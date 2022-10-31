@@ -34,3 +34,9 @@ export default function RectangleTitle({
     />
   );
 }
+
+export function DecisionTitle({ title }: { title: string }) {
+  const theme = useTheme();
+
+  return <h1>{title}</h1>;
+}

@@ -104,6 +104,7 @@ export function MyFooter({ extraStyles }: { extraStyles?: CSSProperties }) {
         width: "100vw",
         height: "auto",
         display: "flex",
+        padding: 20,
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
