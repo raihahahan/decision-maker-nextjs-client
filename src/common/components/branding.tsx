@@ -28,7 +28,7 @@ export default function RectangleTitle({
     <Image
       priority
       src={src as string}
-      alt="raihahahan"
+      alt="MakeMyDecision"
       width={widthSize}
       height={RATIO * widthSize}
     />
