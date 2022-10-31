@@ -1,4 +1,5 @@
 export type anchorTitles =
+  | ""
   | "Random"
   | "Weighted"
   | "Conditional"
@@ -9,6 +10,7 @@ export type anchorTitles =
 
 export type routes =
   | "/"
+  | "/random"
   | "/weighted"
   | "/conditional"
   | "/about"

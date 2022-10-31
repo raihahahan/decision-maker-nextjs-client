@@ -1,7 +1,8 @@
 import { anchorTitles, routes } from "./site-types";
 
 const anchorData: { title: anchorTitles; anchorRoute: routes }[] = [
-  { title: "Random", anchorRoute: "/" },
+  { title: "", anchorRoute: "/" },
+  { title: "Random", anchorRoute: "/random" },
   {
     title: "Weighted",
     anchorRoute: "/weighted",
