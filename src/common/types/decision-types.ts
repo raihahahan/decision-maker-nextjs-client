@@ -1,4 +1,5 @@
 export interface Decision {
+  id?: number;
   name: string;
   createdAt: string;
   updatedAt: string;
@@ -6,10 +7,12 @@ export interface Decision {
 }
 
 export interface Choice {
+  id?: number;
   name: string;
 }
 
 export interface WeightedResult {
+  id?: number;
   choiceId: number;
   totalWeight: number;
   name: string;

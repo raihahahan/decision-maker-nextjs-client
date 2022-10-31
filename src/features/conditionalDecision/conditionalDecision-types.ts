@@ -1,7 +1,9 @@
 import { Decision } from "../../common/types/decision-types";
 
 export interface Condition {
+  id?: number;
   innerItem: {
+    id?: number;
     choiceId: number;
   };
 }
