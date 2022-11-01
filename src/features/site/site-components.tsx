@@ -168,7 +168,7 @@ export default function MainHeader({
             mr="xl"
           />
         </MediaQuery>
-        <Link href="/" passHref>
+        <Link href="/about" passHref>
           <Anchor onClick={() => setOpened(false)}>
             <RectangleTitle
               widthSize={200}
