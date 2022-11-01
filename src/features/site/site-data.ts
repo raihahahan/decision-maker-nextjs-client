@@ -22,7 +22,7 @@ export default anchorData;
 export const footerData: { title: anchorTitles; anchorRoute: routes }[] = [
   {
     title: "M.Raihan" as any,
-    anchorRoute: "/about",
+    anchorRoute: "https://mraihan.vercel.app",
   },
   {
     title: "Github" as any,
