@@ -1,8 +1,8 @@
 export interface Decision {
   id?: number;
+  createdAt?: string;
+  updatedAt?: string;
   name: string;
-  createdAt: string;
-  updatedAt: string;
   choices: Choice[];
 }
 
