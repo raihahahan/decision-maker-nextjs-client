@@ -1,76 +1,63 @@
 import { useForm } from "@mantine/form";
 import { useState } from "react";
-import { Decision } from "../../common/types/decision-types";
+import { IDecision } from "../../common/types/decision-types";
 
 export default function useChoiceForm() {
-  const [formVal, setFormVal] = useState<Decision>({
+  const initialValues = {
     name: "",
     choices: [
       {
         id: 0,
         name: "",
       },
+      {
+        id: 1,
+        name: "",
+      },
     ],
-  });
+  };
 
-  const form = useForm<Decision>({
-    initialValues: {
-      name: "",
-      choices: [
-        {
-          id: 0,
-          name: "",
-        },
-      ],
-    },
+  const form = useForm<IDecision>({
+    initialValues,
     validate: {
       name: (val) => (val.length > 0 ? null : "Invalid decision name."),
       choices: (val) =>
         val.length <= 1
           ? "Please provide more than 1 choices"
-          : val.filter((i) => i.name.length == 0).length > 0
-          ? "Make sure that all choices are filled."
+          : val.length > 10
+          ? "Maximum 10 choices"
           : null,
     },
   });
 
-  const ChoiceInput = {
-    setName(q: string) {
-      setFormVal((prev) => {
-        return { ...prev, name: q };
-      });
-    },
-
-    setChoice(id: number, q: string) {
-      setFormVal((prev) => {
-        return {
-          ...prev,
-          choices: prev.choices.map((i) => {
-            if (i.id == id) {
-              return { ...i, name: q };
-            } else return i;
-          }),
-        };
-      });
+  const formHelpers = {
+    removeChoice(id: number) {
+      form.removeListItem("choices", id);
     },
     addChoice() {
-      setFormVal((prev) => {
-        return {
-          ...prev,
-          choices: [...prev.choices, { id: prev.choices.length, name: "" }],
-        };
-      });
+      if (form.values.choices.length < 10) {
+        form.insertListItem("choices", {
+          id: form.values.choices.length,
+          name: "",
+        });
+      } else {
+        alert("Maximum 10 choices");
+      }
     },
-    removeChoice(id: number) {
-      setFormVal((prev) => {
-        return { ...prev, choices: prev.choices.filter((i) => i.id != id) };
-      });
+    decide() {
+      form.values.choices = form.values.choices.filter(
+        (i) => i.name.trim() != ""
+      );
+      if (form.values.choices.length < 2)
+        form.values.choices = initialValues.choices;
+      form.validateField("choices").hasError
+        ? alert(form.validateField("choices").error)
+        : null;
     },
   };
 
   return {
     form,
-    formSetters: { formVal, setFormVal },
-    ChoiceInput,
+    formHelpers,
   };
 }
