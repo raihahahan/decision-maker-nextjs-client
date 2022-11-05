@@ -1,22 +1,31 @@
 import { Box, Button, Group, TextInput } from "@mantine/core";
 import { CSSProperties } from "react";
-import useTheme from "../theme/theme-hooks";
+import { breakpoints } from "../theme/theme-data";
+import useTheme, { useGlobalMediaQuery } from "../theme/theme-hooks";
 import useChoiceForm from "./choiceForm-hooks";
 
-export default function ChoicesForm() {
-  const { form, formSetters, ChoiceInput } = useChoiceForm();
-  const { formVal, setFormVal } = formSetters;
-  const { addChoice, removeChoice, setChoice, setName } = ChoiceInput;
+export default function ChoicesForm({
+  onSubmit,
+}: {
+  onSubmit: (value: any) => void;
+}) {
+  const { form, formHelpers } = useChoiceForm();
   const { siteColors } = useTheme();
+
   return (
-    <Box sx={{ maxWidth: 300 }} mx="auto">
-      <form onSubmit={form.onSubmit((value) => alert(JSON.stringify(value)))}>
+    <Box
+      sx={{ width: "90vw", maxWidth: breakpoints.sm + 10, marginBottom: 20 }}
+      mx="auto"
+    >
+      <form onSubmit={form.onSubmit((value) => onSubmit(value))}>
         <>
           <TextInput
             labelProps={{
               style: { color: siteColors.text.primary },
             }}
+            size="lg"
             withAsterisk
+            type="text"
             label="Decision to make"
             placeholder="e.g. Which bicycle should I buy..."
             {...form.getInputProps("name")}
@@ -33,18 +42,19 @@ export default function ChoicesForm() {
                 }}
               >
                 <TextInput
+                  size="lg"
                   labelProps={{
                     style: { color: siteColors.text.primary },
                   }}
-                  withAsterisk
+                  style={{ width: "90vw", marginBottom: 20 }}
                   label={`Choice ${index + 1}`}
                   {...form.getInputProps(`choices.${index}.name`)}
                 />
                 <RemoveButton
-                  onClick={() => form.removeListItem("choices", index)}
+                  onClick={() => formHelpers.removeChoice(index)}
                   extraStyles={{
                     marginLeft: 10,
-                    marginBottom: 2,
+                    marginBottom: 25,
                   }}
                 />
               </div>
@@ -52,21 +62,8 @@ export default function ChoicesForm() {
           })}
 
           <Group position="apart" mt="md">
-            <AddButton
-              onClick={() =>
-                form.insertListItem("choices", {
-                  id: form.values.choices.length,
-                  name: "",
-                })
-              }
-            />
-            <MakeDecisionButton
-              onClick={() =>
-                form.validateField("choices").hasError
-                  ? alert(form.validateField("choices").error)
-                  : null
-              }
-            />
+            <AddButton onClick={formHelpers.addChoice} />
+            <MakeDecisionButton onClick={formHelpers.decide} />
           </Group>
         </>
       </form>
@@ -86,7 +83,7 @@ export function RemoveButton({
       onClick={onClick}
       color="red"
       radius="md"
-      size="md"
+      size="xl"
       compact
       uppercase
       style={extraStyles}
@@ -98,7 +95,7 @@ export function RemoveButton({
 
 export function AddButton({ onClick }: { onClick: () => void }) {
   return (
-    <Button color="green" type="button" onClick={onClick}>
+    <Button size="lg" color="green" type="button" onClick={onClick}>
       Add
     </Button>
   );
@@ -106,7 +103,7 @@ export function AddButton({ onClick }: { onClick: () => void }) {
 
 export function MakeDecisionButton({ onClick }: { onClick?: () => void }) {
   return (
-    <Button onClick={onClick} type="submit">
+    <Button size="lg" onClick={onClick} type="submit">
       Decide!
     </Button>
   );
