@@ -5,19 +5,6 @@ import { API_URL } from "../../common/utils/globals";
 import DAL from "../../common/domains/DAL";
 
 class RandomDecisionAPI extends DAL<IRandomDecisionItem> {
-  public async onSubmit(value: IDecision): Promise<void> {
-    try {
-      value.createdAt = new Date().toISOString();
-      value.updatedAt = new Date().toISOString();
-      const postResponse = await this.post(value);
-      const ID = postResponse.id;
-      const res = await this.getDecide(ID as number);
-      alert(JSON.stringify(res));
-    } catch (error) {
-      alert(error);
-    }
-  }
-
   public async get(): Promise<IRandomDecisionItem[]> {
     try {
       const res = await axios.get(`${API_URL}/api/RandomDecisionItems`);
@@ -42,9 +29,9 @@ class RandomDecisionAPI extends DAL<IRandomDecisionItem> {
     }
   }
 
-  public async getDecide(id: number): Promise<IChoice> {
+  public async decide(id: number): Promise<IChoice> {
     try {
-      const res = await axios.get(
+      const res = await axios.post(
         `${API_URL}/api/RandomDecisionItems/${id}/decide`
       );
       return res.data as IChoice;
