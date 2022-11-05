@@ -1,18 +1,13 @@
 import { DecisionTitle } from "../../common/components/branding";
-import { IDecision } from "../../common/types/decision-types";
 import ChoicesForm from "../choiceForm/choiceForm-components";
-import RandomDecisionAPI from "./randomDecision-api";
+import useRandomDecision from "./randomDecision-hooks";
 
 export function RandomDecisionTitle() {
   return <DecisionTitle title="Random Decision" />;
 }
 
 export function RandomDecisionForm() {
-  return (
-    <ChoicesForm
-      onSubmit={async (value: IDecision) =>
-        await RandomDecisionAPI.onSubmit(value)
-      }
-    />
-  );
+  const { onSubmit } = useRandomDecision();
+
+  return <ChoicesForm onSubmit={onSubmit} />;
 }
