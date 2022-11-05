@@ -1,17 +1,17 @@
-export interface Decision {
+export interface IDecision {
   id?: number;
   createdAt?: string;
   updatedAt?: string;
   name: string;
-  choices: Choice[];
+  choices: IChoice[];
 }
 
-export interface Choice {
+export interface IChoice {
   id?: number;
   name: string;
 }
 
-export interface WeightedResult {
+export interface IWeightedResult {
   id?: number;
   choiceId: number;
   totalWeight: number;

@@ -1,6 +1,6 @@
 import { useForm } from "@mantine/form";
 import { useState } from "react";
-import { Choice } from "../../common/types/decision-types";
+import { IChoice } from "../../common/types/decision-types";
 
 export default function useRandomDecisionForm() {
   const choicesInitialVal = {
@@ -18,7 +18,7 @@ export default function useRandomDecisionForm() {
     ],
   };
 
-  const [formChoices, setFormChoices] = useState<Choice[]>(
+  const [formChoices, setFormChoices] = useState<IChoice[]>(
     choicesInitialVal.choices
   );
 
@@ -26,7 +26,7 @@ export default function useRandomDecisionForm() {
     initialValues: choicesInitialVal,
     validate: {
       name: (value: string) => (value.length > 0 ? null : "Invalid name"),
-      choices: (value: Choice[]) => {
+      choices: (value: IChoice[]) => {
         return value.length > 0 ? null : "Input at least 2 choices.";
       },
     },

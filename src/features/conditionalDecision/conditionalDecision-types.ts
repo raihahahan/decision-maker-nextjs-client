@@ -1,6 +1,6 @@
-import { Decision } from "../../common/types/decision-types";
+import { IDecision } from "../../common/types/decision-types";
 
-export interface Condition {
+export interface ICondition {
   id?: number;
   innerItem: {
     id?: number;
@@ -8,10 +8,10 @@ export interface Condition {
   };
 }
 
-export interface ConditionalInput extends Condition {
+export interface IConditionalInput extends ICondition {
   value: boolean;
 }
 
-export interface ConditionalDecisionItem extends Decision {
-  conditions: Condition[];
+export interface IConditionalDecisionItem extends IDecision {
+  conditions: ICondition[];
 }

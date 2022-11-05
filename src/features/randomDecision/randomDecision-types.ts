@@ -1,3 +1,3 @@
-import { Choice, Decision } from "../../common/types/decision-types";
+import { IChoice, IDecision } from "../../common/types/decision-types";
 
-export interface RandomDecisionItem extends Decision {}
+export interface IRandomDecisionItem extends IDecision {}

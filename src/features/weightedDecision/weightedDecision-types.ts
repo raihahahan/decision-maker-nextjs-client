@@ -1,22 +1,22 @@
-import { Decision } from "../../common/types/decision-types";
+import { IDecision } from "../../common/types/decision-types";
 
-export interface Criteria {
+export interface ICriteria {
   id?: number;
   name: string;
   weight: number;
 }
 
-export interface CriteriaInput extends Criteria {
+export interface ICriteriaInput extends ICriteria {
   value: number;
 }
 
-export interface WeightedInput {
+export interface IWeightedInput {
   id?: number;
-  criteriaInput: CriteriaInput[];
+  criteriaInput: ICriteriaInput[];
   choiceId: number;
   choiceName: string;
 }
 
-export interface WeightedDecisionItem extends Decision {
-  criteriaList: Criteria[];
+export interface IWeightedDecisionItem extends IDecision {
+  criteriaList: ICriteria[];
 }
