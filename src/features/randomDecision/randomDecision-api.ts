@@ -1,4 +1,8 @@
-import { IChoice, IDecision } from "../../common/types/decision-types";
+import {
+  IChoice,
+  IDecision,
+  IWeightedResult,
+} from "../../common/types/decision-types";
 import { IRandomDecisionItem } from "./randomDecision-types";
 import axios from "axios";
 import { API_URL } from "../../common/utils/globals";
@@ -29,15 +33,15 @@ class RandomDecisionAPI extends DAL<IRandomDecisionItem> {
     }
   }
 
-  public async decide(id: number): Promise<IChoice> {
+  public async decide(id: number): Promise<IWeightedResult[]> {
     try {
       const res = await axios.post(
         `${API_URL}/api/RandomDecisionItems/${id}/decide`
       );
-      return res.data as IChoice;
+      return res.data as IWeightedResult[];
     } catch (error) {
       alert(error + " error decide");
-      return { name: "", id: -1 };
+      return [];
     }
   }
 }
