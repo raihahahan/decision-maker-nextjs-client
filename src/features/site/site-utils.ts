@@ -1,7 +1,8 @@
 import { routes } from "./site-types";
 
 export const siteTitleNames: Record<routes, string> = {
-  "/": "Random Decision",
+  "/": "",
+  "/random": "Random Decision",
   "/weighted": "Weighted Decision",
   "/conditional": "Conditional Decision",
   "/about": "About",
