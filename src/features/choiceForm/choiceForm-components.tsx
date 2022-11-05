@@ -1,7 +1,9 @@
 import { Box, Button, Group, TextInput } from "@mantine/core";
+import { UseFormReturnType } from "@mantine/form";
 import { CSSProperties } from "react";
+import { IDecision } from "../../common/types/decision-types";
 import { breakpoints } from "../theme/theme-data";
-import useTheme, { useGlobalMediaQuery } from "../theme/theme-hooks";
+import useTheme from "../theme/theme-hooks";
 import useChoiceForm from "./choiceForm-hooks";
 
 export default function ChoicesForm({
@@ -10,7 +12,6 @@ export default function ChoicesForm({
   onSubmit: (value: any) => void;
 }) {
   const { form, formHelpers } = useChoiceForm();
-  const { siteColors } = useTheme();
 
   return (
     <Box
@@ -19,47 +20,12 @@ export default function ChoicesForm({
     >
       <form onSubmit={form.onSubmit((value) => onSubmit(value))}>
         <>
-          <TextInput
-            labelProps={{
-              style: { color: siteColors.text.primary },
-            }}
-            size="lg"
-            withAsterisk
-            type="text"
-            label="Decision to make"
-            placeholder="e.g. Which bicycle should I buy..."
-            {...form.getInputProps("name")}
-          />
+          <DecisionNameInput form={form} />
           <br />
           <h2>Choices</h2>
-          {form.values.choices.map((item, index) => {
-            return (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "flex-end",
-                }}
-              >
-                <TextInput
-                  size="lg"
-                  labelProps={{
-                    style: { color: siteColors.text.primary },
-                  }}
-                  style={{ width: "90vw", marginBottom: 20 }}
-                  label={`Choice ${index + 1}`}
-                  {...form.getInputProps(`choices.${index}.name`)}
-                />
-                <RemoveButton
-                  onClick={() => formHelpers.removeChoice(index)}
-                  extraStyles={{
-                    marginLeft: 10,
-                    marginBottom: 25,
-                  }}
-                />
-              </div>
-            );
-          })}
+          {form.values.choices.map((item, index) => (
+            <ChoiceInput form={form} index={index} formHelpers={formHelpers} />
+          ))}
 
           <Group position="apart" mt="md">
             <AddButton onClick={formHelpers.addChoice} />
@@ -68,6 +34,69 @@ export default function ChoicesForm({
         </>
       </form>
     </Box>
+  );
+}
+
+export function DecisionNameInput({
+  form,
+}: {
+  form: UseFormReturnType<IDecision, (values: IDecision) => IDecision>;
+}) {
+  const { siteColors } = useTheme();
+  return (
+    <TextInput
+      labelProps={{
+        style: { color: siteColors.text.primary },
+      }}
+      size="lg"
+      withAsterisk
+      type="text"
+      label="Decision to make"
+      placeholder="e.g. Which bicycle should I buy..."
+      {...form.getInputProps("name")}
+    />
+  );
+}
+
+export function ChoiceInput({
+  form,
+  index,
+  formHelpers,
+}: {
+  form: UseFormReturnType<IDecision, (values: IDecision) => IDecision>;
+  index: number;
+  formHelpers: {
+    removeChoice(id: number): void;
+    addChoice(): void;
+    decide(): void;
+  };
+}) {
+  const { siteColors } = useTheme();
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-end",
+      }}
+    >
+      <TextInput
+        size="lg"
+        labelProps={{
+          style: { color: siteColors.text.primary },
+        }}
+        style={{ width: "90vw", marginBottom: 20 }}
+        label={`Choice ${index + 1}`}
+        {...form.getInputProps(`choices.${index}.name`)}
+      />
+      <RemoveButton
+        onClick={() => formHelpers.removeChoice(index)}
+        extraStyles={{
+          marginLeft: 10,
+          marginBottom: 25,
+        }}
+      />
+    </div>
   );
 }
 
