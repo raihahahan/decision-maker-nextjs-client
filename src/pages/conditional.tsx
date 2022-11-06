@@ -1,3 +1,5 @@
+import ConditionalDecisionContents from "../features/conditionalDecision/conditionalDecision-contents";
+
 export default function ConditionalPage() {
-  return <h1>Conditional</h1>;
+  return <ConditionalDecisionContents />;
 }
