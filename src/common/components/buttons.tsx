@@ -1,17 +1,25 @@
-import { Button } from "@mantine/core";
-import useTheme from "../../features/theme/theme-hooks";
+import { Button, ButtonProps } from "@mantine/core";
+import { useRouter } from "next/router";
+import { DecisionTypes } from "../types/decision-types";
 
 export default function FeatureButton({
   text,
-  onClick,
+  name,
+  color,
 }: {
   text: string;
-  onClick: () => void;
+  name: DecisionTypes;
+  color: ButtonProps["color"];
 }) {
-  const theme = useTheme();
-
+  const router = useRouter();
   return (
-    <Button onClick={onClick} variant="filled" color="cyan" size="md">
+    <Button
+      style={{ margin: 10 }}
+      color={color}
+      onClick={() => router.push({ pathname: name })}
+      variant="filled"
+      size="md"
+    >
       {text}
     </Button>
   );

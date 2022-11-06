@@ -1,4 +1,5 @@
 import FeatureButton from "../../common/components/buttons";
+import InputLayout from "../../common/components/inputLayout";
 import {
   RandomDecisionForm,
   RandomDecisionTitle,
@@ -6,9 +7,8 @@ import {
 
 export default function RandomDecisionContents() {
   return (
-    <div>
-      <RandomDecisionTitle />
+    <InputLayout type="random">
       <RandomDecisionForm />
-    </div>
+    </InputLayout>
   );
 }
