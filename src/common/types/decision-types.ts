@@ -17,3 +17,9 @@ export interface IWeightedResult {
   totalWeight: number;
   name: string;
 }
+
+export type pushQuery = {
+  query: {
+    data: { dec: string; id: number };
+  };
+};
