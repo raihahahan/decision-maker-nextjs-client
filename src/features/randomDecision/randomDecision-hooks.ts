@@ -13,12 +13,6 @@ export default function useRandomDecision() {
       const ID = postResponse.id;
       router.push({
         pathname: `/result/random/${ID}`,
-        query: {
-          data: JSON.stringify({
-            dec: value.name,
-            id: ID,
-          } as pushQuery["query"]["data"]),
-        },
       });
     } catch (error) {
       alert(error);
