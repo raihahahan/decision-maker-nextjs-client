@@ -1,3 +1,5 @@
+import WeightedDecisionContents from "../features/weightedDecision/weightedDecision-contents";
+
 export default function WeightedPage() {
-  return <h1>Weighted</h1>;
+  return <WeightedDecisionContents />;
 }
