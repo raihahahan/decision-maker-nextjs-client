@@ -18,8 +18,16 @@ export interface IWeightedResult {
   name: string;
 }
 
+export interface IFinalResult {
+  weightedResults: IWeightedResult[];
+  decisionName: string;
+  type: DecisionTypes;
+}
+
 export type pushQuery = {
   query: {
     data: { dec: string; id: number };
   };
 };
+
+export type DecisionTypes = "random" | "conditional" | "weighted" | "error";
