@@ -1,6 +1,6 @@
 import { Box, Button, Group, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { CSSProperties } from "react";
+import { CSSProperties, useEffect } from "react";
 import { IDecision } from "../../common/types/decision-types";
 import { breakpoints } from "../theme/theme-data";
 import useTheme from "../theme/theme-hooks";
@@ -8,11 +8,18 @@ import useChoiceForm from "./choiceForm-hooks";
 
 export default function ChoicesForm({
   onSubmit,
+  presetData,
+  showBackButton,
 }: {
   onSubmit: (value: any) => void;
+  presetData?: IDecision;
+  showBackButton?: boolean;
 }) {
   const { form, formHelpers } = useChoiceForm();
 
+  useEffect(() => {
+    if (presetData != undefined) form.setValues(presetData);
+  }, []);
   return (
     <Box
       sx={{ width: "90vw", maxWidth: breakpoints.sm + 10, marginBottom: 20 }}
@@ -28,7 +35,12 @@ export default function ChoicesForm({
           ))}
 
           <Group position="apart" mt="md">
-            <AddButton onClick={formHelpers.addChoice} />
+            <Group>
+              {showBackButton && (
+                <FormCancelButton onClick={formHelpers.cancel} />
+              )}
+              <AddButton onClick={formHelpers.addChoice} />
+            </Group>
             <MakeDecisionButton onClick={formHelpers.decide} />
           </Group>
         </>
@@ -134,6 +146,14 @@ export function MakeDecisionButton({ onClick }: { onClick?: () => void }) {
   return (
     <Button size="lg" onClick={onClick} type="submit">
       Decide!
+    </Button>
+  );
+}
+
+export function FormCancelButton({ onClick }: { onClick?: () => void }) {
+  return (
+    <Button color="red" size="lg" onClick={onClick} type="button">
+      Cancel
     </Button>
   );
 }

@@ -1,5 +1,5 @@
 import { useForm } from "@mantine/form";
-import { useState } from "react";
+import { useRouter } from "next/router";
 import { IDecision } from "../../common/types/decision-types";
 
 export default function useChoiceForm() {
@@ -16,6 +16,7 @@ export default function useChoiceForm() {
       },
     ],
   };
+  const router = useRouter();
 
   const form = useForm<IDecision>({
     initialValues,
@@ -53,6 +54,9 @@ export default function useChoiceForm() {
       form.validateField("choices").hasError
         ? alert(form.validateField("choices").error)
         : null;
+    },
+    cancel() {
+      router.back();
     },
   };
 
