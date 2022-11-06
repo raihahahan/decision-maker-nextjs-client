@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { IDecision } from "../../common/types/decision-types";
+import { IDecision, pushQuery } from "../../common/types/decision-types";
 import randomDecisionApi from "./randomDecision-api";
 
 export default function useRandomDecision() {
@@ -11,10 +11,14 @@ export default function useRandomDecision() {
       value.updatedAt = new Date().toISOString();
       const postResponse = await randomDecisionApi.post(value);
       const ID = postResponse.id;
-      const res = await randomDecisionApi.decide(ID as number);
       router.push({
-        pathname: "/result",
-        query: { data: JSON.stringify({ res, type: "random" }) },
+        pathname: `/result/random/${ID}`,
+        query: {
+          data: JSON.stringify({
+            dec: value.name,
+            id: ID,
+          } as pushQuery["query"]["data"]),
+        },
       });
     } catch (error) {
       alert(error);
