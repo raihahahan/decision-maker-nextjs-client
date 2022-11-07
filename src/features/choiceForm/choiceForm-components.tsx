@@ -4,18 +4,22 @@ import { CSSProperties, useEffect } from "react";
 import { IDecision } from "../../common/types/decision-types";
 import { breakpoints } from "../theme/theme-data";
 import useTheme from "../theme/theme-hooks";
-import useChoiceForm from "./choiceForm-hooks";
+import { formHookReturnType } from "./choiceForm-types";
 
-export default function ChoicesForm({
+export default function ChoicesForm<T extends IDecision>({
   onSubmit,
+  useChoiceForm,
   presetData,
   showBackButton,
+  hideDecide,
 }: {
   onSubmit: (value: any) => void;
-  presetData?: IDecision;
+  useChoiceForm: formHookReturnType<T>;
+  presetData?: T;
   showBackButton?: boolean;
+  hideDecide?: boolean;
 }) {
-  const { form, formHelpers } = useChoiceForm();
+  const { form, formHelpers } = useChoiceForm;
 
   useEffect(() => {
     if (presetData != undefined) form.setValues(presetData);
@@ -27,11 +31,15 @@ export default function ChoicesForm({
     >
       <form onSubmit={form.onSubmit((value) => onSubmit(value))}>
         <>
-          <DecisionNameInput form={form} />
+          <DecisionNameInput<T> form={form} />
           <br />
           <h2>Choices</h2>
           {form.values.choices.map((item, index) => (
-            <ChoiceInput form={form} index={index} formHelpers={formHelpers} />
+            <ChoiceInput<T>
+              form={form}
+              index={index}
+              formHelpers={formHelpers}
+            />
           ))}
 
           <Group position="apart" mt="md">
@@ -41,7 +49,7 @@ export default function ChoicesForm({
               )}
               <AddButton onClick={formHelpers.addChoice} />
             </Group>
-            <MakeDecisionButton onClick={formHelpers.decide} />
+            {!hideDecide && <MakeDecisionButton onClick={formHelpers.decide} />}
           </Group>
         </>
       </form>
@@ -49,10 +57,10 @@ export default function ChoicesForm({
   );
 }
 
-export function DecisionNameInput({
+export function DecisionNameInput<T extends IDecision>({
   form,
 }: {
-  form: UseFormReturnType<IDecision, (values: IDecision) => IDecision>;
+  form: UseFormReturnType<T, (values: T) => T>;
 }) {
   const { siteColors } = useTheme();
   return (
@@ -70,12 +78,12 @@ export function DecisionNameInput({
   );
 }
 
-export function ChoiceInput({
+export function ChoiceInput<T extends IDecision>({
   form,
   index,
   formHelpers,
 }: {
-  form: UseFormReturnType<IDecision, (values: IDecision) => IDecision>;
+  form: UseFormReturnType<T, (values: T) => T>;
   index: number;
   formHelpers: {
     removeChoice(id: number): void;
