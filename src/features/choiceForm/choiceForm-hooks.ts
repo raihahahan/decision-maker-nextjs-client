@@ -1,6 +1,7 @@
 import { useForm } from "@mantine/form";
 import { FormValidateInput } from "@mantine/form/lib/types";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { IDecision } from "../../common/types/decision-types";
 
 export default function useChoiceForm<T extends IDecision>(
@@ -12,6 +13,10 @@ export default function useChoiceForm<T extends IDecision>(
     initialValues,
     validate,
   });
+
+  useEffect(() => {
+    form.setValues(initialValues);
+  }, []);
 
   const formHelpers = {
     removeChoice(id: number) {
@@ -31,11 +36,10 @@ export default function useChoiceForm<T extends IDecision>(
       form.values.choices = form.values.choices.filter(
         (i) => i.name.trim() != ""
       );
-      if (form.values.choices.length < 2)
-        form.values.choices = initialValues.choices;
-      form.validateField("choices").hasError
-        ? alert(form.validateField("choices").error)
-        : null;
+
+      if (form.validateField("choices").hasError) {
+        alert(form.validateField("choices").error);
+      }
     },
     cancel() {
       router.back();
