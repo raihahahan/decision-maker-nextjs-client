@@ -159,19 +159,21 @@ function WeightedFormSteppers({
     setActive((current) => (current < 4 ? current + 1 : current));
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
-  const router = useRouter();
+  const { siteColors } = useTheme();
   return (
     <>
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
         <Stepper.Step
           label="First step"
           description="Create decision and choices"
+          style={{ color: siteColors.text.primary }}
         >
           Step 1: Create decision and choices
         </Stepper.Step>
         <Stepper.Step
           label="Second step"
           description="Create criteria that affect your decision making"
+          style={{ color: siteColors.text.primary }}
         >
           Step 2: Create criteria that affect your decision making (hint: 0
           [least important] - 100 [most important])
@@ -179,6 +181,7 @@ function WeightedFormSteppers({
         <Stepper.Step
           label="Third step"
           description="Give your input for each decision"
+          style={{ color: siteColors.text.primary }}
         >
           Step 3: Give your input for each decision
         </Stepper.Step>
