@@ -1,34 +1,16 @@
 import { useForm } from "@mantine/form";
+import { FormValidateInput } from "@mantine/form/lib/types";
 import { useRouter } from "next/router";
 import { IDecision } from "../../common/types/decision-types";
 
-export default function useChoiceForm() {
-  const initialValues = {
-    name: "",
-    choices: [
-      {
-        id: 0,
-        name: "",
-      },
-      {
-        id: 1,
-        name: "",
-      },
-    ],
-  };
+export default function useChoiceForm<T extends IDecision>(
+  initialValues: T,
+  validate: FormValidateInput<T>
+) {
   const router = useRouter();
-
-  const form = useForm<IDecision>({
+  const form = useForm<T>({
     initialValues,
-    validate: {
-      name: (val) => (val.length > 0 ? null : "Invalid decision name."),
-      choices: (val) =>
-        val.length <= 1
-          ? "Please provide more than 1 choices"
-          : val.length > 10
-          ? "Maximum 10 choices"
-          : null,
-    },
+    validate,
   });
 
   const formHelpers = {
@@ -36,13 +18,13 @@ export default function useChoiceForm() {
       form.removeListItem("choices", id);
     },
     addChoice() {
-      if (form.values.choices.length < 10) {
+      if (form.values.choices.length < 100) {
         form.insertListItem("choices", {
           id: form.values.choices.length,
           name: "",
         });
       } else {
-        alert("Maximum 10 choices");
+        alert("Maximum 100 choices");
       }
     },
     decide() {
