@@ -101,6 +101,7 @@ export function ChoiceInput<T extends IDecision>({
       }}
     >
       <TextInput
+        withAsterisk
         size="lg"
         labelProps={{
           style: { color: siteColors.text.primary },
