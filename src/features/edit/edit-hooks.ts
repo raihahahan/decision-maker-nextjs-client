@@ -1,6 +1,9 @@
 import { useRouter } from "next/router";
-import { IDecision } from "../../common/types/decision-types";
+import { DecisionTypes, IDecision } from "../../common/types/decision-types";
+import { InitialValidate } from "../choiceForm/choiceForm-data";
+import { initialConditionalValidate } from "../conditionalDecision/conditionalDecision-data";
 import randomDecisionApi from "../randomDecision/randomDecision-api";
+import { initialWeightedValidate } from "../weightedDecision/weightedDecision-data";
 
 export default function useEdit() {
   const router = useRouter();
@@ -15,5 +18,19 @@ export default function useEdit() {
       alert(error);
     }
   };
-  return { onSubmit };
+  const type: DecisionTypes =
+    router.query && router.query.type
+      ? (router.query.type as DecisionTypes)
+      : ("error" as DecisionTypes);
+
+  const validate =
+    type == "random"
+      ? InitialValidate
+      : type == "weighted"
+      ? initialWeightedValidate
+      : type == "conditional"
+      ? initialConditionalValidate
+      : InitialValidate;
+
+  return { onSubmit, validate };
 }
