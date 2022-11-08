@@ -155,8 +155,9 @@ function WeightedFormSteppers({
     (values: IWeightedDecisionItem) => IWeightedDecisionItem
   >;
 }) {
+  const TOTAL = 3;
   const nextStep = () =>
-    setActive((current) => (current < 4 ? current + 1 : current));
+    setActive((current) => (current < TOTAL + 1 ? current + 1 : current));
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
   const { siteColors } = useTheme();
@@ -201,13 +202,13 @@ function WeightedFormSteppers({
         </Button>
 
         <Button
-          type={active >= 3 ? "submit" : "button"}
+          type={active >= TOTAL ? "submit" : "button"}
           size="md"
           onClick={() => {
-            active >= 3 ? alert(JSON.stringify(form.values)) : nextStep();
+            active >= TOTAL ? alert(JSON.stringify(form.values)) : nextStep();
           }}
         >
-          {active >= 3 ? "Decide" : "Next step"}
+          {active >= TOTAL ? "Decide" : "Next step"}
         </Button>
       </Group>
     </>
