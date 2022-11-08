@@ -5,10 +5,16 @@ import { initialConditionalValidate } from "../conditionalDecision/conditionalDe
 import randomDecisionApi from "../randomDecision/randomDecision-api";
 import { initialWeightedValidate } from "../weightedDecision/weightedDecision-data";
 
-export default function useEdit() {
+export default function useEdit<T>() {
   const router = useRouter();
   const id: number = router.query && router.query.id ? +router.query.id : -1;
+
   const onSubmit = async (value: IDecision) => {
+    value.choices = value.choices.map((i) => {
+      delete i.id;
+      return i;
+    });
+
     try {
       await randomDecisionApi.put(id, value);
       router.push({
