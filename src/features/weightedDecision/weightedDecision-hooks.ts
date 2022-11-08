@@ -1,6 +1,7 @@
 import { ButtonProps } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { useRouter } from "next/router";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import {
@@ -62,10 +63,12 @@ export function useWeightedFormSteppers(
     (values: IWeightedDecisionItem) => IWeightedDecisionItem
   >,
   isEdit: boolean,
-  id: number
+  id: number,
+  TOTAL: number,
+  setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   const router = useRouter();
-  const TOTAL = 2;
+
   const nextStep = () =>
     setActive((current) => (current < TOTAL + 1 ? current + 1 : current));
   const prevStep = () =>
@@ -84,6 +87,7 @@ export function useWeightedFormSteppers(
 
   const onClickRightButton = async () => {
     if (active >= TOTAL - 1) {
+      setUnsavedChanges(false);
       form.values.choices = form.values.choices.map((c) => {
         if (c?.id) delete c.id;
         return c;
