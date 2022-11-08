@@ -1,9 +1,11 @@
 import { NextPageContext } from "next";
+import Error from "../../../common/components/error";
 import { IFinalResult } from "../../../common/types/decision-types";
 import randomDecisionApi from "../../../features/randomDecision/randomDecision-api";
 import ResultContents from "../../../features/result/result-contents";
 
 export default function ResultPage({ res }: { res: IFinalResult }) {
+  if (res.type == "error" || !res.weightedResults) return <Error />;
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <ResultContents data={res} type={res.type} />

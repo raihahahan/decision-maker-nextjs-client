@@ -1,9 +1,11 @@
 import { NextPageContext } from "next";
+import Error from "../../../common/components/error";
 import { IDecision } from "../../../common/types/decision-types";
 import EditContents from "../../../features/edit/edit-contents";
 import randomDecisionApi from "../../../features/randomDecision/randomDecision-api";
 
 export default function EditPage({ res }: { res: IDecision }) {
+  if (!res.choices) return <Error />;
   return <EditContents res={res} />;
 }
 
