@@ -9,7 +9,6 @@ export function Result({
   data: IWeightedResult;
   index?: number;
 }) {
-  const { lg } = breakpoints;
   return (
     <Paper
       shadow="xs"
