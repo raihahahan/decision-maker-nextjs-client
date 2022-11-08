@@ -1,5 +1,8 @@
 import { InitialValidate, InitialValues } from "../choiceForm/choiceForm-data";
-import { IWeightedDecisionItem } from "./weightedDecision-types";
+import {
+  IWeightedDecisionItem,
+  IWeightedInput,
+} from "./weightedDecision-types";
 
 export const initialWeightedValues: IWeightedDecisionItem = {
   ...InitialValues,
