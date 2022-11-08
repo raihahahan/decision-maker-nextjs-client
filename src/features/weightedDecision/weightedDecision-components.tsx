@@ -36,7 +36,7 @@ export function WeightedDecisionForm() {
         alignItems: "center",
       }}
     >
-      <div style={{ minHeight: "60vh" }}>
+      <div style={{ minHeight: "50vh" }}>
         {active == 0 ? (
           <ChoicesForm
             useChoiceForm={weightedForm}
