@@ -1,3 +1,5 @@
+import AboutContents from "../features/about/about-contents";
+
 export default function About() {
-  return <h1>About</h1>;
+  return <AboutContents />;
 }
