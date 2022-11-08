@@ -6,6 +6,7 @@ import {
   IFinalResult,
   IWeightedResult,
 } from "../../common/types/decision-types";
+import { capitalizeFirstLetter } from "../../common/utils/utils";
 import { RandomAskAgainButton } from "../randomDecision/randomDecision-components";
 import { useGlobalMediaQuery } from "../theme/theme-hooks";
 import {
@@ -24,7 +25,7 @@ export default function ResultContents({
   type: DecisionTypes;
 }) {
   const { weightedResults, decisionName } = data;
-  const { onClickEdit, onClickCreateNew } = useResult();
+  const { onClickEdit, onClickCreateNew } = useResult(type);
   const { sm, md } = useGlobalMediaQuery();
   return (
     <div
@@ -39,7 +40,7 @@ export default function ResultContents({
       <h1 style={{ textAlign: "center" }}>
         <b>Decision Name:</b> {decisionName}
       </h1>
-      <h2>Random choice:</h2>
+      <h2>{capitalizeFirstLetter(type)} choice:</h2>
       <Result data={weightedResults[0]} />
       <br />
       <h2>Ranked choice:</h2>
