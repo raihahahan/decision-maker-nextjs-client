@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Stepper, Button, Group, Slider, Text, TextInput } from "@mantine/core";
 import ChoicesForm, {
   AddButton,
@@ -6,22 +6,35 @@ import ChoicesForm, {
 } from "../choiceForm/choiceForm-components";
 import useChoiceForm from "../choiceForm/choiceForm-hooks";
 import { UseFormReturnType } from "@mantine/form";
-import { IDecision } from "../../common/types/decision-types";
-import { ICriteria, IWeightedDecisionItem } from "./weightedDecision-types";
+import { IWeightedDecisionItem } from "./weightedDecision-types";
 import { useRouter } from "next/router";
 import useTheme from "../theme/theme-hooks";
 import { breakpoints } from "../theme/theme-data";
-import { InitialValues } from "../choiceForm/choiceForm-data";
 import {
   initialWeightedValidate,
   initialWeightedValues,
 } from "./weightedDecision-data";
+import {
+  useCriteriaForm,
+  useWeightedFormSteppers,
+  useWeightedInput,
+} from "./weightedDecision-hooks";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { setWeightedInput } from "./weightedDecision-slice";
+import { formHookReturnType } from "../choiceForm/choiceForm-types";
 
-export function WeightedDecisionForm() {
+export function WeightedDecisionForm({
+  isEdit,
+  presetValues,
+}: {
+  isEdit: boolean;
+  presetValues?: IWeightedDecisionItem;
+}) {
   const [active, setActive] = useState(0);
 
   const weightedForm = useChoiceForm<IWeightedDecisionItem>(
-    initialWeightedValues,
+    presetValues ?? initialWeightedValues,
     initialWeightedValidate
   );
 
@@ -36,32 +49,44 @@ export function WeightedDecisionForm() {
         alignItems: "center",
       }}
     >
-      <div style={{ minHeight: "50vh" }}>
-        {active == 0 ? (
-          <ChoicesForm
-            useChoiceForm={weightedForm}
-            onSubmit={() => alert("TODO")}
-            hideDecide
-          />
-        ) : active == 1 ? (
-          <CriteriaForm form={weightedForm.form} />
-        ) : active == 2 ? (
-          <div>Summary</div>
-        ) : (
-          <div>error</div>
-        )}
-      </div>
+      <CurrentPage active={active} weightedForm={weightedForm} />
       <br />
       <WeightedFormSteppers
         active={active}
         setActive={setActive}
         form={weightedForm.form}
+        isEdit={isEdit}
+        id={presetValues && presetValues.id ? presetValues.id : -1}
       />
     </div>
   );
 }
 
-function CriteriaForm({
+export function CurrentPage({
+  active,
+  weightedForm,
+}: {
+  active: number;
+  weightedForm: formHookReturnType<IWeightedDecisionItem>;
+}) {
+  return (
+    <div style={{ minHeight: "50vh" }}>
+      {active == 0 ? (
+        <ChoicesForm
+          useChoiceForm={weightedForm}
+          onSubmit={() => alert("TODO")}
+          hideDecide
+        />
+      ) : active == 1 ? (
+        <CriteriaForm form={weightedForm.form} />
+      ) : (
+        <div>error</div>
+      )}
+    </div>
+  );
+}
+
+export function CriteriaForm({
   form,
 }: {
   form: UseFormReturnType<
@@ -69,19 +94,7 @@ function CriteriaForm({
     (values: IWeightedDecisionItem) => IWeightedDecisionItem
   >;
 }) {
-  const addCriteria = () => {
-    if (form.values.criteriaList.length < 100) {
-      form.insertListItem("criteriaList", {
-        id: form.values.criteriaList.length,
-        name: " ",
-      } as ICriteria);
-    } else {
-      alert("Maximum 100 criteria");
-    }
-  };
-  const removeCriteria = (id: number) => {
-    form.removeListItem("criteriaList", id);
-  };
+  const { addCriteria, removeCriteria } = useCriteriaForm(form);
   const { siteColors } = useTheme();
   return (
     <div
@@ -143,10 +156,71 @@ function CriteriaForm({
   );
 }
 
+export function WeightedInputForm({ res }: { res: IWeightedDecisionItem }) {
+  const { weightedInputForm: form, initialValues } = useWeightedInput(res);
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+
+  return (
+    <div>
+      {form.values.map((item, outIndex) => {
+        return (
+          <div>
+            <h3>{item.choiceName}</h3>
+            {item.criteriaInput.map((c, index) => {
+              return (
+                <div>
+                  <Text>{c.name}</Text>
+                  <Slider
+                    style={{ margin: 20, width: "50vw" }}
+                    onChange={(e) =>
+                      form.setValues([
+                        ...initialValues,
+                        {
+                          ...item,
+                          criteriaInput: [
+                            ...item.criteriaInput,
+                            { ...c, value: e },
+                          ],
+                        },
+                      ])
+                    }
+                    marks={[
+                      { value: 20, label: "20%" },
+                      { value: 50, label: "50%" },
+                      { value: 80, label: "80%" },
+                    ]}
+                    {...form.getInputProps(
+                      `${outIndex}.criteriaInput.${index}.value`
+                    )}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
+      <Button
+        type="submit"
+        onClick={() => {
+          dispatch(setWeightedInput(form.values));
+          router.push({
+            pathname: `/result/weighted/${res.id}`,
+          });
+        }}
+      >
+        Submit
+      </Button>
+    </div>
+  );
+}
+
 function WeightedFormSteppers({
   active,
   setActive,
   form,
+  isEdit,
+  id,
 }: {
   active: number;
   setActive: React.Dispatch<React.SetStateAction<number>>;
@@ -154,17 +228,23 @@ function WeightedFormSteppers({
     IWeightedDecisionItem,
     (values: IWeightedDecisionItem) => IWeightedDecisionItem
   >;
+  isEdit: boolean;
+  id: number;
 }) {
-  const TOTAL = 3;
-  const nextStep = () =>
-    setActive((current) => (current < TOTAL + 1 ? current + 1 : current));
-  const prevStep = () =>
-    setActive((current) => (current > 0 ? current - 1 : current));
+  const {
+    rightButtonType,
+    rightButtonDisabled,
+    leftButtonDisabled,
+    onClickRightButton,
+    onClickLeftButton,
+  } = useWeightedFormSteppers(active, setActive, form, isEdit, id);
   const { siteColors } = useTheme();
+
   return (
     <>
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
         <Stepper.Step
+          disabled
           label="First step"
           description="Create decision and choices"
           style={{ color: siteColors.text.primary }}
@@ -172,19 +252,13 @@ function WeightedFormSteppers({
           Step 1: Create decision and choices
         </Stepper.Step>
         <Stepper.Step
+          disabled
           label="Second step"
           description="Create criteria that affect your decision making"
           style={{ color: siteColors.text.primary }}
         >
           Step 2: Create criteria that affect your decision making (hint: 0
           [least important] - 100 [most important])
-        </Stepper.Step>
-        <Stepper.Step
-          label="Third step"
-          description="Give your input for each decision"
-          style={{ color: siteColors.text.primary }}
-        >
-          Step 3: Give your input for each decision
         </Stepper.Step>
         <Stepper.Completed>
           Completed, click back button to get to previous step
@@ -193,22 +267,21 @@ function WeightedFormSteppers({
 
       <Group position="center" mt="xl">
         <Button
-          disabled={active <= 0}
+          disabled={leftButtonDisabled}
           variant="default"
           size="md"
-          onClick={prevStep}
+          onClick={onClickLeftButton}
         >
           Back
         </Button>
 
         <Button
-          type={active >= TOTAL ? "submit" : "button"}
+          disabled={rightButtonDisabled}
+          type={rightButtonType}
           size="md"
-          onClick={() => {
-            active >= TOTAL ? alert(JSON.stringify(form.values)) : nextStep();
-          }}
+          onClick={onClickRightButton}
         >
-          {active >= TOTAL ? "Decide" : "Next step"}
+          Next step
         </Button>
       </Group>
     </>
