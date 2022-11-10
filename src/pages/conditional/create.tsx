@@ -1,3 +1,5 @@
+import ConditionalDecisionCreateContents from "../../features/conditionalDecision/conditionalDecision-contents";
+
 export default function ConditionalCreatePage() {
-  return <h1>Conditional Create Page.</h1>;
+  return <ConditionalDecisionCreateContents />;
 }

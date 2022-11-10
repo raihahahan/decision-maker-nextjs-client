@@ -11,8 +11,11 @@ export type anchorTitles =
 export type routes =
   | "/"
   | "/random"
+  | "/random/create"
   | "/weighted"
+  | "/weighted/create"
   | "/conditional"
+  | "/conditional/create"
   | "/about"
   | "/contact"
   | "/privacy-policy"

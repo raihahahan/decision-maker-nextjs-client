@@ -11,10 +11,6 @@ const anchorData: { title: anchorTitles; anchorRoute: routes }[] = [
     title: "Conditional",
     anchorRoute: "/conditional",
   },
-  {
-    title: "About",
-    anchorRoute: "/about",
-  },
 ];
 
 export default anchorData;
