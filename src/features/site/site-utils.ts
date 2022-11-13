@@ -5,7 +5,6 @@ export const siteTitleNames: Record<routes, string> = {
   "/random": "Random Decision",
   "/weighted": "Weighted Decision",
   "/conditional": "Conditional Decision",
-  "/about": "About",
   "/contact": "Contact",
   "/privacy-policy": "Privacy Policy",
   "/terms-of-use": "Terms of Use",
