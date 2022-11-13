@@ -11,8 +11,8 @@ export default function InputLayout({
   children: React.ReactElement;
   type: DecisionTypes;
 }) {
-  const displayName = DecisionTypeItems.find(
-    (i) => i.name == type
+  const displayName = DecisionTypeItems.find((i) =>
+    i.name.includes(type)
   )?.displayName;
 
   return (
@@ -24,11 +24,11 @@ export default function InputLayout({
         <h3>Try out a different way to decide!</h3>
         {DecisionTypeItems.map((item) => {
           return (
-            item.name != type && (
+            !item.name.includes(type) && (
               <FeatureButton
                 text={item.displayName}
                 color={item.color}
-                name={item.name}
+                name={item.name as any}
               />
             )
           );
