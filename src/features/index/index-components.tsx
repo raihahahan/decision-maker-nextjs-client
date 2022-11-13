@@ -1,11 +1,15 @@
-import { Grid, Text, Badge, Button, Card, Group, Image } from "@mantine/core";
+import { Grid, Text, Button, Card, Group, Image } from "@mantine/core";
+import { useState } from "react";
 import FeatureButton from "../../common/components/buttons";
+import { DecisionTypes, IDecision } from "../../common/types/decision-types";
 import {
   DecisionTypeItems,
   DecisionTypeItemsType,
 } from "../../common/utils/globals";
+import { RemoveButton } from "../choiceForm/choiceForm-components";
 import { breakpoints } from "../theme/theme-data";
 import useTheme from "../theme/theme-hooks";
+import useIndexList from "./index-hooks";
 
 export function IndexButtons() {
   return (
@@ -122,5 +126,37 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
         </Button.Group>
       </div>
     </Card>
+  );
+}
+
+export function IndexGetList({
+  res,
+  type,
+}: {
+  res: IDecision[];
+  type: DecisionTypes;
+}) {
+  const { buttonHandlers } = useIndexList(type, res);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", minWidth: 300 }}>
+      {res.map((item) => {
+        return (
+          <div style={{ margin: 10, display: "flex", flexDirection: "row" }}>
+            <Button
+              style={{ width: "100%", height: 100 }}
+              color={"teal"}
+              onClick={() => buttonHandlers.onClick(item)}
+            >
+              <h3>{item.name}</h3>
+            </Button>
+            <RemoveButton onClick={() => buttonHandlers.onClickRemove(item)} />
+            <Button onClick={() => buttonHandlers.onClickEdit(item)}>
+              Edit
+            </Button>
+          </div>
+        );
+      })}
+    </div>
   );
 }

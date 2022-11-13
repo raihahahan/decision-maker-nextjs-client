@@ -1,9 +1,11 @@
+import IndexLayout from "../index/indexLayout";
 import InputLayout from "../../common/components/inputLayout";
 import {
   RandomDecisionCreateForm,
   RandomDecisionEditForm,
 } from "./randomDecision-components";
 import { IRandomDecisionItem } from "./randomDecision-types";
+import { IndexGetList } from "../index/index-components";
 
 export default function RandomDecisionCreateContents() {
   return (
@@ -22,5 +24,17 @@ export function RandomDecisionEditFormContents({
     <InputLayout type="random">
       <RandomDecisionEditForm res={res} />
     </InputLayout>
+  );
+}
+
+export function RandomDecisionIndexContents({
+  res,
+}: {
+  res: IRandomDecisionItem[];
+}) {
+  return (
+    <IndexLayout type="random">
+      <IndexGetList res={res} type="random" />
+    </IndexLayout>
   );
 }
