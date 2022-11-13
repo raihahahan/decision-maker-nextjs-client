@@ -3,17 +3,21 @@ import { FormValidateInput } from "@mantine/form/lib/types";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { IDecision } from "../../common/types/decision-types";
+import { TExtraFormConfig } from "./choiceForm-types";
 
 export default function useChoiceForm<T extends IDecision>(
   initialValues: T,
   validate: FormValidateInput<T>,
-  setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>
+  setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>,
+  extraFormConfig?: TExtraFormConfig<T>
 ) {
+  // extraFormConfig is for choice form edit
   const router = useRouter();
   const form = useForm<T>({
     initialValues,
     validate,
   });
+  const decisionId = router.query.id as string;
 
   useEffect(() => {
     form.setValues(initialValues);
@@ -29,18 +33,23 @@ export default function useChoiceForm<T extends IDecision>(
   }, [form.values]);
 
   const formHelpers = {
-    removeChoice(id: number) {
+    removeChoice(id: number, itemID?: number) {
       form.removeListItem("choices", id);
+      extraFormConfig?.onRemoveChoice(itemID as number);
     },
-    addChoice() {
+    async addChoice() {
       if (form.values.choices.length < 100) {
+        const changedID = await extraFormConfig?.onAddChoice(+decisionId);
         form.insertListItem("choices", {
-          id: form.values.choices.length,
+          id: changedID ?? form.values.choices.length,
           name: "",
         });
       } else {
         alert("Maximum 100 choices");
       }
+    },
+    editChoice(id: number, value: T) {
+      extraFormConfig?.onEditChoice(id, value);
     },
     decide() {
       form.values.choices = form.values.choices.filter(
