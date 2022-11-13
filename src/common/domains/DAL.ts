@@ -3,12 +3,12 @@ import axios from "axios";
 import { API_URL } from "../utils/globals";
 // DAL: Data Access Layer
 
-abstract class DAL<T extends IDecision> {
-  https = require("https");
-  agent = new this.https.Agent({
+abstract class DAL<T> {
+  protected https = require("https");
+  protected agent = new this.https.Agent({
     rejectUnauthorized: false,
   });
-  route: string = "";
+  protected route: string = "";
 
   constructor(route: string) {
     this.route = route;
@@ -16,8 +16,14 @@ abstract class DAL<T extends IDecision> {
 
   public async get(): Promise<T[]> {
     try {
-      const res = await axios.get(`${this.route}`);
-      return res.data as T[];
+      const res = await fetch(`${this.route}`, {
+        method: "GET",
+        mode: "cors",
+        agent: this.agent,
+      } as any);
+
+      const jsonData: T[] = await res.json();
+      return jsonData;
     } catch (error) {
       // alert(error);
       return [];
@@ -31,10 +37,11 @@ abstract class DAL<T extends IDecision> {
         mode: "cors",
         agent: this.agent,
       } as any);
+
       const jsonData: T = await res.json();
       return jsonData;
     } catch (error) {
-      return { name: "", choices: [] } as any;
+      return { name: JSON.stringify(error), choices: [] } as any;
     }
   }
 
@@ -48,10 +55,6 @@ abstract class DAL<T extends IDecision> {
 
   public async post(input: T): Promise<T> {
     try {
-      delete input?.id;
-      for (let item of input.choices) {
-        delete item?.id;
-      }
       const res = await axios.post(`${this.route}`, input);
       return res.data as T;
     } catch (error) {
@@ -60,25 +63,11 @@ abstract class DAL<T extends IDecision> {
     }
   }
 
-  public async decide(id: number, requestBody?: any): Promise<IFinalResult> {
+  public async delete(id: number): Promise<void> {
     try {
-      const res = await fetch(`${this.route}/${id}/decide`, {
-        method: "POST",
-        mode: "cors",
-        agent: this.agent,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: requestBody ? JSON.stringify(requestBody) : undefined,
-      } as any);
-      const jsonData: IFinalResult = await res.json();
-      return jsonData;
+      await axios.delete(`${this.route}/${id}`);
     } catch (error) {
-      return {
-        decisionName: JSON.stringify(error),
-        weightedResults: [],
-        type: "error",
-      };
+      return;
     }
   }
 }
