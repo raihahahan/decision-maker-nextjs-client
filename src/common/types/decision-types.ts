@@ -9,6 +9,7 @@ export interface IDecision {
 export interface IChoice {
   id?: number;
   name: string;
+  decisionId?: number;
 }
 
 export interface IWeightedResult {
