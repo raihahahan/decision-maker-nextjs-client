@@ -1,6 +1,4 @@
-import { Button, Text } from "@mantine/core";
-import { useRouter } from "next/router";
-import { ParsedUrlQuery } from "querystring";
+import InputLayout from "../../common/components/inputLayout";
 import {
   DecisionTypes,
   IFinalResult,
@@ -28,34 +26,36 @@ export default function ResultContents({
   const { onClickEdit, onClickCreateNew } = useResult(type);
   const { sm, md } = useGlobalMediaQuery();
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        margin: 20,
-        width: "90vw",
-      }}
-    >
-      <h1 style={{ textAlign: "center" }}>
-        <b>Decision Name:</b> {decisionName}
-      </h1>
-      <h2>{capitalizeFirstLetter(type)} choice:</h2>
-      <Result data={weightedResults[0]} />
-      <br />
-      <h2>Ranked choice:</h2>
-      <ResultList resultData={weightedResults} />
+    <InputLayout type={type}>
       <div
         style={{
           display: "flex",
-          flexDirection: md ? "column" : "row",
-          margin: 10,
+          flexDirection: "column",
+          alignItems: "center",
+          margin: 20,
+          width: "90vw",
         }}
       >
-        <EditDecisionButton onClick={onClickEdit} />
-        <CreateNewDecisionButton onClick={onClickCreateNew} />
-        {type == "random" && <RandomAskAgainButton />}
+        <h2 style={{ textAlign: "center" }}>
+          <b>Decision Name:</b> {decisionName}
+        </h2>
+        <h2>{capitalizeFirstLetter(type)} choice:</h2>
+        <Result data={weightedResults[0]} />
+        <br />
+        <h2>Ranked choice:</h2>
+        <ResultList resultData={weightedResults} />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: md ? "column" : "row",
+            margin: 10,
+          }}
+        >
+          <EditDecisionButton onClick={onClickEdit} />
+          <CreateNewDecisionButton onClick={onClickCreateNew} />
+          {type == "random" && <RandomAskAgainButton />}
+        </div>
       </div>
-    </div>
+    </InputLayout>
   );
 }
