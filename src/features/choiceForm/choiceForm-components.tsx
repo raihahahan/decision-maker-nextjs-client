@@ -145,9 +145,11 @@ export function ChoiceInput<T extends IDecision>({
 export function RemoveButton({
   onClick,
   extraStyles,
+  text,
 }: {
   onClick: () => void;
-  extraStyles: CSSProperties;
+  extraStyles?: CSSProperties;
+  text?: string;
 }) {
   return (
     <Button
@@ -159,7 +161,7 @@ export function RemoveButton({
       uppercase
       style={extraStyles}
     >
-      -
+      {text ?? "-"}
     </Button>
   );
 }
