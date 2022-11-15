@@ -1,5 +1,4 @@
 import { NextPageContext } from "next";
-import { useEffect } from "react";
 import { IFinalResult } from "../../../common/types/decision-types";
 import randomDecisionApi from "../../../features/randomDecision/randomDecision-api";
 import ResultContents from "../../../features/result/result-contents";
