@@ -6,6 +6,8 @@ import {
 } from "./randomDecision-components";
 import { IRandomDecisionItem } from "./randomDecision-types";
 import { IndexGetList } from "../index/index-components";
+import { useEffect } from "react";
+import { useRandomDecisionReducer } from "./randomDecision-hooks";
 
 export default function RandomDecisionCreateContents() {
   return (
@@ -32,9 +34,15 @@ export function RandomDecisionIndexContents({
 }: {
   res: IRandomDecisionItem[];
 }) {
+  const { randomDecisionActions, randomDecisionLocalData } =
+    useRandomDecisionReducer();
+  useEffect(() => {
+    randomDecisionActions.set(res);
+  }, []);
+
   return (
     <IndexLayout type="random">
-      <IndexGetList res={res} type="random" />
+      <IndexGetList res={randomDecisionLocalData} type="random" />
     </IndexLayout>
   );
 }

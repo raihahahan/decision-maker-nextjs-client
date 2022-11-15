@@ -20,7 +20,7 @@ import storage from "redux-persist/lib/storage";
 const persistedConfig: PersistConfig<any> = {
   key: "root",
   storage,
-  whitelist: ["theme"],
+  whitelist: ["theme", "decision"],
 };
 
 const persistedReducer = persistReducer(persistedConfig, rootReducer);
