@@ -7,7 +7,7 @@ import {
 } from "./conditionalDecision-data";
 import { IConditionalDecisionItem } from "./conditionalDecision-types";
 
-export default function ConditionalDecisionContents() {
+export default function ConditionalDecisionCreateContents() {
   const conditionalForm = useChoiceForm<IConditionalDecisionItem>(
     initialConditionalValues,
     initialConditionalValidate
