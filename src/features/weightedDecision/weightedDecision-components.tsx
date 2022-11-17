@@ -19,19 +19,14 @@ import {
   useWeightedFormSteppers,
   useWeightedInput,
 } from "./weightedDecision-hooks";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store";
-import { setWeightedInput } from "./weightedDecision-slice";
 import { formHookReturnType } from "../choiceForm/choiceForm-types";
 import usePreventExitForm from "../../common/hooks/usePreventExitForm";
 
 const TOTAL = 2;
 
 export function WeightedDecisionForm({
-  isEdit,
   presetValues,
 }: {
-  isEdit: boolean;
   presetValues?: IWeightedDecisionItem;
 }) {
   const [active, setActive] = useState(0);
@@ -69,7 +64,6 @@ export function WeightedDecisionForm({
         active={active}
         setActive={setActive}
         form={weightedForm.form}
-        isEdit={isEdit}
         id={presetValues && presetValues.id ? presetValues.id : -1}
         setUnsavedChanges={setUnsavedChanges}
       />
@@ -172,11 +166,13 @@ export function CriteriaForm({
 }
 
 export function WeightedInputForm({ res }: { res: IWeightedDecisionItem }) {
-  const { weightedInputForm: form, initialValues } = useWeightedInput(res);
-  const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
-
   const [unsavedChanges, setUnsavedChanges] = useState(true);
+  const {
+    weightedInputForm: form,
+    onSubmit,
+    onChangeSlider,
+  } = useWeightedInput(res, setUnsavedChanges);
+
   usePreventExitForm(unsavedChanges);
 
   return (
@@ -191,18 +187,7 @@ export function WeightedInputForm({ res }: { res: IWeightedDecisionItem }) {
                   <Text>{c.name}</Text>
                   <Slider
                     style={{ margin: 20, width: "50vw" }}
-                    onChange={(e) =>
-                      form.setValues([
-                        ...initialValues,
-                        {
-                          ...item,
-                          criteriaInput: [
-                            ...item.criteriaInput,
-                            { ...c, value: e },
-                          ],
-                        },
-                      ])
-                    }
+                    onChange={onChangeSlider}
                     marks={[
                       { value: 20, label: "20%" },
                       { value: 50, label: "50%" },
@@ -218,16 +203,7 @@ export function WeightedInputForm({ res }: { res: IWeightedDecisionItem }) {
           </div>
         );
       })}
-      <Button
-        type="submit"
-        onClick={() => {
-          setUnsavedChanges(false);
-          dispatch(setWeightedInput(form.values));
-          router.push({
-            pathname: `/result/weighted/${res.id}`,
-          });
-        }}
-      >
+      <Button type="submit" onClick={onSubmit}>
         Submit
       </Button>
     </div>
@@ -238,7 +214,6 @@ function WeightedFormSteppers({
   active,
   setActive,
   form,
-  isEdit,
   id,
   setUnsavedChanges,
 }: {
@@ -248,7 +223,6 @@ function WeightedFormSteppers({
     IWeightedDecisionItem,
     (values: IWeightedDecisionItem) => IWeightedDecisionItem
   >;
-  isEdit: boolean;
   id: number;
   setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -262,7 +236,6 @@ function WeightedFormSteppers({
     active,
     setActive,
     form,
-    isEdit,
     id,
     TOTAL,
     setUnsavedChanges
