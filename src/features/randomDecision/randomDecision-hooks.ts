@@ -61,7 +61,7 @@ export default function useRandomDecision() {
       value.updatedAt = new Date().toISOString();
       const id = value.id;
       await randomDecisionApi.put(id as number, value);
-      randomDecisionActions.update(id, value);
+      randomDecisionActions.update(id as number, value);
       router.push({
         pathname: `/random/${id}/result`,
       });
