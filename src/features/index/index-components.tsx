@@ -137,7 +137,9 @@ export function IndexGetList({
   type: DecisionTypes;
 }) {
   const { buttonHandlers } = useIndexList(type, res);
-
+  if (!res || res?.length <= 0) {
+    return <p>No decisions created yet.</p>;
+  }
   return (
     <div style={{ display: "flex", flexDirection: "column", minWidth: 300 }}>
       {res.map((item) => {
