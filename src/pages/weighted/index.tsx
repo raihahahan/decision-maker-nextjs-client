@@ -1,5 +1,16 @@
-export default function WeightedIndexPage() {
-  return (
-    <h1>Weighted index. This will show a list of saved Weighted items.</h1>
-  );
+import { WeightedDecisionIndexContents } from "../../features/weightedDecision/weightedDecision-contents";
+import { IWeightedDecisionItem } from "../../features/weightedDecision/weightedDecision-types";
+import weightedDeicisonApi from "../../features/weightedDecision/weightedDeicison-api";
+
+export default function WeightedIndexPage({
+  res,
+}: {
+  res: IWeightedDecisionItem[];
+}) {
+  return <WeightedDecisionIndexContents res={res} />;
+}
+
+export async function getServerSideProps() {
+  const res = await weightedDeicisonApi.get();
+  return { props: { res } };
 }
