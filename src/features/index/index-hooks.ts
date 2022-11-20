@@ -8,7 +8,7 @@ export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
   const { randomDecisionActions } = useRandomDecisionReducer();
   const buttonHandlers = {
     onClick(item: IDecision) {
-      router.push(`/${type}/${item.id}/result`);
+      router.push(`/${type}/${item.id}`);
     },
     onClickRemove(item: IDecision) {
       switch (type) {

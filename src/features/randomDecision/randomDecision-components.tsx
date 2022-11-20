@@ -32,8 +32,6 @@ export function RandomDecisionCreateForm() {
 }
 
 export function RandomDecisionEditForm({ res }: { res: IRandomDecisionItem }) {
-  const [unsavedChanges, setUnsavedChanges] = useState(true);
-  usePreventExitForm(unsavedChanges);
   const { editHandlers } = useRandomDecision();
   const presetData: IRandomDecisionItem = {
     id: res.id,
@@ -44,7 +42,7 @@ export function RandomDecisionEditForm({ res }: { res: IRandomDecisionItem }) {
   const randomEditForm = useChoiceForm<IDecision>(
     presetData,
     InitialValidate,
-    setUnsavedChanges,
+    () => null,
     editHandlers
   );
 

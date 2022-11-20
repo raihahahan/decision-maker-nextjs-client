@@ -1,10 +1,10 @@
 import { NextPageContext } from "next";
 import { IFinalResult } from "../../../common/types/decision-types";
 import randomDecisionApi from "../../../features/randomDecision/randomDecision-api";
-import ResultContents from "../../../features/result/result-contents";
+import { RandomDecisionResultContents } from "../../../features/randomDecision/randomDecision-contents";
 
 export default function RandomResultPage({ res }: { res: IFinalResult }) {
-  return <ResultContents data={res} type="random" />;
+  return <RandomDecisionResultContents res={res} />;
 }
 
 export async function getServerSideProps(context: NextPageContext) {

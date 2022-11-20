@@ -153,9 +153,6 @@ export function IndexGetList({
               <h3>{item.name}</h3>
             </Button>
             <RemoveButton onClick={() => buttonHandlers.onClickRemove(item)} />
-            <Button onClick={() => buttonHandlers.onClickEdit(item)}>
-              Edit
-            </Button>
           </div>
         );
       })}
