@@ -4,18 +4,20 @@ import ChoicesForm, {
   AddButton,
   RemoveButton,
 } from "../choiceForm/choiceForm-components";
-import useChoiceForm from "../choiceForm/choiceForm-hooks";
 import { UseFormReturnType } from "@mantine/form";
-import { IWeightedDecisionItem } from "./weightedDecision-types";
-import { useRouter } from "next/router";
+import {
+  ICriteria,
+  IExtraFormConfig,
+  IWeightedDecisionItem,
+  IWeightedInput,
+  IWeightedInputItem,
+} from "./weightedDecision-types";
 import useTheme from "../theme/theme-hooks";
 import { breakpoints } from "../theme/theme-data";
 import {
-  initialWeightedValidate,
-  initialWeightedValues,
-} from "./weightedDecision-data";
-import {
   useCriteriaForm,
+  useWeightedDecisionCreate,
+  useWeightedDecisionEdit,
   useWeightedFormSteppers,
   useWeightedInput,
 } from "./weightedDecision-hooks";
@@ -24,28 +26,21 @@ import usePreventExitForm from "../../common/hooks/usePreventExitForm";
 
 const TOTAL = 2;
 
-export function WeightedDecisionForm({
+export function WeightedMainForm({
+  activeHandlers,
+  weightedForm,
+  setUnsavedChanges,
   presetValues,
 }: {
+  activeHandlers: {
+    active: number;
+    setActive: React.Dispatch<React.SetStateAction<number>>;
+  };
+  weightedForm: formHookReturnType<IWeightedDecisionItem>;
+  setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>;
   presetValues?: IWeightedDecisionItem;
 }) {
-  const [active, setActive] = useState(0);
-  const init = presetValues ?? initialWeightedValues;
-  const weightedForm = useChoiceForm<IWeightedDecisionItem>(
-    init,
-    initialWeightedValidate
-  );
-  const [unsavedChanges, setUnsavedChanges] = useState(true);
-
-  useEffect(() => {
-    setUnsavedChanges(
-      weightedForm.form.values.name.trim().length > 0 ||
-        weightedForm.form.values.choices.filter((i) => i.name.trim().length > 0)
-          .length > 0
-    );
-  }, [weightedForm.form.values, active]);
-
-  usePreventExitForm(unsavedChanges);
+  const { active, setActive } = activeHandlers;
 
   return (
     <div
@@ -58,7 +53,11 @@ export function WeightedDecisionForm({
         alignItems: "center",
       }}
     >
-      <CurrentPage active={active} weightedForm={weightedForm} />
+      <CurrentPage
+        active={active}
+        weightedForm={weightedForm}
+        presetValues={presetValues}
+      />
       <br />
       <WeightedFormSteppers
         active={active}
@@ -71,12 +70,43 @@ export function WeightedDecisionForm({
   );
 }
 
+export function WeightedDecisionCreateForm() {
+  const { activeHandlers, weightedForm, setUnsavedChanges } =
+    useWeightedDecisionCreate();
+  return (
+    <WeightedMainForm
+      activeHandlers={activeHandlers}
+      weightedForm={weightedForm}
+      setUnsavedChanges={setUnsavedChanges}
+    />
+  );
+}
+
+export function WeightedDecisionEditForm({
+  presetValues,
+}: {
+  presetValues: IWeightedDecisionItem;
+}) {
+  const { activeHandlers, weightedForm, setUnsavedChanges } =
+    useWeightedDecisionEdit(presetValues);
+  return (
+    <WeightedMainForm
+      activeHandlers={activeHandlers}
+      weightedForm={weightedForm}
+      setUnsavedChanges={setUnsavedChanges}
+      presetValues={presetValues}
+    />
+  );
+}
+
 export function CurrentPage({
   active,
   weightedForm,
+  presetValues,
 }: {
   active: number;
   weightedForm: formHookReturnType<IWeightedDecisionItem>;
+  presetValues?: IWeightedDecisionItem;
 }) {
   return (
     <div style={{ minHeight: "50vh" }}>
@@ -85,9 +115,13 @@ export function CurrentPage({
           useChoiceForm={weightedForm}
           onSubmit={() => alert("TODO")}
           hideDecide
+          presetData={presetValues}
         />
       ) : active == 1 ? (
-        <CriteriaForm form={weightedForm.form} />
+        <CriteriaForm
+          form={weightedForm.form}
+          extraFormHelpers={weightedForm.formHelpers as any}
+        />
       ) : (
         <div>error</div>
       )}
@@ -97,13 +131,24 @@ export function CurrentPage({
 
 export function CriteriaForm({
   form,
+  extraFormHelpers,
 }: {
   form: UseFormReturnType<
     IWeightedDecisionItem,
     (values: IWeightedDecisionItem) => IWeightedDecisionItem
   >;
+  extraFormHelpers: IExtraFormConfig<IWeightedDecisionItem, ICriteria>;
 }) {
-  const { addCriteria, removeCriteria } = useCriteriaForm(form);
+  const {
+    addCriteria,
+    removeCriteria,
+    finalOnChangeCriteriaName,
+    finalOnChangeCriteriaWeight,
+  } = useCriteriaForm(form, extraFormHelpers);
+  const [refresh, setRefresh] = useState(1);
+  useEffect(() => {
+    setRefresh((i) => (i == 1 ? 2 : 1));
+  }, [form.values.criteriaList]);
   const { siteColors } = useTheme();
   return (
     <div
@@ -131,10 +176,18 @@ export function CriteriaForm({
                   withAsterisk
                   type="text"
                   label={`Criteria ${index + 1}`}
-                  {...form.getInputProps(`criteriaList.${index}.name`)}
+                  value={item.name}
+                  onChange={(e) => {
+                    finalOnChangeCriteriaName(
+                      e,
+                      item.weight,
+                      index,
+                      item.id as number
+                    );
+                  }}
                 />
                 <RemoveButton
-                  onClick={() => removeCriteria(index)}
+                  onClick={() => removeCriteria(index, item?.id)}
                   extraStyles={{
                     marginLeft: 10,
                     marginBottom: 25,
@@ -143,15 +196,20 @@ export function CriteriaForm({
               </div>
               <Slider
                 style={{ margin: 20 }}
-                onChange={(e) =>
-                  form.setFieldValue(`criteriaList.${index}.weight`, e)
-                }
+                value={item.weight}
+                onChange={(e) => {
+                  finalOnChangeCriteriaWeight(
+                    e,
+                    item.name,
+                    index,
+                    item?.id as number // TODO BUG: item value is outdated
+                  );
+                }}
                 marks={[
                   { value: 20, label: "20%" },
                   { value: 50, label: "50%" },
                   { value: 80, label: "80%" },
                 ]}
-                {...form.getInputProps(`criteriaList.${index}.weight`)}
               />
               <br />
             </div>
@@ -165,13 +223,20 @@ export function CriteriaForm({
   );
 }
 
-export function WeightedInputForm({ res }: { res: IWeightedDecisionItem }) {
+export function WeightedInputForm({
+  res,
+  weightedInput,
+}: {
+  res: IWeightedDecisionItem;
+  weightedInput?: IWeightedInputItem;
+}) {
   const [unsavedChanges, setUnsavedChanges] = useState(true);
   const {
     weightedInputForm: form,
     onSubmit,
     onChangeSlider,
-  } = useWeightedInput(res, setUnsavedChanges);
+    putSlider,
+  } = useWeightedInput(res, setUnsavedChanges, weightedInput);
 
   usePreventExitForm(unsavedChanges);
 
@@ -187,15 +252,19 @@ export function WeightedInputForm({ res }: { res: IWeightedDecisionItem }) {
                   <Text>{c.name}</Text>
                   <Slider
                     style={{ margin: 20, width: "50vw" }}
-                    onChange={onChangeSlider}
                     marks={[
                       { value: 20, label: "20%" },
                       { value: 50, label: "50%" },
                       { value: 80, label: "80%" },
                     ]}
-                    {...form.getInputProps(
-                      `${outIndex}.criteriaInput.${index}.value`
-                    )}
+                    onChange={async (e) => {
+                      await onChangeSlider(e, outIndex, index, c);
+                      putSlider(e, c, c);
+                    }}
+                    value={c.value}
+                    // {...form.getInputProps(
+                    //   `${outIndex}.criteriaInput.${index}.value`
+                    // )}
                   />
                 </div>
               );
@@ -247,7 +316,7 @@ function WeightedFormSteppers({
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
         <Stepper.Step
           disabled
-          label="First step"
+          label="Choices"
           description="Create decision and choices"
           style={{ color: siteColors.text.primary }}
         >
@@ -255,7 +324,7 @@ function WeightedFormSteppers({
         </Stepper.Step>
         <Stepper.Step
           disabled
-          label="Second step"
+          label="Criteria"
           description="Create criteria that affect your decision making"
           style={{ color: siteColors.text.primary }}
         >
@@ -283,7 +352,7 @@ function WeightedFormSteppers({
           size="md"
           onClick={onClickRightButton}
         >
-          Next step
+          Next
         </Button>
       </Group>
     </>
