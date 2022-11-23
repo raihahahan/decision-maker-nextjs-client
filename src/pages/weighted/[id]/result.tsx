@@ -1,5 +1,4 @@
 import { NextPageContext } from "next";
-import { useEffect } from "react";
 import { IFinalResult } from "../../../common/types/decision-types";
 import { WeightedResultContents } from "../../../features/weightedDecision/weightedDecision-contents";
 import {
@@ -17,6 +16,16 @@ export default function WeightedResultPage({ res }: { res: IFinalResult }) {
 export async function getServerSideProps(context: NextPageContext) {
   const id: string = context.query.id as string;
   const weightedInput = await weightedInputApi.getById(+id);
+  const weightedDecisionItem = await weightedDeicisonApi.getById(+id);
+  weightedInput.weightedInputs = weightedInput.weightedInputs.map((i) => {
+    const choiceName = weightedDecisionItem.choices.find(
+      (c) => c.id == i.choiceId
+    )?.name;
+    return {
+      ...i,
+      choiceName: choiceName as string,
+    };
+  });
   const res = await weightedDeicisonApi.decide<IWeightedInput[]>(
     +id,
     weightedInput.weightedInputs
