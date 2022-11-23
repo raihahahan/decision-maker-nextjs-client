@@ -1,6 +1,6 @@
 import { ButtonProps } from "@mantine/core";
 import { useForm, UseFormReturnType } from "@mantine/form";
-import { debounce, DebouncedFunc } from "lodash";
+import { debounce } from "lodash";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +28,9 @@ import {
   IWeightedDecisionItem,
   IWeightedInput,
   IWeightedInputItem,
+  useCriteriaFormReturnType,
+  useWeightedFormSteppersReturnType,
+  useWeightedInputReturnType,
 } from "./weightedDecision-types";
 import weightedDeicisonApi, {
   weightedChoiceApi,
@@ -37,125 +40,141 @@ import weightedDeicisonApi, {
   weightedInputsApi,
 } from "./weightedDeicison-api";
 
-export function useWeightedInput(
+/* Hooks in this file:
+  1. useWeightedInput: logic for /weighted/{id}/input
+  2. useWeightedEditInput: logic for editting /weighted/{id}/input
+  3. useCriteriaForm: logic for criteria section of /weighted/create OR /weighted/{id} for edit
+  4. useWeightedDecisionCreate: logic for /weighted/create
+  5. useWeightedDecisionEdit: logic for /weighted/{id}
+  6. useWeightedFormSteppers: logic for form stepper component in /weighted/create OR weighted/{id}
+*/
+
+export function useWeightedEditInput(
   weightedItems: IWeightedDecisionItem,
   setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>,
-  weightedInput?: IWeightedInputItem
-) {
+  weightedInput: IWeightedInputItem
+): useWeightedInputReturnType {
   const router = useRouter();
-  const isEdit = weightedInput != undefined && weightedInput != null;
 
-  let initialValues: IWeightedInput[];
-
-  if (isEdit) {
-    weightedInput.weightedInputs = weightedInput.weightedInputs.map((item) => {
-      const choiceName = weightedItems.choices.find(
-        (i) => i.id == item.choiceId
+  // edit weightedInputs array
+  weightedInput.weightedInputs = weightedInput.weightedInputs.map((item) => {
+    const choiceName = weightedItems.choices.find(
+      (i) => i.id == item.choiceId
+    )?.name;
+    const criteriaInput = item.criteriaInput.map((input) => {
+      const criteriaName = weightedItems.criteriaList.find(
+        (i) => i.id == input.criteriaId
       )?.name;
-
-      const criteriaInput = item.criteriaInput.map((input) => {
-        const criteriaName = weightedItems.criteriaList.find(
-          (i) => i.id == input.criteriaId
-        )?.name;
-        return {
-          ...input,
-          name: criteriaName as string,
-        };
-      });
-
       return {
-        ...item,
-        choiceName: choiceName as string,
-        criteriaInput: criteriaInput,
+        ...input,
+        name: criteriaName as string,
       };
     });
-    initialValues = weightedInput.weightedInputs;
-  } else {
-    initialValues = weightedItems.choices.map((c) => {
-      const choiceId = c.id as number;
-      const choiceName = c.name;
-      const criteriaInput: ICriteriaInput[] = weightedItems.criteriaList.map(
-        (criteria) => {
-          return { ...criteria, value: 20 };
-        }
-      );
-      return { choiceId, choiceName, criteriaInput };
-    });
-  }
-
-  let weightedInputForm = useForm<IWeightedInput[]>({ initialValues }),
-    onSubmit: () => Promise<void>,
-    onChangeSlider: (
-      e: number,
-      outIndex: number,
-      index: number,
-      criteria: ICriteria
-    ) => Promise<void> = async (
-      e: number,
-      outIndex: number,
-      index: number,
-      criteria: ICriteria
-    ) => {
-      weightedInputForm.setFieldValue(
-        `${outIndex}.criteriaInput.${index}.value`,
-        e
-      );
-    },
-    putSlider: DebouncedFunc<
-      (
-        e: number,
-        criteria: ICriteria,
-        criteriaInput: ICriteriaInput
-      ) => Promise<void>
-    > = debounce(async () => {
-      return;
-    }, 300);
-
-  if (isEdit) {
-    const onSubmit = async () => {
-      setUnsavedChanges(false);
-
-      router.push({
-        pathname: `/weighted/${weightedItems.id}/result`,
-      });
+    return {
+      ...item,
+      choiceName: choiceName as string,
+      criteriaInput: criteriaInput,
     };
-    putSlider = debounce(
-      async (e: number, criteria: ICriteria, criteriaInput: ICriteriaInput) => {
-        await weightedCriteriaInputApi.put(criteriaInput.id as number, {
-          ...criteriaInput,
-          value: e,
-        });
-      },
-      300
+  });
+
+  // initialise other variables and methods
+  const initialValues = weightedInput.weightedInputs;
+
+  const weightedInputForm = useForm<IWeightedInput[]>({ initialValues });
+
+  const onSubmit = async () => {
+    setUnsavedChanges(false);
+    router.push({
+      pathname: `/weighted/${weightedItems.id}/result`,
+    });
+  };
+
+  const onChangeSlider = async (
+    e: number,
+    outIndex: number,
+    index: number,
+    criteria: ICriteria
+  ) => {
+    weightedInputForm.setFieldValue(
+      `${outIndex}.criteriaInput.${index}.value`,
+      e
     );
-    return { weightedInputForm, onSubmit, onChangeSlider, putSlider };
-  } else {
-    onSubmit = async () => {
-      const weightedInputItem: IWeightedInputItem = {
-        weightedItemId: weightedItems.id as number,
-        weightedInputs: weightedInputForm.values,
-      };
-      setUnsavedChanges(false);
-      weightedInputItem.weightedInputs = weightedInputItem.weightedInputs.map(
-        (i) => {
-          i.criteriaInput = i.criteriaInput.map((c, index) => {
-            if (c.id) delete c.id;
-            c.decisionId = -1;
-            c.criteriaId = weightedItems.criteriaList[index].id;
-            return c;
-          });
-          return i;
-        }
-      );
+  };
 
-      await weightedInputApi.post(weightedInputItem);
-      router.push({
-        pathname: `/weighted/${weightedItems.id}/result`,
+  const putSlider = debounce(
+    async (e: number, criteria: ICriteria, criteriaInput: ICriteriaInput) => {
+      await weightedCriteriaInputApi.put(criteriaInput.id as number, {
+        ...criteriaInput,
+        value: e,
       });
-    };
+    },
+    300
+  );
 
-    return { weightedInputForm, onSubmit, onChangeSlider, putSlider };
-  }
+  return { weightedInputForm, onSubmit, onChangeSlider, putSlider };
+}
+
+export function useWeightedInput(
+  weightedItems: IWeightedDecisionItem,
+  setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>
+): useWeightedInputReturnType {
+  const router = useRouter();
+
+  // initialise initialValues
+  const initialValues = weightedItems.choices.map((c) => {
+    const choiceId = c.id as number;
+    const choiceName = c.name;
+    const criteriaInput: ICriteriaInput[] = weightedItems.criteriaList.map(
+      (criteria) => {
+        return { ...criteria, value: 20 };
+      }
+    );
+    return { choiceId, choiceName, criteriaInput };
+  });
+
+  // declare other variables
+  const weightedInputForm = useForm<IWeightedInput[]>({ initialValues });
+
+  const onSubmit = async () => {
+    const weightedInputItem: IWeightedInputItem = {
+      weightedItemId: weightedItems.id as number,
+      weightedInputs: weightedInputForm.values,
+    };
+    setUnsavedChanges(false);
+    weightedInputItem.weightedInputs = weightedInputItem.weightedInputs.map(
+      (i) => {
+        i.criteriaInput = i.criteriaInput.map((c, index) => {
+          if (c.id) delete c.id;
+          c.decisionId = -1;
+          c.criteriaId = weightedItems.criteriaList[index].id;
+          return c;
+        });
+        return i;
+      }
+    );
+    await weightedInputApi.post(weightedInputItem);
+    router.push({
+      pathname: `/weighted/${weightedItems.id}/result`,
+    });
+  };
+
+  const onChangeSlider = async (
+    e: number,
+    outIndex: number,
+    index: number,
+    criteria: ICriteria
+  ) => {
+    weightedInputForm.setFieldValue(
+      `${outIndex}.criteriaInput.${index}.value`,
+      e
+    );
+  };
+
+  const putSlider = debounce(async () => {
+    return;
+  }, 300);
+
+  return { weightedInputForm, onSubmit, onChangeSlider, putSlider };
 }
 
 // ====================================================== //
@@ -165,14 +184,19 @@ export function useCriteriaForm(
     IWeightedDecisionItem,
     (values: IWeightedDecisionItem) => IWeightedDecisionItem
   >,
-  extraFormHelpers?: IExtraFormConfig<IWeightedDecisionItem, ICriteria>
-) {
+  extraFormHelpers: IExtraFormConfig<IWeightedDecisionItem, ICriteria>
+): useCriteriaFormReturnType {
+  // declare variables
   const router = useRouter();
   const decisionId = router.query.id as string;
   const isEdit = typeof decisionId == "string";
+
+  // methods
+
+  // 1. Add criteria
   const addCriteria = async () => {
     if (form.values.criteriaList.length < 100) {
-      if (isEdit && extraFormHelpers && extraFormHelpers.onAddCriteria) {
+      if (isEdit) {
         const res = await extraFormHelpers.onAddCriteria(+decisionId);
         form.insertListItem("criteriaList", {
           id: res,
@@ -188,14 +212,17 @@ export function useCriteriaForm(
       alert("Maximum 100 criteria");
     }
   };
+
+  // 2. Remove criteria
   const removeCriteria = (id: number, itemID?: number) => {
     form.removeListItem("criteriaList", id);
 
     if (isEdit) {
-      extraFormHelpers?.onRemoveCriteria(itemID as number);
+      extraFormHelpers.onRemoveCriteria(itemID as number);
     }
   };
 
+  // 3. Edit criteria name
   const editCriteriaName = (
     e: ChangeEvent<HTMLInputElement>,
     weight: number,
@@ -203,7 +230,7 @@ export function useCriteriaForm(
     index: number
   ) => {
     if (isEdit) {
-      extraFormHelpers?.onEditCriteria(
+      extraFormHelpers.onEditCriteria(
         itemID,
         new Criteria(e.target.value, itemID, +decisionId, weight)
       );
@@ -223,6 +250,7 @@ export function useCriteriaForm(
     form.setFieldValue(`criteriaList.${index}.name`, e.target.value as string);
   };
 
+  // 4. edit criteria weight
   const editSliderValue = (
     e: number,
     name: string,
@@ -270,7 +298,7 @@ export function useWeightedFormSteppers(
   id: number,
   TOTAL: number,
   setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>
-) {
+): useWeightedFormSteppersReturnType {
   const router = useRouter();
   const { weightedDecisionActions } = useWeightedDecisionReducer();
   const { editHandlers } = useWeightedDecisionEdit();
@@ -360,8 +388,6 @@ export function useWeightedDecisionCreate() {
 // ====================================================== //
 
 export function useWeightedDecisionEdit(presetValues?: IWeightedDecisionItem) {
-  const { weightedDecisionActions, weightedDecisionLocalData } =
-    useWeightedDecisionReducer();
   const router = useRouter();
   const editHandlers: IExtraFormConfig<IWeightedDecisionItem, ICriteria> = {
     async onEditName(
@@ -423,7 +449,7 @@ export function useWeightedDecisionEdit(presetValues?: IWeightedDecisionItem) {
       await weightedCriteriaApi.delete(id);
       await weightedCriteriaInputApi.delete(id);
     },
-    async onEditCriteria(id: number, value: ICriteria, isEditSlider?: boolean) {
+    async onEditCriteria(id: number, value: ICriteria) {
       await weightedCriteriaApi.put(id, value);
       if (presetValues) {
         await weightedCriteriaInputApi.editCriteriaName(id, {
@@ -457,15 +483,7 @@ export function useWeightedDecisionEdit(presetValues?: IWeightedDecisionItem) {
 
   const [unsavedChanges, setUnsavedChanges] = useState(true);
 
-  useEffect(() => {
-    setUnsavedChanges(
-      weightedForm.form.values.name.trim().length > 0 ||
-        weightedForm.form.values.choices.filter((i) => i.name.trim().length > 0)
-          .length > 0
-    );
-  }, [weightedForm.form.values, active]);
-
-  usePreventExitForm(unsavedChanges);
+  usePreventExitForm(false);
 
   return {
     editHandlers,

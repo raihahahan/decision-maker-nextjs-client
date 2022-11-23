@@ -18,6 +18,7 @@ import {
   useCriteriaForm,
   useWeightedDecisionCreate,
   useWeightedDecisionEdit,
+  useWeightedEditInput,
   useWeightedFormSteppers,
   useWeightedInput,
 } from "./weightedDecision-hooks";
@@ -145,10 +146,7 @@ export function CriteriaForm({
     finalOnChangeCriteriaName,
     finalOnChangeCriteriaWeight,
   } = useCriteriaForm(form, extraFormHelpers);
-  const [refresh, setRefresh] = useState(1);
-  useEffect(() => {
-    setRefresh((i) => (i == 1 ? 2 : 1));
-  }, [form.values.criteriaList]);
+
   const { siteColors } = useTheme();
   return (
     <div
@@ -236,7 +234,9 @@ export function WeightedInputForm({
     onSubmit,
     onChangeSlider,
     putSlider,
-  } = useWeightedInput(res, setUnsavedChanges, weightedInput);
+  } = weightedInput
+    ? useWeightedEditInput(res, setUnsavedChanges, weightedInput)
+    : useWeightedInput(res, setUnsavedChanges);
 
   usePreventExitForm(unsavedChanges);
 
@@ -262,9 +262,6 @@ export function WeightedInputForm({
                       putSlider(e, c, c);
                     }}
                     value={c.value}
-                    // {...form.getInputProps(
-                    //   `${outIndex}.criteriaInput.${index}.value`
-                    // )}
                   />
                 </div>
               );
