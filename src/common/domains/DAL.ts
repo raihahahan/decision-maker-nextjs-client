@@ -70,6 +70,19 @@ abstract class DAL<T> {
       return;
     }
   }
+
+  public async exists(id: number): Promise<boolean> {
+    try {
+      const res: any = await this.getById(id);
+      if (!res || (res?.status as any) == 404 || (res?.status as any) == 400) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      alert(error);
+      return false;
+    }
+  }
 }
 
 export default DAL;
