@@ -43,6 +43,14 @@ export default function useRandomDecision() {
   };
 
   const editHandlers: TExtraFormConfig<IDecision> = {
+    async onEditName(
+      decisionId: number,
+      name: string,
+      curr: IRandomDecisionItem
+    ) {
+      curr.name = name;
+      await randomDecisionApi.put(decisionId, curr);
+    },
     async onAddChoice(decisionId: number) {
       const newChoice = new Choice("", undefined, decisionId);
       const res = await randomChoiceApi.post(newChoice);
