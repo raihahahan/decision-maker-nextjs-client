@@ -1,7 +1,22 @@
-export default function WeightedIndexPage() {
-  <h1>
-    Weighted Index page. This page shows the list of choices and name of
-    decision. There is a button to go to Edit page. There is another button to
-    go to Input page.
-  </h1>;
+import { NextPageContext } from "next";
+import { WeightedEditContents } from "../../../features/weightedDecision/weightedDecision-contents";
+import { IWeightedDecisionItem } from "../../../features/weightedDecision/weightedDecision-types";
+import weightedDeicisonApi from "../../../features/weightedDecision/weightedDeicison-api";
+
+export default function WeightedIndexPage({
+  res,
+}: {
+  res: IWeightedDecisionItem;
+}) {
+  return <WeightedEditContents res={res} />;
+}
+
+export async function getServerSideProps(context: NextPageContext) {
+  const id: string = context.query.id as string;
+  const res = await weightedDeicisonApi.getById(+id);
+  return {
+    props: {
+      res,
+    }, // will be passed to the page component as props
+  };
 }
