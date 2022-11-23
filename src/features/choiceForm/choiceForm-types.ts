@@ -1,7 +1,8 @@
 import { UseFormReturnType } from "@mantine/form";
-import { IChoice } from "../../common/types/decision-types";
+import { IChoice, IDecision } from "../../common/types/decision-types";
 
 export type TFormHelpers = {
+  editName(name: string): void;
   removeChoice(index: number, id?: number): void;
   addChoice(): void;
   decide(): void;
@@ -15,8 +16,9 @@ export type formHookReturnType<T> = {
 };
 
 export type TExtraFormConfig<T> = {
+  onEditName(decisionId: number, name: string, curr: T): Promise<void>;
   onAddChoice(decisionId: number): Promise<number>;
-  onRemoveChoice(id: number): void;
-  onEditChoice(id: number, value: T): void;
-  onSubmitEdit(value: T): void;
+  onRemoveChoice(id: number): Promise<void>;
+  onEditChoice(id: number, value: T): Promise<void>;
+  onSubmitEdit(value: T): Promise<void> | undefined;
 };
