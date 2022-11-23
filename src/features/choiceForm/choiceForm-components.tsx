@@ -1,12 +1,11 @@
 import { Box, Button, Group, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { ChangeEvent, CSSProperties, useCallback, useEffect } from "react";
-import { Choice } from "../../common/domains/domains";
+import { CSSProperties, useEffect, useState } from "react";
 import { IChoice, IDecision } from "../../common/types/decision-types";
-import debounce from "lodash.debounce";
 import { breakpoints } from "../theme/theme-data";
 import useTheme from "../theme/theme-hooks";
 import { formHookReturnType, TFormHelpers } from "./choiceForm-types";
+import { useChoiceInput, useDecisionInput } from "./choiceForm-hooks";
 
 export default function ChoicesForm<T extends IDecision>({
   onSubmit,
@@ -30,19 +29,25 @@ export default function ChoicesForm<T extends IDecision>({
     >
       <form onSubmit={form.onSubmit((value) => onSubmit(value))}>
         <>
-          <DecisionNameInput<T> form={form} />
+          <DecisionNameInput<T>
+            form={form}
+            formHelpers={formHelpers}
+            decisionID={presetData?.id}
+          />
           <br />
           <h2>Choices</h2>
           {form.values.choices.map((item, index) => {
             return (
-              <ChoiceInput<T>
-                form={form}
-                item={item}
-                index={index}
-                formHelpers={formHelpers}
-                itemID={item?.id}
-                decisionID={presetData?.id}
-              />
+              <>
+                <ChoiceInput<T>
+                  form={form}
+                  item={item}
+                  index={index}
+                  formHelpers={formHelpers}
+                  itemID={item?.id}
+                  decisionID={presetData?.id}
+                />
+              </>
             );
           })}
 
@@ -63,10 +68,15 @@ export default function ChoicesForm<T extends IDecision>({
 
 export function DecisionNameInput<T extends IDecision>({
   form,
+  formHelpers,
+  decisionID,
 }: {
   form: UseFormReturnType<T, (values: T) => T>;
+  formHelpers: TFormHelpers;
+  decisionID?: number;
 }) {
   const { siteColors } = useTheme();
+  const { finalOnChange } = useDecisionInput(formHelpers, form, decisionID);
   return (
     <TextInput
       labelProps={{
@@ -77,7 +87,8 @@ export function DecisionNameInput<T extends IDecision>({
       type="text"
       label="Decision to make"
       placeholder="e.g. Which bicycle should I buy..."
-      {...form.getInputProps("name")}
+      value={form.values.name}
+      onChange={finalOnChange}
     />
   );
 }
@@ -97,19 +108,13 @@ export function ChoiceInput<T extends IDecision>({
   itemID?: number;
   decisionID?: number;
 }) {
-  const editHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    if (typeof itemID == "number") {
-      formHelpers.editChoice(
-        itemID as any,
-        new Choice(e.target.value, itemID, decisionID)
-      );
-    } else return;
-  };
-  const debouncedEdit = useCallback(debounce(editHandler, 300), []);
-  const finalOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    debouncedEdit(e);
-    form.setFieldValue(`choices.${index}.name`, e.target.value as any);
-  };
+  const { finalOnChange } = useChoiceInput<T>(
+    formHelpers,
+    form,
+    index,
+    decisionID,
+    itemID
+  );
 
   const { siteColors } = useTheme();
 

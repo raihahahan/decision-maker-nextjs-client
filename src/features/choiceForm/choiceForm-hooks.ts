@@ -1,9 +1,11 @@
 import { useForm } from "@mantine/form";
-import { FormValidateInput } from "@mantine/form/lib/types";
+import { FormValidateInput, UseFormReturnType } from "@mantine/form/lib/types";
+import { debounce } from "lodash";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { ChangeEvent, useCallback, useEffect } from "react";
+import { Choice } from "../../common/domains/domains";
 import { IDecision } from "../../common/types/decision-types";
-import { TExtraFormConfig } from "./choiceForm-types";
+import { TExtraFormConfig, TFormHelpers } from "./choiceForm-types";
 
 export default function useChoiceForm<T extends IDecision>(
   initialValues: T,
@@ -33,6 +35,10 @@ export default function useChoiceForm<T extends IDecision>(
   }, [form.values]);
 
   const formHelpers = {
+    editName(name: string) {
+      form.setFieldValue("name", name as any);
+      extraFormConfig?.onEditName(+decisionId, name, initialValues as any);
+    },
     removeChoice(id: number, itemID?: number) {
       form.removeListItem("choices", id);
       extraFormConfig?.onRemoveChoice(itemID as number);
@@ -70,4 +76,47 @@ export default function useChoiceForm<T extends IDecision>(
     form,
     formHelpers,
   };
+}
+
+export function useChoiceInput<T>(
+  formHelpers: TFormHelpers,
+  form: UseFormReturnType<T, (values: T) => T>,
+  index: number,
+  decisionID?: number,
+  itemID?: number
+) {
+  const editHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    if (typeof itemID == "number") {
+      formHelpers.editChoice(
+        itemID as any,
+        new Choice(e.target.value, itemID, decisionID)
+      );
+    } else return;
+  };
+  const debouncedEdit = useCallback(debounce(editHandler, 300), []);
+  const finalOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    debouncedEdit(e);
+    form.setFieldValue(`choices.${index}.name`, e.target.value as any);
+  };
+
+  return { finalOnChange };
+}
+
+export function useDecisionInput<T>(
+  formHelpers: TFormHelpers,
+  form: UseFormReturnType<T, (values: T) => T>,
+  decisionID?: number
+) {
+  const editHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    if (typeof decisionID == "number") {
+      formHelpers.editName(e.target.value);
+    } else return;
+  };
+  const debouncedEdit = useCallback(debounce(editHandler, 300), []);
+  const finalOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    debouncedEdit(e);
+    form.setFieldValue("name", e.target.value as any);
+  };
+
+  return { finalOnChange };
 }
