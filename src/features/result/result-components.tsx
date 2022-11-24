@@ -1,6 +1,7 @@
 import { Button, Paper, Text } from "@mantine/core";
 import { IWeightedResult } from "../../common/types/decision-types";
 import { breakpoints } from "../theme/theme-data";
+import { getWeight } from "./result-utils";
 
 export function Result({
   data,
@@ -23,10 +24,17 @@ export function Result({
       }}
     >
       {index != undefined && typeof index == "number" && (
-        <div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
           <h3>
             {index + 1}: {data?.name}
           </h3>
+          <h3>Score: {getWeight(data.totalWeight)}</h3>
         </div>
       )}
       {index == undefined && <h3>{data?.name}</h3>}
