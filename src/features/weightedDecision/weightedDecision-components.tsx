@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Stepper, Button, Group, Slider, Text, TextInput } from "@mantine/core";
 import ChoicesForm, {
   AddButton,
+  MakeDecisionButton,
   RemoveButton,
 } from "../choiceForm/choiceForm-components";
 import { UseFormReturnType } from "@mantine/form";
@@ -24,6 +25,7 @@ import {
 } from "./weightedDecision-hooks";
 import { formHookReturnType } from "../choiceForm/choiceForm-types";
 import usePreventExitForm from "../../common/hooks/usePreventExitForm";
+import { useRouter } from "next/router";
 
 const TOTAL = 2;
 
@@ -42,6 +44,7 @@ export function WeightedMainForm({
   presetValues?: IWeightedDecisionItem;
 }) {
   const { active, setActive } = activeHandlers;
+  const router = useRouter();
 
   return (
     <div
@@ -59,6 +62,16 @@ export function WeightedMainForm({
         weightedForm={weightedForm}
         presetValues={presetValues}
       />
+      {presetValues && (
+        <>
+          <MakeDecisionButton
+            onClick={() =>
+              router.push({ pathname: `/weighted/${router.query.id}/result` })
+            }
+          />
+          <br />
+        </>
+      )}
       <br />
       <WeightedFormSteppers
         active={active}
