@@ -77,7 +77,7 @@ export function CustomAnchor({
   const { siteColors } = useTheme();
   const route = useRouter();
   return (
-    <Link href={anchorRoute} passHref>
+    <Link style={{ padding: 4 }} href={anchorRoute} passHref>
       <Anchor
         onClick={openControl ? () => openControl.setOpened(false) : undefined}
         style={{
@@ -108,7 +108,7 @@ export function MyFooter({ extraStyles }: { extraStyles?: CSSProperties }) {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
-        paddingTop: sm ? 20 : 0,
+        paddingTop: 20,
         ...extraStyles,
       }}
     >
