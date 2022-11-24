@@ -8,19 +8,19 @@ export default function RectangleTitle({
   widthSize: number;
   type?: "default" | "dark";
 }) {
-  const WIDTH = 675;
+  const WIDTH = 587;
   const HEIGHT = 245;
   const RATIO = HEIGHT / WIDTH;
   let src;
   switch (type) {
     case "default":
-      src = "/images/header-title.png";
+      src = "/images/title-light.png";
       break;
     case "dark":
-      src = "/images/header-title-light.png";
+      src = "/images/title-dark.png";
       break;
     default:
-      src = "/images/header-title.png";
+      src = "/images/title-light.png";
       break;
   }
 
