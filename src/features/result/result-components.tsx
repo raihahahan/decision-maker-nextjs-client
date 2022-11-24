@@ -1,13 +1,18 @@
 import { Button, Paper, Text } from "@mantine/core";
-import { IWeightedResult } from "../../common/types/decision-types";
+import {
+  DecisionTypes,
+  IWeightedResult,
+} from "../../common/types/decision-types";
 import { breakpoints } from "../theme/theme-data";
 import { getWeight } from "./result-utils";
 
 export function Result({
   data,
+  type,
   index,
 }: {
   data: IWeightedResult;
+  type: DecisionTypes;
   index?: number;
 }) {
   return (
@@ -34,7 +39,7 @@ export function Result({
           <h3>
             {index + 1}: {data?.name}
           </h3>
-          <h3>Score: {getWeight(data.totalWeight)}</h3>
+          {type != "random" && <h3>Score: {getWeight(data.totalWeight)}</h3>}
         </div>
       )}
       {index == undefined && <h3>{data?.name}</h3>}
@@ -42,11 +47,17 @@ export function Result({
   );
 }
 
-export function ResultList({ resultData }: { resultData: IWeightedResult[] }) {
+export function ResultList({
+  resultData,
+  type,
+}: {
+  resultData: IWeightedResult[];
+  type: DecisionTypes;
+}) {
   return (
     <div>
       {resultData.map((item, index) => {
-        return <Result data={item} index={index} />;
+        return <Result data={item} index={index} type={type} />;
       })}
     </div>
   );

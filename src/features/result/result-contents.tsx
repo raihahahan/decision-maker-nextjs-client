@@ -42,10 +42,10 @@ export default function ResultContents({
           <b>Decision Name:</b> {decisionName}
         </h2>
         <h2>{capitalizeFirstLetter(type)} choice:</h2>
-        <Result data={weightedResults[0]} />
+        <Result data={weightedResults[0]} type={type} />
         <br />
         <h2>Ranked choice:</h2>
-        <ResultList resultData={weightedResults} />
+        <ResultList resultData={weightedResults} type={type} />
         <div
           style={{
             display: "flex",
