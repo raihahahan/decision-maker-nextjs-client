@@ -1,14 +1,12 @@
 import { Grid, Text, Button, Card, Group, Image } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import FeatureButton from "../../common/components/buttons";
 import { DecisionTypes, IDecision } from "../../common/types/decision-types";
 import {
   DecisionTypeItems,
   DecisionTypeItemsType,
 } from "../../common/utils/globals";
-import { arrayToOrderedListString } from "../../common/utils/utils";
 import { RemoveButton } from "../choiceForm/choiceForm-components";
 import { breakpoints } from "../theme/theme-data";
 import useTheme from "../theme/theme-hooks";
