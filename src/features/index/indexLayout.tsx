@@ -20,11 +20,6 @@ export default function IndexLayout({
       }}
     >
       {children}
-      <div style={{ position: "absolute", bottom: "10vh", right: "6vw" }}>
-        <AddButton
-          onClick={() => router.push({ pathname: `${type}/create` })}
-        />
-      </div>
     </div>
   );
 }
