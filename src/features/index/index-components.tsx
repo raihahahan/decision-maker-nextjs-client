@@ -174,8 +174,13 @@ export function IndexGetList({
   res: IDecision[];
   type: DecisionTypes;
 }) {
-  const { buttonHandlers, selectedHandlers, tableHandlers, checkBoxChecked } =
-    useIndexList(type, res);
+  const {
+    buttonHandlers,
+    selectedHandlers,
+    tableHandlers,
+    checkBoxChecked,
+    topCheckBoxChecked,
+  } = useIndexList(type, res);
   const { siteColors, themeState } = useTheme();
 
   const rows = res.map((element, index) => {
@@ -188,7 +193,7 @@ export function IndexGetList({
             onClick={() => tableHandlers.onSelect(element)}
           />
         </td>
-        <td style={{ color: siteColors.text.primary }}>{index + 1}</td>
+        <td style={{ color: siteColors.text.primary }}>{element.id}</td>
         <td style={{ color: siteColors.text.primary }}>{element.name}</td>
         <td style={{ color: siteColors.text.primary }}>
           {new Date(element.createdAt as string).toDateString()}
@@ -262,7 +267,7 @@ export function IndexGetList({
           </Button>
         </div>
       </div>
-      <div style={{ display: "flex" }}>
+      {/* <div style={{ display: "flex" }}>
         <TextInput placeholder="Search" />
         <Select
           placeholder="Sort"
@@ -282,7 +287,7 @@ export function IndexGetList({
             { value: "vue", label: "Vue" },
           ]}
         />
-      </div>
+      </div> */}
 
       <Table
         style={{
@@ -298,13 +303,11 @@ export function IndexGetList({
           <tr>
             <th>
               <Checkbox
-                checked={selectedHandlers.selected.length == res.length}
+                checked={topCheckBoxChecked}
                 onClick={tableHandlers.onSelectTop}
               />
             </th>
-            <th style={{ color: siteColors.text.primary }}>
-              No. <FiArrowDown />
-            </th>
+            <th style={{ color: siteColors.text.primary }}>ID</th>
             <th style={{ color: siteColors.text.primary }}>Decision Name</th>
             <th style={{ color: siteColors.text.primary }}>Created at</th>
             <th style={{ color: siteColors.text.primary }}>Updated at</th>

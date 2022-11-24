@@ -1,3 +1,4 @@
+import { Alert } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { DecisionTypes, IDecision } from "../../common/types/decision-types";
@@ -18,6 +19,8 @@ export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
       router.push(`/${type}/${item.id}`);
     },
     onClickRemove(item: IDecision) {
+      const confirmation = confirm("Are you sure?");
+      if (!confirmation) return;
       switch (type) {
         case "random":
           randomDecisionApi.delete(item.id as number);
@@ -32,14 +35,29 @@ export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
       }
     },
     onClickMasterRemove() {
+      const confirmation = confirm("Are you sure?");
+      if (!confirmation) return;
       if (selected.length <= 0) {
         alert("Please select at least 1 item.");
         return;
       }
-      selected.forEach((item) => {
-        weightedDeicisonApi.delete(item.id as number);
-        weightedDecisionActions.remove(item.id as number);
-      });
+      switch (type) {
+        case "random":
+          selected.forEach((item) => {
+            randomDecisionApi.delete(item.id as number);
+            randomDecisionActions.remove(item.id as number);
+          });
+          break;
+        case "weighted":
+          selected.forEach((item) => {
+            weightedDeicisonApi.delete(item.id as number);
+            weightedDecisionActions.remove(item.id as number);
+          });
+          break;
+        default:
+          break;
+      }
+
       setSelected([]);
     },
     onClickEdit(item: IDecision) {
@@ -70,10 +88,12 @@ export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
   const checkBoxChecked = (element: IDecision): boolean =>
     selected.find((i) => i.id == element.id) != undefined;
 
+  const topCheckBoxChecked = selected.length == res.length && res.length != 0;
   return {
     buttonHandlers,
     tableHandlers,
     selectedHandlers: { selected, setSelected },
     checkBoxChecked,
+    topCheckBoxChecked,
   };
 }
