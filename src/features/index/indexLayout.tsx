@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { AddButton } from "../choiceForm/choiceForm-components";
 import { DecisionTypes } from "../../common/types/decision-types";
-import { capitalizeFirstLetter } from "../../common/utils/utils";
 
 export default function IndexLayout({
   children,
@@ -13,9 +12,13 @@ export default function IndexLayout({
   const router = useRouter();
   return (
     <div
-      style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        paddingTop: 20,
+      }}
     >
-      <h1>{capitalizeFirstLetter(type)} Decisions</h1>
       {children}
       <div style={{ position: "absolute", bottom: "10vh", right: "6vw" }}>
         <AddButton
