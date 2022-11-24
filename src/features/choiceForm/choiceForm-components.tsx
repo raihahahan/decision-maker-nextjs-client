@@ -40,6 +40,7 @@ export default function ChoicesForm<T extends IDecision>({
             return (
               <>
                 <ChoiceInput<T>
+                  key={item.id}
                   form={form}
                   item={item}
                   index={index}
@@ -113,7 +114,8 @@ export function ChoiceInput<T extends IDecision>({
     form,
     index,
     decisionID,
-    itemID
+    itemID,
+    item
   );
 
   const { siteColors } = useTheme();

@@ -7,7 +7,7 @@ export type TFormHelpers = {
   addChoice(): void;
   decide(): void;
   cancel(): void;
-  editChoice(id: number, value: IChoice): void;
+  editChoice(id: number, value: IChoice, index: number): void;
 };
 
 export type formHookReturnType<T> = {

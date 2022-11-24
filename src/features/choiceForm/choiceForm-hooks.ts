@@ -4,7 +4,7 @@ import { debounce } from "lodash";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useCallback, useEffect } from "react";
 import { Choice } from "../../common/domains/domains";
-import { IDecision } from "../../common/types/decision-types";
+import { IChoice, IDecision } from "../../common/types/decision-types";
 import { TExtraFormConfig, TFormHelpers } from "./choiceForm-types";
 
 export default function useChoiceForm<T extends IDecision>(
@@ -49,12 +49,14 @@ export default function useChoiceForm<T extends IDecision>(
         form.insertListItem("choices", {
           id: changedID ?? form.values.choices.length,
           name: "",
+          decisionId: +decisionId,
         });
       } else {
         alert("Maximum 100 choices");
       }
     },
-    editChoice(id: number, value: T) {
+    editChoice(id: number, value: T, index: number) {
+      form.setFieldValue(`choices.${index}.name`, value.name as any);
       extraFormConfig?.onEditChoice(id, value);
     },
     decide() {
@@ -89,7 +91,8 @@ export function useChoiceInput<T>(
     if (typeof itemID == "number") {
       formHelpers.editChoice(
         itemID as any,
-        new Choice(e.target.value, itemID, decisionID)
+        new Choice(e.target.value, itemID, decisionID),
+        index
       );
     } else return;
   };

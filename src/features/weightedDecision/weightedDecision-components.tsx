@@ -166,6 +166,7 @@ export function CriteriaForm({
                 }}
               >
                 <TextInput
+                  key={item.id}
                   labelProps={{
                     style: { color: siteColors.text.primary },
                   }}
@@ -193,6 +194,7 @@ export function CriteriaForm({
                 />
               </div>
               <Slider
+                key={item.id + item.name}
                 style={{ margin: 20 }}
                 value={item.weight}
                 onChange={(e) => {
