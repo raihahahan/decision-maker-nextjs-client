@@ -1,6 +1,3 @@
-import { Grid } from "@mantine/core";
-import FeatureButton from "../../common/components/buttons";
-import { DecisionTypeItems } from "../../common/utils/globals";
 import { IndexButtons, IndexDescription } from "./index-components";
 
 export default function IndexContents() {
