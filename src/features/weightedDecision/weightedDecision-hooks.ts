@@ -32,6 +32,12 @@ import {
   useWeightedFormSteppersReturnType,
   useWeightedInputReturnType,
 } from "./weightedDecision-types";
+import {
+  createWeightedInputItem,
+  modifyWeightedInputs,
+  weightedDecisionCreateUnsavedListener,
+  weightedItemsToWeightedInput,
+} from "./weightedDecision-utils";
 import weightedDeicisonApi, {
   weightedChoiceApi,
   weightedCriteriaApi,
@@ -57,25 +63,10 @@ export function useWeightedEditInput(
   const router = useRouter();
 
   // edit weightedInputs array
-  weightedInput.weightedInputs = weightedInput.weightedInputs.map((item) => {
-    const choiceName = weightedItems.choices.find(
-      (i) => i.id == item.choiceId
-    )?.name;
-    const criteriaInput = item.criteriaInput.map((input) => {
-      const criteriaName = weightedItems.criteriaList.find(
-        (i) => i.id == input.criteriaId
-      )?.name;
-      return {
-        ...input,
-        name: criteriaName as string,
-      };
-    });
-    return {
-      ...item,
-      choiceName: choiceName as string,
-      criteriaInput: criteriaInput,
-    };
-  });
+  weightedInput.weightedInputs = modifyWeightedInputs(
+    weightedInput,
+    weightedItems
+  );
 
   // initialise other variables and methods
   const initialValues = weightedInput.weightedInputs;
@@ -121,37 +112,18 @@ export function useWeightedInput(
   const router = useRouter();
 
   // initialise initialValues
-  const initialValues = weightedItems.choices.map((c) => {
-    const choiceId = c.id as number;
-    const choiceName = c.name;
-    const criteriaInput: ICriteriaInput[] = weightedItems.criteriaList.map(
-      (criteria) => {
-        return { ...criteria, value: 20 };
-      }
-    );
-    return { choiceId, choiceName, criteriaInput };
-  });
+  const initialValues = weightedItemsToWeightedInput(weightedItems);
 
   // declare other variables
   const weightedInputForm = useForm<IWeightedInput[]>({ initialValues });
 
   const onSubmit = async () => {
-    const weightedInputItem: IWeightedInputItem = {
-      weightedItemId: weightedItems.id as number,
-      weightedInputs: weightedInputForm.values,
-    };
     setUnsavedChanges(false);
-    weightedInputItem.weightedInputs = weightedInputItem.weightedInputs.map(
-      (i) => {
-        i.criteriaInput = i.criteriaInput.map((c, index) => {
-          if (c.id) delete c.id;
-          c.decisionId = -1;
-          c.criteriaId = weightedItems.criteriaList[index].id;
-          return c;
-        });
-        return i;
-      }
+    const weightedInputItem = createWeightedInputItem(
+      weightedItems,
+      weightedInputForm
     );
+
     await weightedInputApi.post(weightedInputItem);
     router.push({
       pathname: `/weighted/${weightedItems.id}/result`,
@@ -369,11 +341,7 @@ export function useWeightedDecisionCreate() {
   const [unsavedChanges, setUnsavedChanges] = useState(true);
 
   useEffect(() => {
-    setUnsavedChanges(
-      weightedForm.form.values.name.trim().length > 0 ||
-        weightedForm.form.values.choices.filter((i) => i.name.trim().length > 0)
-          .length > 0
-    );
+    setUnsavedChanges(weightedDecisionCreateUnsavedListener(weightedForm.form));
   }, [weightedForm.form.values, active]);
 
   usePreventExitForm(unsavedChanges);
