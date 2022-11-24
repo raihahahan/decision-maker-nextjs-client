@@ -1,4 +1,4 @@
-import { Anchor, Navbar, Text } from "@mantine/core";
+import { Anchor, Navbar } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CSSProperties } from "react";
@@ -9,7 +9,6 @@ import anchorData, { footerData } from "./site-data";
 import RectangleTitle from "../../common/components/branding";
 import { anchorTitles, routes } from "./site-types";
 import ToggleThemeButton from "../theme/theme-components";
-import { useThemeReturnType } from "../theme/theme-types";
 import { useGlobalMediaQuery } from "../theme/theme-hooks";
 
 export function MyNavbar({
@@ -43,7 +42,6 @@ export function AnchorLinks({
     setOpened: React.Dispatch<React.SetStateAction<boolean>>;
   };
 }) {
-  const router = useRouter();
   return (
     <div style={{ display: "flex", flexDirection: isSmall ? "column" : "row" }}>
       {anchorData.map((item) => {

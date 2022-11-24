@@ -15,7 +15,10 @@ export default function ToggleThemeButton({
   const dispatch = useDispatch<AppDispatch>();
   const { siteColors, themeState } = useTheme();
   return (
-    <Anchor onClick={() => dispatch(toggleTheme())} style={{ margin: 20 }}>
+    <Anchor
+      onClick={() => dispatch(toggleTheme())}
+      style={{ margin: 20, marginTop: 30 }}
+    >
       {themeState == "dark" ? (
         <FiMoon
           size={size ?? 26}

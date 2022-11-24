@@ -8,6 +8,7 @@ import {
   DecisionTypeItems,
   DecisionTypeItemsType,
 } from "../../common/utils/globals";
+import { arrayToOrderedListString } from "../../common/utils/utils";
 import { RemoveButton } from "../choiceForm/choiceForm-components";
 import { breakpoints } from "../theme/theme-data";
 import useTheme from "../theme/theme-hooks";
@@ -50,9 +51,8 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
     <Link
       style={{
         marginTop: 10,
-        minHeight: "30vw",
+        minHeight: "20vw",
         width: "90vw",
-        backgroundColor: colorTheme.surface,
         borderWidth: 0,
       }}
       href={`/${item.name}`}
@@ -62,11 +62,16 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
         p="lg"
         radius="md"
         withBorder
-        style={{ height: "100%" }}
+        style={{
+          height: "100%",
+          backgroundColor: colorTheme.surface,
+          borderWidth: 0,
+        }}
       >
         <Card.Section>
           <Image
             src={
+              item.imgSrc ??
               "https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
             }
             height={160}
@@ -91,7 +96,7 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
               color: siteColors.text.primary,
             }}
           >
-            {item.displayName}
+            {item.displayName + " Decision"}
           </Text>
         </Group>
 
@@ -103,7 +108,14 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
             marginBottom: 10,
           }}
         >
-          <Text>{item.description}</Text>
+          {item.description.map((item, index) => {
+            return (
+              <>
+                <Text>{index + 1 + ". " + item}</Text>
+                <br />
+              </>
+            );
+          })}
         </div>
 
         <br />
