@@ -1,4 +1,6 @@
 import { Grid, Text, Button, Card, Group, Image } from "@mantine/core";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import FeatureButton from "../../common/components/buttons";
 import { DecisionTypes, IDecision } from "../../common/types/decision-types";
@@ -43,13 +45,9 @@ export function IndexDescription() {
 
 export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
   const { siteColors, colorTheme, themeState } = useTheme();
-
+  const router = useRouter();
   return (
-    <Card
-      shadow="sm"
-      p="lg"
-      radius="md"
-      withBorder
+    <Link
       style={{
         marginTop: 10,
         minHeight: "30vw",
@@ -57,75 +55,86 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
         backgroundColor: colorTheme.surface,
         borderWidth: 0,
       }}
+      href={`/${item.name}`}
     >
-      <Card.Section>
-        <Image
-          src={
-            "https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          }
-          height={160}
-          alt="project-image"
-        />
-      </Card.Section>
-
-      <Group
-        position="apart"
-        mt="md"
-        mb="xs"
-        style={{ display: "flex", justifyContent: "center" }}
+      <Card
+        shadow="sm"
+        p="lg"
+        radius="md"
+        withBorder
+        style={{ height: "100%" }}
       >
-        <Text
-          weight={"bolder"}
+        <Card.Section>
+          <Image
+            src={
+              "https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+            }
+            height={160}
+            alt="project-image"
+          />
+        </Card.Section>
+
+        <Group
+          position="apart"
+          mt="md"
+          mb="xs"
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <Text
+            weight={"bolder"}
+            style={{
+              display: "flex",
+              justifySelf: "center",
+              fontSize: 16,
+              marginTop: 10,
+              textAlign: "center",
+              color: siteColors.text.primary,
+            }}
+          >
+            {item.displayName}
+          </Text>
+        </Group>
+
+        <br />
+        <div
           style={{
-            display: "flex",
-            justifySelf: "center",
-            fontSize: 16,
-            marginTop: 10,
-            textAlign: "center",
             color: siteColors.text.primary,
+            fontSize: "1em",
+            marginBottom: 10,
           }}
         >
-          {item.displayName}
-        </Text>
-      </Group>
+          <Text>{item.description}</Text>
+        </div>
 
-      <br />
-      <div
-        style={{
-          color: siteColors.text.primary,
-          fontSize: "1em",
-        }}
-      >
-        <Text>{item.description}</Text>
-      </div>
-
-      <br />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "row",
-        }}
-      >
-        <Button.Group
+        <br />
+        <div
           style={{
             display: "flex",
             justifyContent: "center",
-            position: "absolute",
-            bottom: 0,
-            borderTopLeftRadius: 0,
-            borderTopRightRadius: 0,
-            width: "100%",
+            flexDirection: "row",
           }}
         >
-          <FeatureButton
-            text={item.displayName}
-            name={item.name as any}
-            color={item.color}
-          />
-        </Button.Group>
-      </div>
-    </Card>
+          <Button.Group
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              position: "absolute",
+              bottom: 0,
+              borderTopLeftRadius: 0,
+              borderTopRightRadius: 0,
+              width: "100%",
+            }}
+          >
+            <FeatureButton
+              text={item.displayName}
+              name={item.name as any}
+              color={item.color}
+              extraStyles={{ width: "100%", margin: 0 }}
+            />
+          </Button.Group>
+        </div>
+      </Card>
+    </Link>
   );
 }
 
