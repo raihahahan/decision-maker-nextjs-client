@@ -4,8 +4,9 @@ import { debounce } from "lodash";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useCallback, useEffect } from "react";
 import { Choice } from "../../common/domains/domains";
-import { IChoice, IDecision } from "../../common/types/decision-types";
+import { IDecision } from "../../common/types/decision-types";
 import { TExtraFormConfig, TFormHelpers } from "./choiceForm-types";
+import { formUnsaveChangesListener } from "./choiceForm-utils";
 
 export default function useChoiceForm<T extends IDecision>(
   initialValues: T,
@@ -27,10 +28,7 @@ export default function useChoiceForm<T extends IDecision>(
 
   useEffect(() => {
     if (setUnsavedChanges) {
-      setUnsavedChanges(
-        form.values.name.trim().length > 0 ||
-          form.values.choices.filter((i) => i.name.trim().length > 0).length > 0
-      );
+      setUnsavedChanges(formUnsaveChangesListener(form));
     }
   }, [form.values]);
 
@@ -49,7 +47,6 @@ export default function useChoiceForm<T extends IDecision>(
         form.insertListItem("choices", {
           id: changedID ?? form.values.choices.length,
           name: "",
-          decisionId: +decisionId,
         });
       } else {
         alert("Maximum 100 choices");

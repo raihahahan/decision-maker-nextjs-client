@@ -114,8 +114,7 @@ export function ChoiceInput<T extends IDecision>({
     form,
     index,
     decisionID,
-    itemID,
-    item
+    itemID
   );
 
   const { siteColors } = useTheme();
