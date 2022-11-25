@@ -23,7 +23,7 @@ export default function ResultContents({
   data: IFinalResult;
   type: DecisionTypes;
 }) {
-  if (!data || !data?.weightedResults) return <Error />;
+  if (data.type == "error" || !data || !data?.weightedResults) return <Error />;
   const { weightedResults, decisionName } = data;
   const { onClickEdit, onClickCreateNew } = useResult(type);
   const { sm, md } = useGlobalMediaQuery();

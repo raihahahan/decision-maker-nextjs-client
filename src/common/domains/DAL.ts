@@ -1,6 +1,4 @@
-import { IDecision, IFinalResult } from "../types/decision-types";
 import axios from "axios";
-import { API_URL } from "../utils/globals";
 // DAL: Data Access Layer
 
 abstract class DAL<T> {
@@ -41,7 +39,7 @@ abstract class DAL<T> {
       const jsonData: T = await res.json();
       return jsonData;
     } catch (error) {
-      return { name: JSON.stringify(error), choices: [] } as any;
+      return null as any;
     }
   }
 
@@ -59,7 +57,7 @@ abstract class DAL<T> {
       return res.data as T;
     } catch (error) {
       // alert(error);
-      return { name: JSON.stringify(error), choices: [] } as any;
+      return null as any;
     }
   }
 
