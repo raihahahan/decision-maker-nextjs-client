@@ -1,5 +1,6 @@
-import { ButtonProps } from "@mantine/core";
+import { ButtonProps, MANTINE_COLORS } from "@mantine/core";
 import { routes } from "../../features/site/site-types";
+import { DecisionTypes } from "../types/decision-types";
 
 export const API_URL = "https://localhost:7239";
 
@@ -9,6 +10,7 @@ export type DecisionTypeItemsType = {
   color: ButtonProps["color"];
   description: string[];
   imgSrc?: string;
+  type: DecisionTypes;
 };
 
 export const DecisionTypeItems: DecisionTypeItemsType[] = [
@@ -22,6 +24,7 @@ export const DecisionTypeItems: DecisionTypeItemsType[] = [
       "Random Decision maker will choose a decision randomly.",
     ],
     imgSrc: "/images/random-decision-index-card.png",
+    type: "random",
   },
   {
     name: "/weighted/create",
@@ -34,6 +37,7 @@ export const DecisionTypeItems: DecisionTypeItemsType[] = [
       "For each choice, rate the decision based on the given criteria.",
     ],
     imgSrc: "/images/weighted-decision-index-card.png",
+    type: "weighted",
   },
   {
     name: "/conditional/create",
@@ -46,5 +50,6 @@ export const DecisionTypeItems: DecisionTypeItemsType[] = [
       "Choose the value of the conditions.",
     ],
     imgSrc: "/images/conditional-decision-index-card.png",
+    type: "conditional",
   },
 ];
