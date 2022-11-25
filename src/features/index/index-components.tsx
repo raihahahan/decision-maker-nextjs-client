@@ -9,9 +9,12 @@ import {
   Checkbox,
   Select,
   TextInput,
+  useMantineColorScheme,
+  useMantineTheme,
 } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import {
   FiArrowDown,
   FiDelete,
@@ -26,7 +29,7 @@ import {
   DecisionTypeItems,
   DecisionTypeItemsType,
 } from "../../common/utils/globals";
-import { capitalizeFirstLetter } from "../../common/utils/utils";
+import { capitalizeFirstLetter, formatDate } from "../../common/utils/utils";
 import { breakpoints } from "../theme/theme-data";
 import useTheme from "../theme/theme-hooks";
 import useIndexList from "./index-hooks";
@@ -182,6 +185,11 @@ export function IndexGetList({
     topCheckBoxChecked,
   } = useIndexList(type, res);
   const { siteColors, themeState } = useTheme();
+  const mantineColors = useMantineTheme().colors;
+  const elementColor =
+    mantineColors[
+      DecisionTypeItems.find((i) => i.type == type)?.color ?? "blue"
+    ][6];
 
   const rows = res.map((element, index) => {
     return (
@@ -196,10 +204,10 @@ export function IndexGetList({
         <td style={{ color: siteColors.text.primary }}>{element.id}</td>
         <td style={{ color: siteColors.text.primary }}>{element.name}</td>
         <td style={{ color: siteColors.text.primary }}>
-          {new Date(element.createdAt as string).toDateString()}
+          {formatDate(new Date(element?.createdAt as string))}
         </td>
         <td style={{ color: siteColors.text.primary }}>
-          {new Date(element.updatedAt as string).toDateString()}
+          {formatDate(new Date(element?.updatedAt as string))}
         </td>
         <td style={{ color: siteColors.text.primary }}>
           <Link href={`/${type}/${element.id}`}>
@@ -230,13 +238,13 @@ export function IndexGetList({
     );
   });
   return (
-    <div>
+    <div style={{ margin: 10, minWidth: "60vw" }}>
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          backgroundColor: "purple",
+          backgroundColor: elementColor,
           borderTopLeftRadius: 10,
           borderTopRightRadius: 10,
         }}
@@ -250,7 +258,7 @@ export function IndexGetList({
           <Button
             size="md"
             color="red"
-            style={{ margin: 5 }}
+            style={{ margin: 5, borderColor: "white", borderWidth: 2 }}
             onClick={buttonHandlers.onClickMasterRemove}
           >
             <FiTrash style={{ marginRight: 10 }} />
@@ -259,7 +267,7 @@ export function IndexGetList({
           <Button
             size="md"
             color="green"
-            style={{ margin: 5 }}
+            style={{ margin: 5, borderColor: "white", borderWidth: 2 }}
             onClick={buttonHandlers.onClickAdd}
           >
             <FiPlus style={{ marginRight: 10 }} />

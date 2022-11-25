@@ -35,12 +35,12 @@ export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
       }
     },
     onClickMasterRemove() {
-      const confirmation = confirm("Are you sure?");
-      if (!confirmation) return;
       if (selected.length <= 0) {
         alert("Please select at least 1 item.");
         return;
       }
+      const confirmation = confirm("Are you sure?");
+      if (!confirmation) return;
       switch (type) {
         case "random":
           selected.forEach((item) => {
