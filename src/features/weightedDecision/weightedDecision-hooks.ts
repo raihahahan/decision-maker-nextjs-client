@@ -304,6 +304,8 @@ export function useWeightedFormSteppers(
       });
 
       if (id == -1) {
+        form.values.createdAt = new Date().toISOString();
+        form.values.updatedAt = new Date().toISOString();
         const res = await weightedDeicisonApi.post(form.values);
         weightedDecisionActions.add(form.values);
         const _id = res.id;
@@ -429,6 +431,7 @@ export function useWeightedDecisionEdit(presetValues?: IWeightedDecisionItem) {
     },
     async onSubmitEdit(value: IWeightedDecisionItem) {
       const id = value.id;
+      value.updatedAt = new Date().toISOString();
       router.push({ pathname: `/weighted/${id}/input` });
     },
   };
