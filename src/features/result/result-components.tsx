@@ -1,9 +1,11 @@
 import { Button, Paper, Text } from "@mantine/core";
+import { MyTable, TableTitleHeader } from "../../common/components/table";
 import {
   DecisionTypes,
   IWeightedResult,
 } from "../../common/types/decision-types";
 import { breakpoints } from "../theme/theme-data";
+import useTheme from "../theme/theme-hooks";
 import { getWeight } from "./result-utils";
 
 export function Result({
@@ -54,12 +56,53 @@ export function ResultList({
   resultData: IWeightedResult[];
   type: DecisionTypes;
 }) {
+  const headers = <ResultListHeaders />;
+  const rows = <ResultListRows resultData={resultData} type={type} />;
   return (
-    <div>
-      {resultData.map((item, index) => {
-        return <Result data={item} index={index} type={type} />;
-      })}
+    <div style={{ display: "flex", width: "50vw", flexDirection: "column" }}>
+      <TableTitleHeader
+        type={type}
+        disableCreate
+        disableDelete
+        styles={{ justifyContent: "center" }}
+        customTitle="Ranked Choice"
+      />
+      <MyTable headers={headers} rows={rows} />
     </div>
+  );
+}
+
+function ResultListRows({
+  resultData,
+  type,
+}: {
+  resultData: IWeightedResult[];
+  type: DecisionTypes;
+}) {
+  const { siteColors } = useTheme();
+  return (
+    <>
+      {resultData.map((element, index) => {
+        return (
+          <tr key={element.id} style={{ color: siteColors.text.primary }}>
+            <td>{index + 1}</td>
+            <td>{element.name}</td>
+            {type != "random" && <td>{element.totalWeight}</td>}
+          </tr>
+        );
+      })}
+    </>
+  );
+}
+
+function ResultListHeaders() {
+  const { siteColors } = useTheme();
+  return (
+    <>
+      <th style={{ color: siteColors.text.primary }}>Rank</th>
+      <th style={{ color: siteColors.text.primary }}>Choice name</th>
+      <th style={{ color: siteColors.text.primary }}>Score</th>
+    </>
   );
 }
 

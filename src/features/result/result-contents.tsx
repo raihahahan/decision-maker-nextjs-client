@@ -1,7 +1,6 @@
 import Error from "../../common/components/error";
 import InputLayout from "../../common/components/inputLayout";
 import { DecisionTypes, IFinalResult } from "../../common/types/decision-types";
-import { capitalizeFirstLetter } from "../../common/utils/utils";
 import { RandomAskAgainButton } from "../randomDecision/randomDecision-components";
 import { useGlobalMediaQuery } from "../theme/theme-hooks";
 import {
@@ -37,10 +36,7 @@ export default function ResultContents({
         <h2 style={{ textAlign: "center" }}>
           <b>Decision Name:</b> {decisionName}
         </h2>
-        <h2>{capitalizeFirstLetter(type)} choice:</h2>
-        <Result data={weightedResults[0]} type={type} />
         <br />
-        <h2>Ranked choice:</h2>
         <ResultList resultData={weightedResults} type={type} />
         <div
           style={{
