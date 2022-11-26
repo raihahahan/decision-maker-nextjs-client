@@ -38,6 +38,19 @@ class DecisionDAL<T extends IDecision> extends DAL<T> {
       };
     }
   }
+
+  public async totalPages(): Promise<number> {
+    try {
+      const res = await fetch(`${this.route}/totalPages`, {
+        method: "GET",
+        mode: "cors",
+        agent: this.agent,
+      } as any);
+      return res.json();
+    } catch (error) {
+      return 1;
+    }
+  }
 }
 
 export default DecisionDAL;

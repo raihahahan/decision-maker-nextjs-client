@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import React from "react";
 import { DecisionTypes } from "../types/decision-types";
 import { DecisionTypeItems } from "../utils/globals";
@@ -7,9 +6,11 @@ import FeatureButton from "./buttons";
 export default function InputLayout({
   children,
   type,
+  hideTitle,
 }: {
   children: React.ReactElement;
   type: DecisionTypes;
+  hideTitle?: boolean;
 }) {
   const displayName = DecisionTypeItems.find((i) =>
     i.name.includes(type)
@@ -17,7 +18,7 @@ export default function InputLayout({
 
   return (
     <>
-      <h1>{displayName} Decision</h1>
+      {!hideTitle && <h1>{displayName} Decision</h1>}
       {children}
       <div style={{ display: "flex", flexDirection: "column" }}>
         <br />

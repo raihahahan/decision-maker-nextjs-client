@@ -8,18 +8,21 @@ export default function FeatureButton({
   name,
   color,
   extraStyles,
+  link,
 }: {
   text: string;
   name: DecisionTypes;
   color: ButtonProps["color"];
   extraStyles?: CSSProperties;
+  link?: string;
 }) {
   const router = useRouter();
+
   return (
     <Button
       style={{ margin: 10, ...(extraStyles as object) }}
       color={color}
-      onClick={() => router.push({ pathname: name })}
+      onClick={() => router.push({ pathname: link ?? name })}
       variant="filled"
       size="md"
     >

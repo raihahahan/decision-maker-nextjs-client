@@ -1,4 +1,5 @@
 import axios from "axios";
+import { URL } from "url";
 // DAL: Data Access Layer
 
 abstract class DAL<T> {
@@ -12,9 +13,27 @@ abstract class DAL<T> {
     this.route = route;
   }
 
-  public async get(): Promise<T[]> {
+  public async get(params?: {
+    sortorder?: string;
+    pageNumber?: number;
+    q?: string;
+  }): Promise<T[]> {
     try {
-      const res = await fetch(`${this.route}`, {
+      let url = this.route;
+      let query = "";
+      if (params) {
+        query = "?";
+        let queriesArr = [];
+        for (const [k, v] of Object.entries(params)) {
+          if (v != undefined) {
+            queriesArr.push(k + "=" + v);
+          }
+        }
+        query += queriesArr.join("&");
+        url += query;
+      }
+
+      const res = await fetch(`${url}`, {
         method: "GET",
         mode: "cors",
         agent: this.agent,

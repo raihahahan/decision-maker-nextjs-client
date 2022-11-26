@@ -1,18 +1,19 @@
-import { Alert } from "@mantine/core";
+import { useMantineTheme } from "@mantine/core";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import useGenerics from "../../common/hooks/useGenerics";
 import { DecisionTypes, IDecision } from "../../common/types/decision-types";
-import randomDecisionApi from "../randomDecision/randomDecision-api";
-import { useRandomDecisionReducer } from "../randomDecision/randomDecision-hooks";
-import { useWeightedDecisionReducer } from "../weightedDecision/weightedDecision-hooks";
-import weightedDeicisonApi from "../weightedDecision/weightedDeicison-api";
+import { DecisionTypeItems } from "../../common/utils/globals";
+import { TUseIndexList } from "./index-types";
 
-export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
+export default function useIndexList(
+  type: DecisionTypes,
+  res: IDecision[]
+): TUseIndexList {
   const [selected, setSelected] = useState<IDecision[]>([]);
   const router = useRouter();
-  const { randomDecisionActions } = useRandomDecisionReducer();
-  const { weightedDecisionActions, weightedDecisionLocalData } =
-    useWeightedDecisionReducer();
+
+  const { decisionActions, decisionApi } = useGenerics(type);
 
   const buttonHandlers = {
     onClick(item: IDecision) {
@@ -21,18 +22,8 @@ export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
     onClickRemove(item: IDecision) {
       const confirmation = confirm("Are you sure?");
       if (!confirmation) return;
-      switch (type) {
-        case "random":
-          randomDecisionApi.delete(item.id as number);
-          randomDecisionActions.remove(item.id as number);
-          break;
-        case "weighted":
-          weightedDeicisonApi.delete(item.id as number);
-          weightedDecisionActions.remove(item.id as number);
-          break;
-        default:
-          break;
-      }
+      decisionApi?.delete(item.id as number);
+      decisionActions?.remove(item.id as number);
     },
     onClickMasterRemove() {
       if (selected.length <= 0) {
@@ -41,27 +32,14 @@ export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
       }
       const confirmation = confirm("Are you sure?");
       if (!confirmation) return;
-      switch (type) {
-        case "random":
-          selected.forEach((item) => {
-            randomDecisionApi.delete(item.id as number);
-            randomDecisionActions.remove(item.id as number);
-          });
-          break;
-        case "weighted":
-          selected.forEach((item) => {
-            weightedDeicisonApi.delete(item.id as number);
-            weightedDecisionActions.remove(item.id as number);
-          });
-          break;
-        default:
-          break;
-      }
-
+      selected.forEach((item) => {
+        decisionApi?.delete(item.id as number);
+        decisionActions?.remove(item.id as number);
+      });
       setSelected([]);
     },
     onClickEdit(item: IDecision) {
-      router.push(`/${type}/${item.id}/edit`);
+      router.push(`/${type}/${item.id}`);
     },
     onClickAdd() {
       router.push(`/${type}/create`);
@@ -95,5 +73,96 @@ export default function useIndexList(type: DecisionTypes, res: IDecision[]) {
     selectedHandlers: { selected, setSelected },
     checkBoxChecked,
     topCheckBoxChecked,
+  };
+}
+
+export function useIndexTable(type: DecisionTypes, res: IDecision[]) {
+  const indexVarList = useIndexList(type, res);
+  const mantineColors = useMantineTheme().colors;
+  const elementColor =
+    mantineColors[
+      DecisionTypeItems.find((i) => i.type == type)?.color ?? "blue"
+    ][6];
+
+  return {
+    indexVarList,
+    elementColor,
+  };
+}
+
+export function useIndexPagination(type: DecisionTypes) {
+  const router = useRouter();
+  const { decisionApi, reducerData } = useGenerics(type);
+  const [totalPages, setTotalPages] = useState<number>(0);
+
+  useEffect(() => {
+    decisionApi
+      ?.totalPages()
+      .then((i) => (typeof i == "number" ? setTotalPages(i) : null));
+  }, [, reducerData]);
+
+  const initialPage = +(router.query?.pageNum as string)
+    ? +(router.query?.pageNum as string)
+    : 1;
+  const [currPage, setCurrPage] = useState<number>(initialPage);
+
+  const onClickPage = (pageNum: number) => {
+    setCurrPage(pageNum);
+    router.push({ pathname: `/${type}`, query: { pageNum } });
+  };
+
+  return {
+    onClickPage,
+    currPageHandlers: { currPage, setCurrPage },
+    totalPages,
+  };
+}
+
+export function useIndexQueryListener(type: DecisionTypes): void {
+  const { decisionActions, decisionApi } = useGenerics(type);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      router.query?.pageNum ||
+      router.query?.sortorder ||
+      typeof router.query?.q == "string"
+    ) {
+      const pageNumber = router.query?.pageNum ?? undefined;
+      const sortorder = router.query?.sortorder ?? undefined;
+      const q = router.query?.q ?? undefined;
+      const params = { pageNumber, sortorder, q };
+      decisionApi
+        ?.get(params as any)
+        .then((i: IDecision[]) => decisionActions?.set(i as any));
+    }
+  }, [router.query]);
+}
+
+export function useIndexSearch(type: DecisionTypes) {
+  const router = useRouter();
+  const [search, setSearch] = useState<string>("");
+  const onSubmitSearch = () => {
+    router.push({ pathname: `/${type}`, query: { q: search } });
+  };
+
+  // helper functions
+  const searchHelpers = {
+    onSubmitForm(e: FormEvent<HTMLFormElement>) {
+      e.preventDefault();
+      onSubmitSearch();
+    },
+    onChange(e: ChangeEvent<HTMLInputElement>) {
+      setSearch(e.target.value);
+    },
+    onClickSearchBarCrossIcon() {
+      setSearch("");
+    },
+  };
+
+  return {
+    searchHandlers: { search, setSearch },
+    onSubmitSearch,
+    searchHelpers,
   };
 }
