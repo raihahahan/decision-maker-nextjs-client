@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Stepper, Button, Group, Slider, Text, TextInput } from "@mantine/core";
+import {
+  Stepper,
+  Button,
+  Group,
+  Slider,
+  TextInput,
+  Divider,
+} from "@mantine/core";
 import ChoicesForm, {
   AddButton,
-  MakeDecisionButton,
   RemoveButton,
 } from "../choiceForm/choiceForm-components";
 import { UseFormReturnType } from "@mantine/form";
@@ -244,19 +250,39 @@ export function WeightedInputForm({
     : useWeightedInput(res, setUnsavedChanges);
 
   usePreventExitForm(unsavedChanges);
-
+  const { siteColors } = useTheme();
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        margin: 10,
+        maxWidth: breakpoints.lg + 100,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       {form.values.map((item, outIndex) => {
         return (
-          <div>
-            <h3>{item.choiceName}</h3>
+          <div
+            style={{
+              backgroundColor: siteColors.header,
+              padding: 20,
+              margin: 20,
+              borderRadius: 5,
+              minWidth: "80vw",
+            }}
+          >
+            <h3>
+              Choice {outIndex + 1}: {item.choiceName}
+            </h3>
+            <Divider />
             {item.criteriaInput.map((c, index) => {
               return (
                 <div>
-                  <Text>{c.name}</Text>
+                  <h4 style={{ paddingLeft: 20 }}>{c.name}</h4>
                   <Slider
-                    style={{ margin: 20, width: "50vw" }}
+                    style={{ margin: 20 }}
                     marks={[
                       { value: 20, label: "20%" },
                       { value: 50, label: "50%" },
@@ -274,7 +300,13 @@ export function WeightedInputForm({
           </div>
         );
       })}
-      <Button type="submit" onClick={onSubmit}>
+      <Button
+        style={{ margin: 20 }}
+        color="green"
+        size="lg"
+        type="submit"
+        onClick={onSubmit}
+      >
         Submit
       </Button>
     </div>
