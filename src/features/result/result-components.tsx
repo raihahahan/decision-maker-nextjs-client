@@ -56,7 +56,7 @@ export function ResultList({
   resultData: IWeightedResult[];
   type: DecisionTypes;
 }) {
-  const headers = <ResultListHeaders />;
+  const headers = <ResultListHeaders type={type} />;
   const rows = <ResultListRows resultData={resultData} type={type} />;
   return (
     <div style={{ display: "flex", width: "50vw", flexDirection: "column" }}>
@@ -95,13 +95,15 @@ function ResultListRows({
   );
 }
 
-function ResultListHeaders() {
+function ResultListHeaders({ type }: { type: DecisionTypes }) {
   const { siteColors } = useTheme();
   return (
     <>
       <th style={{ color: siteColors.text.primary }}>Rank</th>
       <th style={{ color: siteColors.text.primary }}>Choice name</th>
-      <th style={{ color: siteColors.text.primary }}>Score</th>
+      {type != "random" && (
+        <th style={{ color: siteColors.text.primary }}>Score</th>
+      )}
     </>
   );
 }
