@@ -178,6 +178,7 @@ export function useCriteriaForm(
         form.insertListItem("criteriaList", {
           id: form.values.criteriaList.length,
           name: "",
+          weight: 20,
         } as ICriteria);
       }
     } else {
