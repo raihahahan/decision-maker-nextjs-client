@@ -20,7 +20,23 @@ export default function InputLayout({
     <>
       {!hideTitle && <h1>{displayName} Decision</h1>}
       {children}
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {!hideTitle && (
+          <>
+            <br />
+            <FeatureButton
+              text="View history"
+              name="error"
+              link={`/${type}`}
+              color={DecisionTypeItems.find((i) => i.type == type)?.color}
+            />
+          </>
+        )}
         <br />
         <h3>Try out a different way to decide!</h3>
         {DecisionTypeItems.map((item) => {
