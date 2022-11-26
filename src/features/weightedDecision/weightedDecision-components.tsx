@@ -62,16 +62,6 @@ export function WeightedMainForm({
         weightedForm={weightedForm}
         presetValues={presetValues}
       />
-      {presetValues && (
-        <>
-          <MakeDecisionButton
-            onClick={() =>
-              router.push({ pathname: `/weighted/${router.query.id}/result` })
-            }
-          />
-          <br />
-        </>
-      )}
       <br />
       <WeightedFormSteppers
         active={active}
