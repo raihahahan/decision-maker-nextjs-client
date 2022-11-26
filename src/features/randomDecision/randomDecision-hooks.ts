@@ -49,6 +49,7 @@ export default function useRandomDecision() {
       curr: IRandomDecisionItem
     ) {
       curr.name = name;
+      curr.updatedAt = new Date().toISOString();
       await randomDecisionApi.put(decisionId, curr);
     },
     async onAddChoice(decisionId: number) {

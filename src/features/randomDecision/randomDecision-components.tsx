@@ -37,6 +37,8 @@ export function RandomDecisionEditForm({ res }: { res: IRandomDecisionItem }) {
     id: res.id,
     name: res.name,
     choices: res.choices,
+    createdAt: res.createdAt,
+    updatedAt: res.updatedAt,
   };
 
   const randomEditForm = useChoiceForm<IDecision>(

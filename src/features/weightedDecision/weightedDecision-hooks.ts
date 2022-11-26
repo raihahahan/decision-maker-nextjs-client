@@ -366,6 +366,7 @@ export function useWeightedDecisionEdit(presetValues?: IWeightedDecisionItem) {
       curr: IWeightedDecisionItem
     ) {
       curr.name = name;
+      curr.updatedAt = new Date().toISOString();
       await weightedDeicisonApi.put(decisionId, curr);
     },
     async onAddChoice(decisionId: number) {
@@ -432,6 +433,7 @@ export function useWeightedDecisionEdit(presetValues?: IWeightedDecisionItem) {
     async onSubmitEdit(value: IWeightedDecisionItem) {
       const id = value.id;
       value.updatedAt = new Date().toISOString();
+      await weightedDeicisonApi.put(id as number, value);
       router.push({ pathname: `/weighted/${id}/input` });
     },
   };
