@@ -39,7 +39,10 @@ export default function useIndexList(
       setSelected([]);
     },
     onClickEdit(item: IDecision) {
-      router.push(`/${type}/${item.id}`);
+      let _item = { ...item };
+      _item.updatedAt = new Date().toISOString();
+      decisionApi?.put(_item.id as number, _item as any);
+      router.push(`/${type}/${_item.id}`);
     },
     onClickAdd() {
       router.push(`/${type}/create`);
