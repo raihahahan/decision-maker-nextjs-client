@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import Error from "../../common/components/error";
 import InputLayout from "../../common/components/inputLayout";
 import { IFinalResult } from "../../common/types/decision-types";
 import { IndexGetList } from "../index/index-components";
@@ -14,7 +13,6 @@ import {
 import { useWeightedDecisionReducer } from "./weightedDecision-hooks";
 import {
   IWeightedDecisionItem,
-  IWeightedInput,
   IWeightedInputItem,
 } from "./weightedDecision-types";
 
