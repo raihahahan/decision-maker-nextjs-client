@@ -1,10 +1,6 @@
 import Error from "../../common/components/error";
 import InputLayout from "../../common/components/inputLayout";
-import {
-  DecisionTypes,
-  IFinalResult,
-  IWeightedResult,
-} from "../../common/types/decision-types";
+import { DecisionTypes, IFinalResult } from "../../common/types/decision-types";
 import { capitalizeFirstLetter } from "../../common/utils/utils";
 import { RandomAskAgainButton } from "../randomDecision/randomDecision-components";
 import { useGlobalMediaQuery } from "../theme/theme-hooks";
