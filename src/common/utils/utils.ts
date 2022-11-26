@@ -35,3 +35,14 @@ export function formatDate(date: Date): string {
     strTime
   );
 }
+
+export function trimText(text: string, maxLength: number): string {
+  if (
+    isNaN(maxLength) ||
+    typeof text != "string" ||
+    typeof maxLength != "number"
+  ) {
+    return "";
+  }
+  return text.length > maxLength ? text.slice(0, maxLength - 1) + "..." : text;
+}
