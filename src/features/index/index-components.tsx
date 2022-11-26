@@ -5,7 +5,6 @@ import {
   Card,
   Group,
   Image,
-  Table,
   Checkbox,
   TextInput,
   Pagination,
@@ -13,17 +12,10 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  FiDelete,
-  FiEdit,
-  FiEye,
-  FiPlus,
-  FiSearch,
-  FiTrash,
-  FiX,
-} from "react-icons/fi";
+import { FiDelete, FiEdit, FiEye, FiSearch, FiX } from "react-icons/fi";
 import FeatureButton from "../../common/components/buttons";
 import InputLayout from "../../common/components/inputLayout";
+import { MyTable, TableTitleHeader } from "../../common/components/table";
 import { DecisionTypes, IDecision } from "../../common/types/decision-types";
 import {
   DecisionTypeItems,
@@ -190,7 +182,9 @@ export function IndexGetList({
       <>
         <IndexGetListSearchBar type={type} />
         <br />
-        <IndexGetListTable res={res} type={type} />
+        <div style={{ minHeight: "50vh" }}>
+          <IndexGetListTable res={res} type={type} />
+        </div>
         <br />
         <IndexGetListPagination res={res} type={type} />
       </>
@@ -237,33 +231,15 @@ export function IndexGetListTable({
 }) {
   const { siteColors } = useTheme();
   const { sm } = useGlobalMediaQuery();
-  const { indexVarList, elementColor } = useIndexTable(type, res);
+  const { indexVarList } = useIndexTable(type, res);
 
   const headers = <TableHeaders indexVarList={indexVarList} />;
   const rows = <TableRows res={res} indexVarList={indexVarList} type={type} />;
 
   return (
     <div style={{ margin: 10, minWidth: "60vw" }}>
-      <TableTitleHeader
-        indexVarList={indexVarList}
-        elementColor={elementColor}
-        type={type}
-      />
-      <Table
-        style={{
-          backgroundColor: siteColors.header,
-          borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10,
-        }}
-        horizontalSpacing={sm ? "md" : "xl"}
-        verticalSpacing="md"
-        fontSize={sm ? "md" : "lg"}
-      >
-        <thead>
-          <tr>{headers}</tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </Table>
+      <TableTitleHeader indexVarList={indexVarList} type={type} />
+      <MyTable headers={headers} rows={rows} />
     </div>
   );
 }
@@ -421,62 +397,5 @@ function TableHeaders({ indexVarList }: { indexVarList: TUseIndexList }) {
       <th style={{ color: siteColors.text.primary }}>Actions</th>
       <th style={{ color: siteColors.text.primary }}>Result</th>
     </>
-  );
-}
-
-function TableTitleHeader({
-  indexVarList,
-  elementColor,
-  type,
-}: {
-  indexVarList: TUseIndexList;
-  elementColor: string;
-  type: DecisionTypes;
-}) {
-  const { buttonHandlers } = indexVarList;
-  const { sm } = useGlobalMediaQuery();
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        backgroundColor: elementColor,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-      }}
-    >
-      <div>
-        <h1
-          style={{
-            color: "white",
-            paddingLeft: 15,
-            fontSize: sm ? 17 : undefined,
-          }}
-        >
-          {capitalizeFirstLetter(type)} Decisions
-        </h1>
-      </div>
-      <div style={{ paddingRight: 10 }}>
-        <Button
-          size={sm ? "sm" : "md"}
-          color="red"
-          style={{ margin: 5, borderColor: "white", borderWidth: 2 }}
-          onClick={buttonHandlers.onClickMasterRemove}
-        >
-          <FiTrash style={{ marginRight: 10 }} />
-          Delete
-        </Button>
-        <Button
-          size={sm ? "sm" : "md"}
-          color="green"
-          style={{ margin: 5, borderColor: "white", borderWidth: 2 }}
-          onClick={buttonHandlers.onClickAdd}
-        >
-          <FiPlus style={{ marginRight: 10 }} />
-          Create
-        </Button>
-      </div>
-    </div>
   );
 }

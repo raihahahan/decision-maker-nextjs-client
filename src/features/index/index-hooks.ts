@@ -81,15 +81,9 @@ export default function useIndexList(
 
 export function useIndexTable(type: DecisionTypes, res: IDecision[]) {
   const indexVarList = useIndexList(type, res);
-  const mantineColors = useMantineTheme().colors;
-  const elementColor =
-    mantineColors[
-      DecisionTypeItems.find((i) => i.type == type)?.color ?? "blue"
-    ][6];
 
   return {
     indexVarList,
-    elementColor,
   };
 }
 

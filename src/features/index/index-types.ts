@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { IDecision } from "../../common/types/decision-types";
 
-export type TUseIndexList = {
+export interface TUseIndexList {
   buttonHandlers: {
     onClick(item: IDecision): void;
     onClickRemove(item: IDecision): void;
@@ -19,7 +19,7 @@ export type TUseIndexList = {
   };
   checkBoxChecked: (element: IDecision) => boolean;
   topCheckBoxChecked: boolean;
-};
+}
 
 export interface TButtonProps {
   onClick: (args?: any) => void;
