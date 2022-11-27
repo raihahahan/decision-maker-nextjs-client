@@ -9,10 +9,19 @@ import {
   TextInput,
   Pagination,
   ActionIcon,
+  Menu,
 } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FiDelete, FiEdit, FiEye, FiSearch, FiX } from "react-icons/fi";
+import { useState } from "react";
+import {
+  FiDelete,
+  FiEdit,
+  FiEye,
+  FiFilter,
+  FiSearch,
+  FiX,
+} from "react-icons/fi";
 import FeatureButton from "../../common/components/buttons";
 import InputLayout from "../../common/components/inputLayout";
 import { MyTable, TableTitleHeader } from "../../common/components/table";
@@ -21,11 +30,7 @@ import {
   DecisionTypeItems,
   DecisionTypeItemsType,
 } from "../../common/utils/globals";
-import {
-  capitalizeFirstLetter,
-  formatDate,
-  trimText,
-} from "../../common/utils/utils";
+import { formatDate, trimText } from "../../common/utils/utils";
 import { breakpoints } from "../theme/theme-data";
 import useTheme, { useGlobalMediaQuery } from "../theme/theme-hooks";
 import {
@@ -183,6 +188,8 @@ export function IndexGetList({
     <InputLayout type={type} hideTitle>
       <>
         <IndexGetListSearchBar type={type} />
+        <div></div>
+        <SearchbarFilterButton type={type} />
         <br />
         <div style={{ minHeight: "50vh" }}>
           <IndexGetListTable res={res} type={type} />
@@ -192,6 +199,52 @@ export function IndexGetList({
       </>
     </InputLayout>
   );
+}
+
+export function SearchbarFilterButton({ type }: { type: DecisionTypes }) {
+  const [opened, setOpened] = useState<boolean>(false);
+
+  const router = useRouter();
+  function pushSort(sortorder: string) {
+    router.push({ pathname: `/${type}`, query: { sortorder } });
+    setOpened(false);
+  }
+
+  function DropDown() {
+    return (
+      <Menu opened={opened} shadow="md" width={200}>
+        <Menu.Target>
+          <Button
+            style={{ marginTop: 10, display: "flex", alignSelf: "flex-start" }}
+            onClick={() => setOpened((i) => !i)}
+            rightIcon={<FiFilter />}
+            color="teal"
+            variant="default"
+          >
+            Filters
+          </Button>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          <Menu.Label>Sort by</Menu.Label>
+          <Menu.Item onClick={() => pushSort("Date")}>Created at</Menu.Item>
+          <Menu.Item onClick={() => pushSort("date_desc")}>
+            Created at descending
+          </Menu.Item>
+          <Menu.Item onClick={() => pushSort("updated")}>Updated at</Menu.Item>
+          <Menu.Item onClick={() => pushSort("updated_desc")}>
+            Updated at descending
+          </Menu.Item>
+          <Menu.Item onClick={() => pushSort("name")}>Name</Menu.Item>
+          <Menu.Item onClick={() => pushSort("name_desc")}>
+            Name descending
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+    );
+  }
+
+  return <DropDown />;
 }
 
 export function IndexGetListSearchBar({ type }: { type: DecisionTypes }) {
@@ -237,7 +290,7 @@ export function IndexGetListTable({
   const rows = <TableRows res={res} indexVarList={indexVarList} type={type} />;
 
   return (
-    <div style={{ margin: 10, minWidth: "60vw" }}>
+    <div style={{ minWidth: "60vw" }}>
       <TableTitleHeader indexVarList={indexVarList} type={type} />
       <MyTable headers={headers} rows={rows} />
     </div>
