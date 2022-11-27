@@ -6,6 +6,8 @@ import {
   Slider,
   TextInput,
   Divider,
+  Pagination,
+  Select,
 } from "@mantine/core";
 import ChoicesForm, {
   AddButton,
@@ -14,6 +16,7 @@ import ChoicesForm, {
 import { UseFormReturnType } from "@mantine/form";
 import {
   ICriteria,
+  ICriteriaInput,
   IExtraFormConfig,
   IWeightedDecisionItem,
   IWeightedInput,
@@ -28,6 +31,7 @@ import {
   useWeightedEditInput,
   useWeightedFormSteppers,
   useWeightedInput,
+  useWeightedInputPagination,
 } from "./weightedDecision-hooks";
 import { formHookReturnType } from "../choiceForm/choiceForm-types";
 import usePreventExitForm from "../../common/hooks/usePreventExitForm";
@@ -50,7 +54,15 @@ export function WeightedMainForm({
   presetValues?: IWeightedDecisionItem;
 }) {
   const { active, setActive } = activeHandlers;
-  const router = useRouter();
+  const steppers = (
+    <WeightedFormSteppers
+      active={active}
+      setActive={setActive}
+      form={weightedForm.form}
+      id={presetValues && presetValues.id ? presetValues.id : -1}
+      setUnsavedChanges={setUnsavedChanges}
+    />
+  );
 
   return (
     <div
@@ -63,19 +75,15 @@ export function WeightedMainForm({
         alignItems: "center",
       }}
     >
+      {steppers}
+      <br />
       <CurrentPage
         active={active}
         weightedForm={weightedForm}
         presetValues={presetValues}
       />
       <br />
-      <WeightedFormSteppers
-        active={active}
-        setActive={setActive}
-        form={weightedForm.form}
-        id={presetValues && presetValues.id ? presetValues.id : -1}
-        setUnsavedChanges={setUnsavedChanges}
-      />
+      {steppers}
     </div>
   );
 }
@@ -249,10 +257,44 @@ export function WeightedInputForm({
     ? useWeightedEditInput(res, setUnsavedChanges, weightedInput)
     : useWeightedInput(res, setUnsavedChanges);
 
+  const { activeHandlers, pageHandlers } = useWeightedInputPagination();
+
   usePreventExitForm(unsavedChanges);
   const { siteColors } = useTheme();
+  const item = form.values[activeHandlers.active - 1];
+  const insertIndex = (str: string, index: number): string => {
+    return `${index + 1}: ${str}`;
+  };
+
+  const submitButton = <WeightedInputSubmitButton onClick={onSubmit} />;
+  const pagination = (
+    <Pagination
+      total={form.values.length}
+      initialPage={1}
+      onChange={pageHandlers.onClickPage}
+      page={activeHandlers.active}
+    />
+  );
+
+  const select = (
+    <Select
+      placeholder="Go to choice"
+      searchable
+      nothingFound="No choices found."
+      data={form.values.map((i, index) => {
+        return insertIndex(i.choiceName, index);
+      })}
+      onChange={(e) => {
+        const index = e?.charAt(0);
+        if (typeof index == "string") activeHandlers.setActive(+index);
+      }}
+      style={{ margin: 20 }}
+    />
+  );
+
   return (
     <div
+      key={activeHandlers.active}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -262,53 +304,35 @@ export function WeightedInputForm({
         alignItems: "center",
       }}
     >
-      {form.values.map((item, outIndex) => {
-        return (
-          <div
-            style={{
-              backgroundColor: siteColors.header,
-              padding: 20,
-              margin: 20,
-              borderRadius: 5,
-              minWidth: "80vw",
-            }}
-          >
-            <h3>
-              Choice {outIndex + 1}: {item.choiceName}
-            </h3>
-            <Divider />
-            {item.criteriaInput.map((c, index) => {
-              return (
-                <div>
-                  <h4 style={{ paddingLeft: 20 }}>{c.name}</h4>
-                  <Slider
-                    style={{ margin: 20 }}
-                    marks={[
-                      { value: 20, label: "20%" },
-                      { value: 50, label: "50%" },
-                      { value: 80, label: "80%" },
-                    ]}
-                    onChange={async (e) => {
-                      await onChangeSlider(e, outIndex, index, c);
-                      putSlider(e, c, c);
-                    }}
-                    value={c.value}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
-      <Button
-        style={{ margin: 20 }}
-        color="green"
-        size="lg"
-        type="submit"
-        onClick={onSubmit}
+      {submitButton}
+      {pagination}
+      {select}
+      <div
+        style={{
+          backgroundColor: siteColors.header,
+          padding: 20,
+          margin: 20,
+          borderRadius: 5,
+          minWidth: "80vw",
+        }}
       >
-        Submit
-      </Button>
+        <h3>
+          Choice {activeHandlers.active}: {item.choiceName}
+        </h3>
+        <Divider />
+        {item.criteriaInput.map((c, index) => {
+          return (
+            <WeightedInputCriteriaCard
+              sliderHelpers={{ onChangeSlider, putSlider }}
+              indices={{ outIndex: activeHandlers.active - 1, index }}
+              c={c}
+            />
+          );
+        })}
+      </div>
+      {select}
+      {pagination}
+      {submitButton}
     </div>
   );
 }
@@ -390,5 +414,67 @@ function WeightedFormSteppers({
         </Button>
       </Group>
     </>
+  );
+}
+
+// COMPONENTS
+
+// WeightedInputForm
+
+export function WeightedInputCriteriaCard({
+  sliderHelpers,
+  indices,
+  c,
+}: {
+  sliderHelpers: {
+    onChangeSlider: (
+      e: number,
+      i1: number,
+      i2: number,
+      c: ICriteriaInput
+    ) => Promise<void>;
+    putSlider: (e: number, c1: ICriteriaInput, c2: ICriteriaInput) => void;
+  };
+  indices: { outIndex: number; index: number };
+  c: ICriteriaInput;
+}) {
+  const { onChangeSlider, putSlider } = sliderHelpers;
+  const { outIndex, index } = indices;
+
+  return (
+    <div>
+      <h4 style={{ paddingLeft: 20 }}>{c.name}</h4>
+      <Slider
+        style={{ margin: 20 }}
+        marks={[
+          { value: 20, label: "20%" },
+          { value: 50, label: "50%" },
+          { value: 80, label: "80%" },
+        ]}
+        onChange={async (e) => {
+          await onChangeSlider(e, outIndex, index, c);
+          putSlider(e, c, c);
+        }}
+        value={c.value}
+      />
+    </div>
+  );
+}
+
+export function WeightedInputSubmitButton({
+  onClick,
+}: {
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      style={{ margin: 20 }}
+      color="green"
+      size="lg"
+      type="submit"
+      onClick={onClick}
+    >
+      Submit
+    </Button>
   );
 }

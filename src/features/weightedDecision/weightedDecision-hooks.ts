@@ -490,3 +490,16 @@ export function useWeightedDecisionReducer() {
 
   return { weightedDecisionLocalData, weightedDecisionActions };
 }
+
+// ====================================================== //
+export function useWeightedInputPagination() {
+  const [active, setActive] = useState<number>(1);
+
+  const pageHandlers = {
+    onClickPage(e: number) {
+      setActive(e);
+    },
+  };
+
+  return { activeHandlers: { active, setActive }, pageHandlers };
+}
