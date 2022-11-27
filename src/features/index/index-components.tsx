@@ -257,6 +257,7 @@ export function IndexGetListPagination({
 
   return (
     <Pagination
+      key={totalPages}
       initialPage={currPage}
       page={currPage}
       onChange={onClickPage}
