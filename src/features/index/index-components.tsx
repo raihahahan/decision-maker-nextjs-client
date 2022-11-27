@@ -34,6 +34,7 @@ import { formatDate, trimText } from "../../common/utils/utils";
 import { breakpoints } from "../theme/theme-data";
 import useTheme, { useGlobalMediaQuery } from "../theme/theme-hooks";
 import {
+  useIndexFilterButton,
   useIndexPagination,
   useIndexQueryListener,
   useIndexSearch,
@@ -202,13 +203,7 @@ export function IndexGetList({
 }
 
 export function SearchbarFilterButton({ type }: { type: DecisionTypes }) {
-  const [opened, setOpened] = useState<boolean>(false);
-
-  const router = useRouter();
-  function pushSort(sortorder: string) {
-    router.push({ pathname: `/${type}`, query: { sortorder } });
-    setOpened(false);
-  }
+  const { opened, setOpened, pushSort } = useIndexFilterButton(type);
 
   function DropDown() {
     return (

@@ -105,7 +105,8 @@ export function useIndexPagination(type: DecisionTypes) {
 
   const onClickPage = (pageNum: number) => {
     setCurrPage(pageNum);
-    router.push({ pathname: `/${type}`, query: { pageNum } });
+    const currQueries = router.query;
+    router.push({ pathname: `/${type}`, query: { ...currQueries, pageNum } });
   };
 
   return {
@@ -162,4 +163,17 @@ export function useIndexSearch(type: DecisionTypes) {
     onSubmitSearch,
     searchHelpers,
   };
+}
+
+export function useIndexFilterButton(type: DecisionTypes) {
+  const [opened, setOpened] = useState<boolean>(false);
+
+  const router = useRouter();
+  function pushSort(sortorder: string) {
+    const currQueries = router.query;
+    router.push({ pathname: `/${type}`, query: { ...currQueries, sortorder } });
+    setOpened(false);
+  }
+
+  return { opened, setOpened, pushSort };
 }
