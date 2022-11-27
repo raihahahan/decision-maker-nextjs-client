@@ -16,10 +16,13 @@ export const InitialValues: IDecision = {
 
 export const InitialValidate = {
   name: (val: string) => (val.length > 0 ? null : "Invalid decision name."),
-  choices: (val: IChoice[]) =>
-    val.length <= 1
+  choices: (val: IChoice[]) => {
+    let copy = [...val];
+    copy = copy.filter((i) => i.name.trim() != "");
+    return copy.length <= 1
       ? "Please provide more than 1 choices"
-      : val.length > 10
-      ? "Maximum 10 choices"
-      : null,
+      : val.length > 100
+      ? "Maximum 100 choices"
+      : null;
+  },
 };

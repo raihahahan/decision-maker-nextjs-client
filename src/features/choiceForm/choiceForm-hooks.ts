@@ -57,12 +57,12 @@ export default function useChoiceForm<T extends IDecision>(
       extraFormConfig?.onEditChoice(id, value);
     },
     decide() {
-      form.values.choices = form.values.choices.filter(
-        (i) => i.name.trim() != ""
-      );
-
       if (form.validateField("choices").hasError) {
         alert(form.validateField("choices").error);
+      } else {
+        form.values.choices = form.values.choices.filter(
+          (i) => i.name.trim() != ""
+        );
       }
       if (setUnsavedChanges) setUnsavedChanges(false);
     },
