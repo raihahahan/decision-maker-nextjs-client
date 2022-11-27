@@ -76,7 +76,9 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
       radius="md"
       withBorder
       style={{
-        height: "100%",
+        marginTop: 10,
+        minHeight: "30vw",
+        width: "90vw",
         backgroundColor: colorTheme.surface,
         borderWidth: 0,
       }}
@@ -229,8 +231,6 @@ export function IndexGetListTable({
   res: IDecision[];
   type: DecisionTypes;
 }) {
-  const { siteColors } = useTheme();
-  const { sm } = useGlobalMediaQuery();
   const { indexVarList } = useIndexTable(type, res);
 
   const headers = <TableHeaders indexVarList={indexVarList} />;
