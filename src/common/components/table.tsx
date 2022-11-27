@@ -87,8 +87,8 @@ export function TableTitleHeader({
             style={{ margin: 5, borderColor: "white", borderWidth: 2 }}
             onClick={buttonHandlers?.onClickMasterRemove}
           >
-            <FiTrash style={{ marginRight: 10 }} />
-            Delete
+            <FiTrash style={{ marginRight: sm ? 0 : 10 }} />
+            {!sm && "Delete"}
           </Button>
         )}
         {!disableCreate && (
@@ -98,8 +98,8 @@ export function TableTitleHeader({
             style={{ margin: 5, borderColor: "white", borderWidth: 2 }}
             onClick={buttonHandlers?.onClickAdd}
           >
-            <FiPlus style={{ marginRight: 10 }} />
-            Create
+            <FiPlus style={{ marginRight: sm ? 0 : 10 }} />
+            {!sm && "Create"}
           </Button>
         )}
       </div>
