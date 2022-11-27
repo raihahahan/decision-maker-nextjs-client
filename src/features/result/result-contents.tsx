@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import Error from "../../common/components/error";
 import InputLayout from "../../common/components/inputLayout";
 import { DecisionTypes, IFinalResult } from "../../common/types/decision-types";
@@ -7,6 +8,7 @@ import { useGlobalMediaQuery } from "../theme/theme-hooks";
 import {
   CreateNewDecisionButton,
   EditDecisionButton,
+  EditInputButton,
   Result,
   ResultList,
 } from "./result-components";
@@ -21,8 +23,9 @@ export default function ResultContents({
 }) {
   if (data.type == "error" || !data || !data?.weightedResults) return <Error />;
   const { weightedResults, decisionName } = data;
-  const { onClickEdit, onClickCreateNew } = useResult(type);
-  const { sm, md } = useGlobalMediaQuery();
+  const { onClickEdit, onClickCreateNew, onClickEditInput } = useResult(type);
+  const { md } = useGlobalMediaQuery();
+  const router = useRouter();
   return (
     <InputLayout type={type}>
       <div
@@ -51,6 +54,7 @@ export default function ResultContents({
           <EditDecisionButton onClick={onClickEdit} />
           <CreateNewDecisionButton onClick={onClickCreateNew} />
           {type == "random" && <RandomAskAgainButton />}
+          {type != "random" && <EditInputButton onClick={onClickEditInput} />}
         </div>
       </div>
     </InputLayout>

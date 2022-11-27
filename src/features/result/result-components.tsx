@@ -123,3 +123,11 @@ export function CreateNewDecisionButton({ onClick }: { onClick: () => void }) {
     </Button>
   );
 }
+
+export function EditInputButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Button style={{ margin: 10 }} onClick={onClick} color="green" size="lg">
+      Edit Input
+    </Button>
+  );
+}
