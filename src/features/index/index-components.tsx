@@ -82,7 +82,7 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
       withBorder
       style={{
         marginTop: 10,
-        minHeight: "30vw",
+        minHeight: "20vw",
         width: "90vw",
         backgroundColor: colorTheme.surface,
         borderWidth: 0,
