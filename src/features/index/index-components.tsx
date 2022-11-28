@@ -222,13 +222,17 @@ export function SearchbarFilterButton({ type }: { type: DecisionTypes }) {
 
         <Menu.Dropdown>
           <Menu.Label>Sort by</Menu.Label>
-          <Menu.Item onClick={() => pushSort("Date")}>Created at</Menu.Item>
           <Menu.Item onClick={() => pushSort("date_desc")}>
-            Created at descending
+            Created at (newest to oldest)
           </Menu.Item>
-          <Menu.Item onClick={() => pushSort("updated")}>Updated at</Menu.Item>
+          <Menu.Item onClick={() => pushSort("Date")}>
+            Created at (oldest to newest)
+          </Menu.Item>
           <Menu.Item onClick={() => pushSort("updated_desc")}>
-            Updated at descending
+            Updated at (newest to oldest)
+          </Menu.Item>
+          <Menu.Item onClick={() => pushSort("updated")}>
+            Updated at (oldest to newest)
           </Menu.Item>
           <Menu.Item onClick={() => pushSort("name")}>Name</Menu.Item>
           <Menu.Item onClick={() => pushSort("name_desc")}>
