@@ -13,12 +13,12 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import {
   FiDelete,
   FiEdit,
   FiEye,
   FiFilter,
+  FiPenTool,
   FiSearch,
   FiX,
 } from "react-icons/fi";
@@ -285,7 +285,7 @@ export function IndexGetListTable({
 }) {
   const { indexVarList } = useIndexTable(type, res);
 
-  const headers = <TableHeaders indexVarList={indexVarList} />;
+  const headers = <TableHeaders indexVarList={indexVarList} type={type} />;
   const rows = <TableRows res={res} indexVarList={indexVarList} type={type} />;
 
   return (
@@ -338,7 +338,7 @@ function SearchBarSearchIcon({ onClick }: TButtonProps) {
 function TableEditIcon({ onClick }: TButtonProps) {
   const { themeState } = useTheme();
   return (
-    <ActionIcon onClick={onClick}>
+    <ActionIcon aria-label="edit" onClick={onClick}>
       <FiEdit
         style={{
           color: themeState == "light" ? "green" : "lime",
@@ -400,8 +400,6 @@ function TableRows({
             <td
               style={{
                 color: siteColors.text.primary,
-                display: "flex",
-                flexDirection: "row",
               }}
             >
               <TableEditIcon
@@ -411,6 +409,17 @@ function TableRows({
                 onClick={() => buttonHandlers.onClickRemove(element)}
               />
             </td>
+            {type != "random" && (
+              <td>
+                <Link href={`/${type}/${element.id}/input`}>
+                  <FiPenTool
+                    style={{
+                      color: siteColors.text.primary,
+                    }}
+                  />
+                </Link>
+              </td>
+            )}
             <td>
               <Link href={`/${type}/${element.id}/result`}>
                 <FiEye
@@ -427,7 +436,13 @@ function TableRows({
   );
 }
 
-function TableHeaders({ indexVarList }: { indexVarList: TUseIndexList }) {
+function TableHeaders({
+  indexVarList,
+  type,
+}: {
+  indexVarList: TUseIndexList;
+  type: DecisionTypes;
+}) {
   const { tableHandlers, topCheckBoxChecked } = indexVarList;
   const { siteColors } = useTheme();
   const { sm } = useGlobalMediaQuery();
@@ -448,6 +463,9 @@ function TableHeaders({ indexVarList }: { indexVarList: TUseIndexList }) {
         </>
       )}
       <th style={{ color: siteColors.text.primary }}>Actions</th>
+      {type != "random" && (
+        <th style={{ color: siteColors.text.primary }}>Input</th>
+      )}
       <th style={{ color: siteColors.text.primary }}>Result</th>
     </>
   );
