@@ -5,8 +5,13 @@ import { useRouter } from "next/router";
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Choice } from "../../common/domains/domains";
+import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import usePreventExitForm from "../../common/hooks/usePreventExitForm";
-import { IChoice, IDecisionReducer } from "../../common/types/decision-types";
+import {
+  IChoice,
+  IDecisionReducer,
+  IUseDecisionReducer,
+} from "../../common/types/decision-types";
 import { AppDispatch } from "../../redux/store";
 import useChoiceForm from "../choiceForm/choiceForm-hooks";
 import {
@@ -273,7 +278,8 @@ export function useWeightedFormSteppers(
   setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>
 ): useWeightedFormSteppersReturnType {
   const router = useRouter();
-  const { weightedDecisionActions } = useWeightedDecisionReducer();
+  const { decisionActions: weightedDecisionActions } =
+    useDecisionGenerics("weighted");
   const { editHandlers } = useWeightedDecisionEdit();
 
   const nextStep = () =>
@@ -469,7 +475,7 @@ export function useWeightedDecisionEdit(presetValues?: IWeightedDecisionItem) {
 
 // ====================================================== //
 
-export function useWeightedDecisionReducer() {
+export function useWeightedDecisionReducer(): IUseDecisionReducer {
   const dispatch = useDispatch<AppDispatch>();
   const weightedDecisionLocalData = useSelector(selectWeightedDecision);
 
@@ -488,7 +494,10 @@ export function useWeightedDecisionReducer() {
     },
   };
 
-  return { weightedDecisionLocalData, weightedDecisionActions };
+  return {
+    decisionLocalData: weightedDecisionLocalData,
+    decisionActions: weightedDecisionActions,
+  };
 }
 
 // ====================================================== //

@@ -1,10 +1,12 @@
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { Choice } from "../../common/domains/domains";
+import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import {
   IChoice,
   IDecision,
   IDecisionReducer,
+  IUseDecisionReducer,
   pushQuery,
 } from "../../common/types/decision-types";
 import { AppDispatch } from "../../redux/store";
@@ -21,8 +23,10 @@ import { IRandomDecisionItem } from "./randomDecision-types";
 
 export default function useRandomDecision() {
   const router = useRouter();
-  const { randomDecisionLocalData, randomDecisionActions } =
-    useRandomDecisionReducer();
+  const {
+    decisionLocalData: randomDecisionLocalData,
+    decisionActions: randomDecisionActions,
+  } = useDecisionGenerics("random");
 
   const createHandlers = {
     async onSubmitCreate(value: IDecision) {
@@ -80,7 +84,7 @@ export default function useRandomDecision() {
   return { createHandlers, editHandlers };
 }
 
-export function useRandomDecisionReducer() {
+export function useRandomDecisionReducer(): IUseDecisionReducer {
   const dispatch = useDispatch<AppDispatch>();
   const randomDecisionLocalData = useSelector(selectRandomDecision);
 
@@ -99,5 +103,8 @@ export function useRandomDecisionReducer() {
     },
   };
 
-  return { randomDecisionLocalData, randomDecisionActions };
+  return {
+    decisionLocalData: randomDecisionLocalData,
+    decisionActions: randomDecisionActions,
+  };
 }

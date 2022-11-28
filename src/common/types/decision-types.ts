@@ -51,3 +51,8 @@ export type TDecisionReducerState = {
 };
 
 export type DecisionTypes = "random" | "conditional" | "weighted" | "error";
+
+export interface IUseDecisionReducer {
+  decisionLocalData: IDecision[];
+  decisionActions: IDecisionReducer<IDecision>;
+}

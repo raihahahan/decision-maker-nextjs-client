@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import InputLayout from "../../common/components/inputLayout";
+import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import { IFinalResult } from "../../common/types/decision-types";
 import { IndexGetList } from "../index/index-components";
 import IndexLayout from "../index/indexLayout";
@@ -10,7 +11,6 @@ import {
   WeightedDecisionEditForm,
   WeightedInputForm,
 } from "./weightedDecision-components";
-import { useWeightedDecisionReducer } from "./weightedDecision-hooks";
 import {
   IWeightedDecisionItem,
   IWeightedInputItem,
@@ -58,8 +58,10 @@ export function WeightedDecisionIndexContents({
 }: {
   res: IWeightedDecisionItem[];
 }) {
-  const { weightedDecisionActions, weightedDecisionLocalData } =
-    useWeightedDecisionReducer();
+  const {
+    decisionActions: weightedDecisionActions,
+    decisionLocalData: weightedDecisionLocalData,
+  } = useDecisionGenerics("weighted");
   useEffect(() => {
     weightedDecisionActions.set(res);
   }, []);

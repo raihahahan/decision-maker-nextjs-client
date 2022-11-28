@@ -1,9 +1,7 @@
-import { useMantineTheme } from "@mantine/core";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import useGenerics from "../../common/hooks/useGenerics";
+import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import { DecisionTypes, IDecision } from "../../common/types/decision-types";
-import { DecisionTypeItems } from "../../common/utils/globals";
 import { TUseIndexList } from "./index-types";
 
 export default function useIndexList(
@@ -13,7 +11,7 @@ export default function useIndexList(
   const [selected, setSelected] = useState<IDecision[]>([]);
   const router = useRouter();
 
-  const { decisionActions, decisionApi } = useGenerics(type);
+  const { decisionActions, decisionApi } = useDecisionGenerics(type);
 
   const buttonHandlers = {
     onClick(item: IDecision) {
@@ -46,6 +44,13 @@ export default function useIndexList(
     },
     onClickAdd() {
       router.push(`/${type}/create`);
+    },
+    onClickEditInput(item: IDecision) {
+      router.push({ pathname: `/${type}/${item.id}/input` });
+      this.onClickEdit(item);
+    },
+    onClickResult(item: IDecision) {
+      router.push(`/${type}/${item.id}/result`);
     },
   };
 
@@ -89,14 +94,14 @@ export function useIndexTable(type: DecisionTypes, res: IDecision[]) {
 
 export function useIndexPagination(type: DecisionTypes) {
   const router = useRouter();
-  const { decisionApi, reducerData } = useGenerics(type);
+  const { decisionApi, decisionLocalData } = useDecisionGenerics(type);
   const [totalPages, setTotalPages] = useState<number>(0);
 
   useEffect(() => {
     decisionApi
       ?.totalPages()
       .then((i) => (typeof i == "number" ? setTotalPages(i) : null));
-  }, [, reducerData]);
+  }, [, decisionLocalData]);
 
   const initialPage = +(router.query?.pageNum as string)
     ? +(router.query?.pageNum as string)
@@ -117,7 +122,7 @@ export function useIndexPagination(type: DecisionTypes) {
 }
 
 export function useIndexQueryListener(type: DecisionTypes): void {
-  const { decisionActions, decisionApi } = useGenerics(type);
+  const { decisionActions, decisionApi } = useDecisionGenerics(type);
   const router = useRouter();
 
   useEffect(() => {

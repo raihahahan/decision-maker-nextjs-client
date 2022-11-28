@@ -7,9 +7,9 @@ import {
 import { IRandomDecisionItem } from "./randomDecision-types";
 import { IndexGetList } from "../index/index-components";
 import { useEffect } from "react";
-import { useRandomDecisionReducer } from "./randomDecision-hooks";
 import { IFinalResult } from "../../common/types/decision-types";
 import ResultContents from "../result/result-contents";
+import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 
 export default function RandomDecisionCreateContents() {
   return (
@@ -40,8 +40,10 @@ export function RandomDecisionIndexContents({
 }: {
   res: IRandomDecisionItem[];
 }) {
-  const { randomDecisionActions, randomDecisionLocalData } =
-    useRandomDecisionReducer();
+  const {
+    decisionActions: randomDecisionActions,
+    decisionLocalData: randomDecisionLocalData,
+  } = useDecisionGenerics("random");
   useEffect(() => {
     randomDecisionActions.set(res);
   }, []);
