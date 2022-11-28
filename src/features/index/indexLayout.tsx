@@ -17,6 +17,7 @@ export default function IndexLayout({
         alignItems: "center",
         flexDirection: "column",
         paddingTop: 20,
+        margin: 20,
       }}
     >
       {children}
