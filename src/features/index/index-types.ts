@@ -8,6 +8,8 @@ export interface TUseIndexList {
     onClickMasterRemove(): void;
     onClickEdit(item: IDecision): void;
     onClickAdd(): void;
+    onClickEditInput(item: IDecision): void;
+    onClickResult(item: IDecision): void;
   };
   selectedHandlers: {
     selected: IDecision[];

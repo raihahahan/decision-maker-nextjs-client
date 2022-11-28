@@ -11,7 +11,6 @@ import {
   ActionIcon,
   Menu,
 } from "@mantine/core";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import {
   FiDelete,
@@ -356,6 +355,32 @@ function TableDeleteIcon({ onClick }: TButtonProps) {
   );
 }
 
+function TableEditInputIcon({ onClick }: TButtonProps) {
+  const { siteColors } = useTheme();
+  return (
+    <ActionIcon onClick={onClick}>
+      <FiPenTool
+        style={{
+          color: siteColors.text.primary,
+        }}
+      />
+    </ActionIcon>
+  );
+}
+
+function TableResultIcon({ onClick }: TButtonProps) {
+  const { siteColors } = useTheme();
+  return (
+    <ActionIcon onClick={onClick}>
+      <FiEye
+        style={{
+          color: siteColors.text.primary,
+        }}
+      />
+    </ActionIcon>
+  );
+}
+
 function TableRows({
   res,
   indexVarList,
@@ -369,6 +394,7 @@ function TableRows({
     indexVarList;
   const { sm } = useGlobalMediaQuery();
   const { siteColors } = useTheme();
+  const router = useRouter();
   return (
     <>
       {res.map((element, index) => {
@@ -411,23 +437,15 @@ function TableRows({
             </td>
             {type != "random" && (
               <td>
-                <Link href={`/${type}/${element.id}/input`}>
-                  <FiPenTool
-                    style={{
-                      color: siteColors.text.primary,
-                    }}
-                  />
-                </Link>
+                <TableEditInputIcon
+                  onClick={() => buttonHandlers.onClickEditInput(element)}
+                />
               </td>
             )}
             <td>
-              <Link href={`/${type}/${element.id}/result`}>
-                <FiEye
-                  style={{
-                    color: siteColors.text.primary,
-                  }}
-                />
-              </Link>
+              <TableResultIcon
+                onClick={() => buttonHandlers.onClickResult(element)}
+              />
             </td>
           </tr>
         );
