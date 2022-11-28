@@ -2,6 +2,7 @@ import axios from "axios";
 import DAL from "../../common/domains/DAL";
 import DecisionDAL from "../../common/domains/DecisionDAL";
 import { IChoice } from "../../common/types/decision-types";
+import CONSTANTS from "../../common/utils/constants";
 import { API_URL } from "../../common/utils/globals";
 import {
   ICriteria,
@@ -13,7 +14,7 @@ import {
 
 class WeightedDecisionAPI extends DecisionDAL<IWeightedDecisionItem> {
   constructor() {
-    super(`${API_URL}/api/WeightedDecisionItems`);
+    super(`${API_URL}/api/${CONSTANTS.WEIGHTED.DECISION_ITEM}`);
   }
 
   public override async post(
@@ -38,31 +39,31 @@ class WeightedDecisionAPI extends DecisionDAL<IWeightedDecisionItem> {
 
 class WeightedInputAPI extends DAL<IWeightedInputItem> {
   constructor() {
-    super(`${API_URL}/api/WeightedInputItems`);
+    super(`${API_URL}/api/${CONSTANTS.WEIGHTED.INPUT_ITEMS}`);
   }
 }
 
 class WeightedInputsAPI extends DAL<IWeightedInput> {
   constructor() {
-    super(`${API_URL}/api/WeightedInputs`);
+    super(`${API_URL}/api/${CONSTANTS.WEIGHTED.INPUTS}`);
   }
 }
 
 class WeightedChoiceApi extends DAL<IChoice> {
   constructor() {
-    super(`${API_URL}/api/WeightedChoices`);
+    super(`${API_URL}/api/${CONSTANTS.WEIGHTED.CHOICES}`);
   }
 }
 
 class WeightedCriteriaApi extends DAL<ICriteria> {
   constructor() {
-    super(`${API_URL}/api/WeightedCriterias`);
+    super(`${API_URL}/api/${CONSTANTS.WEIGHTED.CRITERIAS}`);
   }
 }
 
 class WeightedCriteriaInputApi extends DAL<ICriteriaInput> {
   constructor() {
-    super(`${API_URL}/api/WeightedCriteriaInputs`);
+    super(`${API_URL}/api/${CONSTANTS.WEIGHTED.CRITERIA_INPUTS}`);
   }
 
   public async editCriteriaName(
