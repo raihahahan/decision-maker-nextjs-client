@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import InputLayout from "../../common/components/inputLayout";
+import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import ChoicesForm from "../choiceForm/choiceForm-components";
 import useChoiceForm from "../choiceForm/choiceForm-hooks";
 import { IndexGetList } from "../index/index-components";
@@ -14,6 +16,7 @@ export default function ConditionalDecisionCreateContents() {
     initialConditionalValues,
     initialConditionalValidate
   );
+
   return (
     <InputLayout type="conditional">
       <ChoicesForm
@@ -29,9 +32,16 @@ export function ConditionalDecisionIndexContents({
 }: {
   res: IConditionalDecisionItem[];
 }) {
+  const { decisionActions, decisionLocalData } =
+    useDecisionGenerics("conditional");
+
+  useEffect(() => {
+    decisionActions.set(res);
+  }, []);
+
   return (
     <IndexLayout type="conditional">
-      <IndexGetList res={res} type="conditional" />
+      <IndexGetList res={decisionLocalData} type="conditional" />
     </IndexLayout>
   );
 }

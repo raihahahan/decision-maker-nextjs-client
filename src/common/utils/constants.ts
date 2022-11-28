@@ -13,6 +13,7 @@ const CONSTANTS = {
   },
   CONDITIONAL: {
     DECISION_ITEM: "ConditionalDecisionItems",
+    CHOICES: "ConditionalChoices",
   },
 };
 
