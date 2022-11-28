@@ -1,7 +1,23 @@
-export default function Error({ statusCode }: { statusCode?: number }) {
+export default function Error({
+  statusCode,
+  error,
+}: {
+  statusCode?: number;
+  error?: any;
+}) {
   if (typeof statusCode == "number") {
-    return <h1>Error with status code {statusCode}</h1>;
+    return (
+      <div>
+        <h1>Error with status code {statusCode}</h1>
+        <p>{error}</p>
+      </div>
+    );
   } else {
-    return <h1>Sorry! The requested page is not found.</h1>;
+    return (
+      <div>
+        <h1>Sorry! The requested page is not found.</h1>
+        <p>{error}</p>
+      </div>
+    );
   }
 }
