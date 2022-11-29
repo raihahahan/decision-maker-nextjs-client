@@ -15,6 +15,10 @@ import {
 import { AppDispatch } from "../../redux/store";
 import useChoiceForm from "../choiceForm/choiceForm-hooks";
 import {
+  TUseMultiFormStepperReturnType,
+  useFormSteppersParams,
+} from "../multiStepForm/multiStepForm-types";
+import {
   Criteria,
   initialWeightedValidate,
   initialWeightedValues,
@@ -267,16 +271,10 @@ export function useCriteriaForm(
 // ====================================================== //
 
 export function useWeightedFormSteppers(
-  active: number,
-  setActive: React.Dispatch<React.SetStateAction<number>>,
-  form: UseFormReturnType<
-    IWeightedDecisionItem,
-    (values: IWeightedDecisionItem) => IWeightedDecisionItem
-  >,
-  id: number,
-  TOTAL: number,
-  setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>
-): useWeightedFormSteppersReturnType {
+  params: useFormSteppersParams<IWeightedDecisionItem>
+): TUseMultiFormStepperReturnType {
+  const [active, setActive, form, id, TOTAL, setUnsavedChanges] = params;
+
   const router = useRouter();
   const { decisionActions: weightedDecisionActions } =
     useDecisionGenerics("weighted");

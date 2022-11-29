@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  Stepper,
   Button,
   Group,
   Slider,
@@ -9,17 +8,13 @@ import {
   Pagination,
   Select,
 } from "@mantine/core";
-import ChoicesForm, {
-  AddButton,
-  RemoveButton,
-} from "../choiceForm/choiceForm-components";
+import { AddButton, RemoveButton } from "../choiceForm/choiceForm-components";
 import { UseFormReturnType } from "@mantine/form";
 import {
   ICriteria,
   ICriteriaInput,
   IExtraFormConfig,
   IWeightedDecisionItem,
-  IWeightedInput,
   IWeightedInputItem,
 } from "./weightedDecision-types";
 import useTheme from "../theme/theme-hooks";
@@ -35,9 +30,9 @@ import {
 } from "./weightedDecision-hooks";
 import { formHookReturnType } from "../choiceForm/choiceForm-types";
 import usePreventExitForm from "../../common/hooks/usePreventExitForm";
-import { useRouter } from "next/router";
-
-const TOTAL = 2;
+import MultiStepForm from "../multiStepForm/multiStepForm-components";
+import { weightedStepperData } from "./weightedDecision-data";
+import { IMultiStepFormItem } from "../multiStepForm/multiStepForm-types";
 
 export function WeightedMainForm({
   activeHandlers,
@@ -53,38 +48,38 @@ export function WeightedMainForm({
   setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>;
   presetValues?: IWeightedDecisionItem;
 }) {
-  const { active, setActive } = activeHandlers;
-  const steppers = (
-    <WeightedFormSteppers
-      active={active}
-      setActive={setActive}
-      form={weightedForm.form}
-      id={presetValues && presetValues.id ? presetValues.id : -1}
-      setUnsavedChanges={setUnsavedChanges}
-    />
-  );
+  const pages: IMultiStepFormItem[] = [
+    {
+      id: 0,
+      element: (
+        <CriteriaForm
+          form={weightedForm.form}
+          extraFormHelpers={weightedForm.formHelpers as any}
+        />
+      ),
+    },
+  ];
+
+  const useMultiFormStepper = useWeightedFormSteppers([
+    activeHandlers.active,
+    activeHandlers.setActive,
+    weightedForm.form as any,
+    presetValues && presetValues.id ? presetValues.id : -1,
+    pages.length + 1,
+    setUnsavedChanges,
+  ]);
 
   return (
-    <div
-      style={{
-        padding: 20,
-        width: "90vw",
-        maxWidth: breakpoints.sm + 10,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      {steppers}
-      <br />
-      <CurrentPage
-        active={active}
-        weightedForm={weightedForm}
-        presetValues={presetValues}
-      />
-      <br />
-      {steppers}
-    </div>
+    <MultiStepForm
+      activeHandlers={activeHandlers}
+      form={weightedForm}
+      setUnsavedChanges={setUnsavedChanges}
+      presetValues={presetValues}
+      stepperData={weightedStepperData}
+      type="weighted"
+      pages={pages}
+      useMultiFormStepper={useMultiFormStepper}
+    />
   );
 }
 
@@ -114,36 +109,6 @@ export function WeightedDecisionEditForm({
       setUnsavedChanges={setUnsavedChanges}
       presetValues={presetValues}
     />
-  );
-}
-
-export function CurrentPage({
-  active,
-  weightedForm,
-  presetValues,
-}: {
-  active: number;
-  weightedForm: formHookReturnType<IWeightedDecisionItem>;
-  presetValues?: IWeightedDecisionItem;
-}) {
-  return (
-    <div style={{ minHeight: "50vh" }}>
-      {active == 0 ? (
-        <ChoicesForm
-          useChoiceForm={weightedForm}
-          onSubmit={() => alert("TODO")}
-          hideDecide
-          presetData={presetValues}
-        />
-      ) : active == 1 ? (
-        <CriteriaForm
-          form={weightedForm.form}
-          extraFormHelpers={weightedForm.formHelpers as any}
-        />
-      ) : (
-        <div>error</div>
-      )}
-    </div>
   );
 }
 
@@ -334,86 +299,6 @@ export function WeightedInputForm({
       {pagination}
       {submitButton}
     </div>
-  );
-}
-
-function WeightedFormSteppers({
-  active,
-  setActive,
-  form,
-  id,
-  setUnsavedChanges,
-}: {
-  active: number;
-  setActive: React.Dispatch<React.SetStateAction<number>>;
-  form: UseFormReturnType<
-    IWeightedDecisionItem,
-    (values: IWeightedDecisionItem) => IWeightedDecisionItem
-  >;
-  id: number;
-  setUnsavedChanges: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  const {
-    rightButtonType,
-    rightButtonDisabled,
-    leftButtonDisabled,
-    onClickRightButton,
-    onClickLeftButton,
-  } = useWeightedFormSteppers(
-    active,
-    setActive,
-    form,
-    id,
-    TOTAL,
-    setUnsavedChanges
-  );
-  const { siteColors } = useTheme();
-
-  return (
-    <>
-      <Stepper active={active} onStepClick={setActive} breakpoint="sm">
-        <Stepper.Step
-          disabled
-          label="Choices"
-          description="Create decision and choices"
-          style={{ color: siteColors.text.primary }}
-        >
-          Step 1: Create decision and choices
-        </Stepper.Step>
-        <Stepper.Step
-          disabled
-          label="Criteria"
-          description="Create criteria that affect your decision making"
-          style={{ color: siteColors.text.primary }}
-        >
-          Step 2: Create criteria that affect your decision making (hint: 0
-          [least important] - 100 [most important])
-        </Stepper.Step>
-        <Stepper.Completed>
-          Completed, click back button to get to previous step
-        </Stepper.Completed>
-      </Stepper>
-
-      <Group position="center" mt="xl">
-        <Button
-          disabled={leftButtonDisabled}
-          variant="default"
-          size="md"
-          onClick={onClickLeftButton}
-        >
-          Back
-        </Button>
-
-        <Button
-          disabled={rightButtonDisabled}
-          type={rightButtonType}
-          size="md"
-          onClick={onClickRightButton}
-        >
-          Next
-        </Button>
-      </Group>
-    </>
   );
 }
 

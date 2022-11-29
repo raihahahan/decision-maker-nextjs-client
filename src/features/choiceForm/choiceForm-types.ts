@@ -10,7 +10,7 @@ export type TFormHelpers = {
   editChoice(id: number, value: IChoice, index: number): void;
 };
 
-export type formHookReturnType<T> = {
+export type formHookReturnType<T extends IDecision> = {
   form: UseFormReturnType<T, (values: T) => T>;
   formHelpers: TFormHelpers;
 };

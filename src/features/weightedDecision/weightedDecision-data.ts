@@ -1,9 +1,6 @@
 import { InitialValidate, InitialValues } from "../choiceForm/choiceForm-data";
-import {
-  ICriteria,
-  IWeightedDecisionItem,
-  IWeightedInput,
-} from "./weightedDecision-types";
+import { IStepperItem } from "../multiStepForm/multiStepForm-types";
+import { ICriteria, IWeightedDecisionItem } from "./weightedDecision-types";
 
 export const initialWeightedValues: IWeightedDecisionItem = {
   ...InitialValues,
@@ -50,3 +47,19 @@ export class Criteria implements ICriteria {
     this.weight = weight;
   }
 }
+
+export const weightedStepperData: IStepperItem[] = [
+  {
+    id: 0,
+    display: "Step 1: Create decision and choices",
+    label: "Choices",
+    description: "Create decision and choices",
+  },
+  {
+    id: 1,
+    display:
+      "Create criteria that affect your decision making (hint: 0 [least important] - 100 [most important])",
+    label: "Criteria",
+    description: "Create criteria that affect your decision making",
+  },
+];

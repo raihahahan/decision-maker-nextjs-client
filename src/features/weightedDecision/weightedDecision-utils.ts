@@ -77,6 +77,7 @@ export function weightedDecisionCreateUnsavedListener(
 ): boolean {
   return (
     form.values.name.trim().length > 0 ||
-    form.values.choices.filter((i) => i.name.trim().length > 0).length > 0
+    form.values.choices.filter((i) => i.name.trim().length > 0).length > 0 ||
+    form.values.criteriaList.filter((i) => i.name.trim().length > 0).length > 0
   );
 }
