@@ -2,12 +2,15 @@ import { IDecision } from "../../common/types/decision-types";
 
 export interface ICondition {
   id?: number;
-  innerItem: {
-    id?: number;
-    choiceId: number;
-  };
+  name: string;
+  include: IInnerItem[];
+  exclude: IInnerItem[];
 }
 
+export interface IInnerItem {
+  id?: number;
+  choiceId: number;
+}
 export interface IConditionalInput extends ICondition {
   value: boolean;
 }
