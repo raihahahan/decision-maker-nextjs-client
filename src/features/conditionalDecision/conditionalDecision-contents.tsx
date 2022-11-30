@@ -8,6 +8,7 @@ import IndexLayout from "../index/indexLayout";
 import ResultContents from "../result/result-contents";
 import {
   ConditionalDecisionCreateForm,
+  ConditionalDecisionEditForm,
   ConditionalInputForm,
 } from "./conditionalDecision-components";
 import {
@@ -65,4 +66,16 @@ export function ConditionalDecisionResultContents({
   }, []);
 
   return <ResultContents data={res} type="conditional" />;
+}
+
+export function ConditionalDecisionEditContents({
+  res,
+}: {
+  res: IConditionalDecisionItem;
+}) {
+  return (
+    <InputLayout type="conditional">
+      <ConditionalDecisionEditForm res={res} />
+    </InputLayout>
+  );
 }

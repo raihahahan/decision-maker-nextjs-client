@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import usePreventExitForm from "../../common/hooks/usePreventExitForm";
 import {
+  IChoice,
+  IDecision,
   IDecisionReducer,
   IUseDecisionReducer,
 } from "../../common/types/decision-types";
@@ -28,13 +30,18 @@ import {
   IConditionalDecisionItem,
   IConditionalInput,
   IConditionalInputItem,
+  IExtraFormConfigCondition,
   IInnerItem,
 } from "./conditionalDecision-types";
 import { conditionalDecisionCreateUnsavedListener } from "./conditionalDecision-utils";
-import {
+import conditionalDecisionApi, {
+  conditionalChoiceApi,
+  conditionalConditionsApi,
   conditionalInputItemsApi,
   conditionalInputsApi,
 } from "./conditionalDecision-api";
+import { IExtraFormConfig } from "../weightedDecision/weightedDecision-types";
+import { Choice } from "../../common/domains/domains";
 
 export function useConditionalDecisionReducer(): IUseDecisionReducer {
   const dispatch = useDispatch<AppDispatch>();
@@ -69,7 +76,6 @@ export function useConditionalDecisionSteppers(
   const router = useRouter();
 
   const { decisionActions, decisionApi } = useDecisionGenerics("conditional");
-  const editHandlers = {};
 
   const nextStep = () =>
     setActive((current) => (current < TOTAL + 1 ? current + 1 : current));
@@ -153,12 +159,107 @@ export function useConditionalDecisionCreate() {
   };
 }
 
+export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
+  const [active, setActive] = useState(0);
+  const [unsavedChanges, setUnsavedChanges] = useState(true);
+
+  const editHandlers: IExtraFormConfigCondition<IConditionalDecisionItem> = {
+    async onEditName(
+      decisionId: number,
+      name: string,
+      curr: IConditionalDecisionItem
+    ) {
+      curr.name = name;
+      curr.updatedAt = new Date().toISOString();
+      await decisionApi.put<IConditionalDecisionItem>(decisionId, curr);
+    },
+    async onAddChoice(decisionId: number) {
+      const newChoice = new Choice("", undefined, decisionId);
+      const res = await conditionalChoiceApi.post(newChoice);
+      return res.id as number;
+    },
+
+    async onRemoveChoice(id: number) {
+      await conditionalChoiceApi.delete(id);
+    },
+
+    async onEditChoice(id: number, value: IChoice) {
+      await conditionalChoiceApi.put(id, value);
+    },
+
+    async onSubmitEdit(value: IDecision) {
+      value.updatedAt = new Date().toISOString();
+      const id = value.id;
+      await decisionApi.put(id as number, value);
+      decisionActions.update(id as number, value);
+      router.push({
+        pathname: `/conditional/${id}/result`,
+      });
+    },
+
+    async onEditCondition(id: number, value: ICondition) {
+      await conditionalConditionsApi.put(id, value);
+    },
+    async onRemoveCondition(id: number) {
+      await conditionalConditionsApi.delete(id);
+    },
+    async onAddCondition(decisionId: number) {
+      const newCondition = {
+        decisionId,
+        name: "",
+        include: [],
+        exclude: [],
+      } as ICondition;
+      const res = await conditionalConditionsApi.post(newCondition);
+      return res.id as number;
+    },
+  };
+
+  const conditionalForm = useChoiceForm<IConditionalDecisionItem>(
+    res,
+    initialConditionalValidate,
+    setUnsavedChanges,
+    editHandlers
+  );
+
+  conditionalForm.formHelpers = {
+    ...conditionalForm.formHelpers,
+    onEditCondition: editHandlers.onEditCondition,
+    onRemoveCondition: editHandlers.onRemoveCondition,
+    onAddCondition: editHandlers.onAddCondition,
+  } as any;
+
+  const { decisionActions, decisionApi } = useDecisionGenerics("conditional");
+
+  const router = useRouter();
+
+  useEffect(() => {
+    setUnsavedChanges(
+      conditionalDecisionCreateUnsavedListener(conditionalForm.form)
+    );
+  }, [conditionalForm.form.values, active]);
+
+  usePreventExitForm(unsavedChanges);
+
+  return {
+    activeHandlers: { active, setActive },
+    conditionalForm,
+    setUnsavedChanges,
+    editHandlers,
+  };
+}
+
 export function useCondtionalDecisionConditionsForm(
   form: UseFormReturnType<
     IConditionalDecisionItem,
     (values: IConditionalDecisionItem) => IConditionalDecisionItem
-  >
+  >,
+  formHelpers: IExtraFormConfigCondition<IConditionalDecisionItem>
 ) {
+  const router = useRouter();
+  const decisionId = router.query.id as string;
+  const isEdit = typeof decisionId == "string";
+
   const isPressed = (
     conditionIndex: number,
     refId: string,
@@ -208,6 +309,7 @@ export function useCondtionalDecisionConditionsForm(
         name: "",
         include: [],
         exclude: [],
+        decisionId: -1,
       } as ICondition);
     },
     onEditConditionName(

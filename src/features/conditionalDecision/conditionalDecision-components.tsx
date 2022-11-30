@@ -14,6 +14,7 @@ import useTheme from "../theme/theme-hooks";
 import { conditionalStepperData } from "./conditionalDecision-data";
 import {
   useConditionalDecisionCreate,
+  useConditionalDecisionEdit,
   useConditionalDecisionSteppers,
   useConditionalInputEditForm,
   useConditionalInputForm,
@@ -23,6 +24,7 @@ import {
   IConditionalDecisionItem,
   IConditionalInput,
   IConditionalInputItem,
+  IExtraFormConfigCondition,
 } from "./conditionalDecision-types";
 
 export function ConditionalMainForm({
@@ -32,7 +34,15 @@ export function ConditionalMainForm({
   presetValues,
 }: IMultiStepFormProps<IConditionalDecisionItem>) {
   const pages: IMultiStepFormItem[] = [
-    { id: 0, element: <ConditionsForm form={form.form} /> },
+    {
+      id: 0,
+      element: (
+        <ConditionsForm
+          form={form.form}
+          formHelpers={form.formHelpers as any}
+        />
+      ),
+    },
   ];
 
   const useMultiFormStepper = useConditionalDecisionSteppers([
@@ -60,15 +70,19 @@ export function ConditionalMainForm({
 
 export function ConditionsForm({
   form,
+  formHelpers,
 }: {
   form: UseFormReturnType<
     IConditionalDecisionItem,
     (values: IConditionalDecisionItem) => IConditionalDecisionItem
   >;
+  formHelpers: IExtraFormConfigCondition<IConditionalDecisionItem>;
 }) {
   const { siteColors } = useTheme();
-  const { buttonHandlers, isPressed } =
-    useCondtionalDecisionConditionsForm(form);
+  const { buttonHandlers, isPressed } = useCondtionalDecisionConditionsForm(
+    form,
+    formHelpers
+  );
   const {
     onAddCondition,
     onEditConditionName,
@@ -186,6 +200,23 @@ export function ConditionalDecisionCreateForm() {
       activeHandlers={activeHandlers}
       form={conditionalForm}
       setUnsavedChanges={setUnsavedChanges}
+    />
+  );
+}
+
+export function ConditionalDecisionEditForm({
+  res,
+}: {
+  res: IConditionalDecisionItem;
+}) {
+  const { activeHandlers, conditionalForm, setUnsavedChanges, editHandlers } =
+    useConditionalDecisionEdit(res);
+  return (
+    <ConditionalMainForm
+      activeHandlers={activeHandlers}
+      form={conditionalForm}
+      setUnsavedChanges={setUnsavedChanges}
+      presetValues={res}
     />
   );
 }
