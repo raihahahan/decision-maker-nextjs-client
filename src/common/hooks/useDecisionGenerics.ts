@@ -1,3 +1,4 @@
+import conditionalDecisionApi from "../../features/conditionalDecision/conditionalDecision-api";
 import { useConditionalDecisionReducer } from "../../features/conditionalDecision/conditionalDecision-hooks";
 import randomDecisionApi from "../../features/randomDecision/randomDecision-api";
 import { useRandomDecisionReducer } from "../../features/randomDecision/randomDecision-hooks";
@@ -20,6 +21,8 @@ export default function useDecisionGenerics(type: DecisionTypes) {
       ? randomDecisionApi
       : type == "weighted"
       ? weightedDeicisonApi
+      : type == "conditional"
+      ? conditionalDecisionApi
       : undefined;
 
   return { decisionApi, decisionActions, decisionLocalData };
