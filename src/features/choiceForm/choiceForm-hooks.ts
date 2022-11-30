@@ -7,6 +7,7 @@ import { Choice } from "../../common/domains/domains";
 import { IDecision } from "../../common/types/decision-types";
 import { TExtraFormConfig, TFormHelpers } from "./choiceForm-types";
 import { formUnsaveChangesListener } from "./choiceForm-utils";
+import { v4 as uuidv4 } from "uuid";
 
 export default function useChoiceForm<T extends IDecision>(
   initialValues: T,
@@ -47,6 +48,7 @@ export default function useChoiceForm<T extends IDecision>(
         form.insertListItem("choices", {
           id: changedID ?? form.values.choices.length,
           name: "",
+          refId: uuidv4(),
         });
       } else {
         alert("Maximum 100 choices");
