@@ -7,6 +7,6 @@ export default function useResult(type: DecisionTypes) {
     router.push({ pathname: `/${type}/${router.query.id}` });
   const onClickCreateNew = () => router.push({ pathname: `/${type}/create` });
   const onClickEditInput = () =>
-    router.push({ pathname: `/weighted/${router.query.id}/input` });
+    router.push({ pathname: `/${type}/${router.query.id}/input` });
   return { onClickEdit, onClickCreateNew, onClickEditInput };
 }
