@@ -1,4 +1,5 @@
 import { IChoice, IDecision } from "../../common/types/decision-types";
+import { v4 as uuidv4 } from "uuid";
 
 export const InitialValues: IDecision = {
   name: "",
@@ -6,10 +7,12 @@ export const InitialValues: IDecision = {
     {
       id: 0,
       name: "",
+      refId: uuidv4(),
     },
     {
       id: 1,
       name: "",
+      refId: uuidv4(),
     },
   ],
 };
