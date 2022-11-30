@@ -4,6 +4,7 @@ import { IChoice } from "../../common/types/decision-types";
 import CONSTANTS from "../../common/utils/constants";
 import { API_URL } from "../../common/utils/globals";
 import {
+  ICondition,
   IConditionalDecisionItem,
   IConditionalInput,
   IConditionalInputItem,
@@ -33,9 +34,21 @@ class ConditionalInputsAPI extends DAL<IConditionalInput> {
   }
 }
 
+class ConditionalConditionsAPI extends DAL<ICondition> {
+  constructor() {
+    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.CONDITIONS}`);
+  }
+}
+
 const conditionalChoiceApi = new ConditionalChoiceAPI();
 const conditionalInputItemsApi = new ConditionalInputItemsAPI();
 const conditionalInputsApi = new ConditionalInputsAPI();
+const conditionalConditionsApi = new ConditionalConditionsAPI();
 
 export default new ConditionalDecisionAPI();
-export { conditionalChoiceApi, conditionalInputItemsApi, conditionalInputsApi };
+export {
+  conditionalChoiceApi,
+  conditionalInputItemsApi,
+  conditionalInputsApi,
+  conditionalConditionsApi,
+};

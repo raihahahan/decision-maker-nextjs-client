@@ -16,6 +16,7 @@ const CONSTANTS = {
     CHOICES: "ConditionalChoices",
     INPUT_ITEMS: "ConditionalInputItems",
     INPUTS: "ConditionalInput",
+    CONDITIONS: "ConditionalConditions",
   },
 };
 
