@@ -23,7 +23,7 @@ export default function useDecisionGenerics(type: DecisionTypes) {
       ? weightedDeicisonApi
       : type == "conditional"
       ? conditionalDecisionApi
-      : undefined;
+      : randomDecisionApi;
 
   return { decisionApi, decisionActions, decisionLocalData };
 }
