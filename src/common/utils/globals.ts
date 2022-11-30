@@ -1,4 +1,4 @@
-import { ButtonProps, MANTINE_COLORS } from "@mantine/core";
+import { ButtonProps } from "@mantine/core";
 import { routes } from "../../features/site/site-types";
 import { DecisionTypes } from "../types/decision-types";
 
