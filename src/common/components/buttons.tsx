@@ -30,3 +30,17 @@ export default function FeatureButton({
     </Button>
   );
 }
+
+export function SubmitButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Button
+      style={{ margin: 20 }}
+      color="green"
+      size="lg"
+      type="submit"
+      onClick={onClick}
+    >
+      Submit
+    </Button>
+  );
+}

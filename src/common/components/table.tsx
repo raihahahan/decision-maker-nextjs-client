@@ -24,6 +24,7 @@ export function MyTable({
         backgroundColor: siteColors.header,
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
+        minWidth: "80vw",
       }}
       horizontalSpacing={sm ? "md" : "xl"}
       verticalSpacing="md"
