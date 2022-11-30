@@ -17,7 +17,7 @@ export const InitialValues: IDecision = {
   ],
 };
 
-export const InitialValidate = {
+export const InitialValidate: any = {
   name: (val: string) => (val.length > 0 ? null : "Invalid decision name."),
   choices: (val: IChoice[]) => {
     let copy = [...val];
