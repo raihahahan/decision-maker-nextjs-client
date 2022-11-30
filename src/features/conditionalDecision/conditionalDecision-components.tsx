@@ -1,5 +1,7 @@
 import { Checkbox, Group, Text, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
+import { useState } from "react";
+import { SubmitButton } from "../../common/components/buttons";
 import { IChoice } from "../../common/types/decision-types";
 import { AddButton, RemoveButton } from "../choiceForm/choiceForm-components";
 import MultiStepForm from "../multiStepForm/multiStepForm-components";
@@ -13,9 +15,15 @@ import { conditionalStepperData } from "./conditionalDecision-data";
 import {
   useConditionalDecisionCreate,
   useConditionalDecisionSteppers,
+  useConditionalInputEditForm,
+  useConditionalInputForm,
   useCondtionalDecisionConditionsForm,
 } from "./conditionalDecision-hooks";
-import { IConditionalDecisionItem } from "./conditionalDecision-types";
+import {
+  IConditionalDecisionItem,
+  IConditionalInput,
+  IConditionalInputItem,
+} from "./conditionalDecision-types";
 
 export function ConditionalMainForm({
   activeHandlers,
@@ -59,7 +67,8 @@ export function ConditionsForm({
   >;
 }) {
   const { siteColors } = useTheme();
-  const { buttonHandlers } = useCondtionalDecisionConditionsForm(form);
+  const { buttonHandlers, isPressed } =
+    useCondtionalDecisionConditionsForm(form);
   const {
     onAddCondition,
     onEditConditionName,
@@ -109,24 +118,28 @@ export function ConditionsForm({
               </div>
               <h4>Include</h4>
               {form.values.choices.map((choice, includeChoiceIndex) => {
+                const refId = choice.refId as string;
                 return (
                   <ConditionCheckItem
+                    isPressed={isPressed(conditionIndex, refId, "include")}
                     key={includeChoiceIndex}
                     choice={choice}
                     onChange={() =>
-                      onToggleIncludeButton(conditionIndex, includeChoiceIndex)
+                      onToggleIncludeButton(conditionIndex, refId)
                     }
                   />
                 );
               })}
               <h4>Exclude</h4>
               {form.values.choices.map((choice, excludeChoiceIndex) => {
+                const refId = choice.refId as string;
                 return (
                   <ConditionCheckItem
+                    isPressed={isPressed(conditionIndex, refId, "exclude")}
                     key={excludeChoiceIndex}
                     choice={choice}
                     onChange={() =>
-                      onToggleExcludeButton(conditionIndex, excludeChoiceIndex)
+                      onToggleExcludeButton(conditionIndex, refId)
                     }
                   />
                 );
@@ -145,15 +158,21 @@ export function ConditionsForm({
 }
 
 function ConditionCheckItem({
+  isPressed,
   choice,
   onChange,
 }: {
+  isPressed: boolean;
   choice: IChoice;
   onChange: () => void;
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
-      <Checkbox onChange={onChange} style={{ marginRight: 10 }} />
+      <Checkbox
+        checked={isPressed}
+        onChange={onChange}
+        style={{ marginRight: 10 }}
+      />
       <Text>{choice.name}</Text>
     </div>
   );
@@ -168,5 +187,70 @@ export function ConditionalDecisionCreateForm() {
       form={conditionalForm}
       setUnsavedChanges={setUnsavedChanges}
     />
+  );
+}
+
+export function ConditionalInputForm({
+  res,
+  conditionalInput,
+}: {
+  res: IConditionalDecisionItem;
+  conditionalInput?: IConditionalInputItem;
+}) {
+  let finalInput: IConditionalInput[] = conditionalInput
+    ? conditionalInput.conditionalInputs
+    : res.conditions.map((item) => {
+        return { ...item, value: false };
+      });
+
+  const { buttonHandlers } = conditionalInput
+    ? useConditionalInputEditForm()
+    : useConditionalInputForm();
+
+  const [checkedState, setCheckedState] = useState<boolean[]>(
+    finalInput.map((i) => i.value)
+  );
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        margin: 10,
+        maxWidth: breakpoints.lg + 100,
+      }}
+    >
+      <>
+        <h1>Conditions</h1>
+        <h3>Tick the boxes for the conditions that are currently true.</h3>
+        {finalInput.map((item, index) => {
+          return (
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <Checkbox
+                checked={checkedState[index]}
+                onChange={() => {
+                  setCheckedState((i) =>
+                    i.map((j, _index) => {
+                      if (_index == index) j = !j;
+                      return j;
+                    })
+                  );
+                  if (!conditionalInput) {
+                    finalInput[index].value = !finalInput[index].value;
+                  } else {
+                    buttonHandlers.onClickCheck(item);
+                  }
+                }}
+                style={{ marginRight: 10 }}
+              />
+              <Text>{item.name}</Text>
+            </div>
+          );
+        })}
+        <SubmitButton
+          onClick={() => buttonHandlers.onClickSubmit(finalInput, res)}
+        />
+      </>
+    </div>
   );
 }

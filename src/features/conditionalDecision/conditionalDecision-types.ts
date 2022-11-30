@@ -9,7 +9,7 @@ export interface ICondition {
 
 export interface IInnerItem {
   id?: number;
-  choiceId: number;
+  choiceId: string;
 }
 export interface IConditionalInput extends ICondition {
   value: boolean;
@@ -17,4 +17,10 @@ export interface IConditionalInput extends ICondition {
 
 export interface IConditionalDecisionItem extends IDecision {
   conditions: ICondition[];
+}
+
+export interface IConditionalInputItem {
+  id?: number;
+  conditionalInputs: IConditionalInput[];
+  conditionalItemId: number;
 }

@@ -1,10 +1,19 @@
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import InputLayout from "../../common/components/inputLayout";
 import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
+import { IFinalResult } from "../../common/types/decision-types";
 import { IndexGetList } from "../index/index-components";
 import IndexLayout from "../index/indexLayout";
-import { ConditionalDecisionCreateForm } from "./conditionalDecision-components";
-import { IConditionalDecisionItem } from "./conditionalDecision-types";
+import ResultContents from "../result/result-contents";
+import {
+  ConditionalDecisionCreateForm,
+  ConditionalInputForm,
+} from "./conditionalDecision-components";
+import {
+  IConditionalDecisionItem,
+  IConditionalInputItem,
+} from "./conditionalDecision-types";
 
 export default function ConditionalDecisionCreateContents() {
   return (
@@ -12,6 +21,16 @@ export default function ConditionalDecisionCreateContents() {
       <ConditionalDecisionCreateForm />
     </InputLayout>
   );
+}
+
+export function ConditionalInputContents({
+  res,
+  conditionalInput,
+}: {
+  res: IConditionalDecisionItem;
+  conditionalInput?: IConditionalInputItem;
+}) {
+  return <ConditionalInputForm res={res} conditionalInput={conditionalInput} />;
 }
 
 export function ConditionalDecisionIndexContents({
@@ -31,4 +50,19 @@ export function ConditionalDecisionIndexContents({
       <IndexGetList res={decisionLocalData} type="conditional" />
     </IndexLayout>
   );
+}
+
+export function ConditionalDecisionResultContents({
+  res,
+}: {
+  res: IFinalResult | any;
+}) {
+  const router = useRouter();
+  useEffect(() => {
+    if (res == undefined || res?.status == 400) {
+      router.push({ pathname: `/conditional/${router.query.id}/input` });
+    }
+  }, []);
+
+  return <ResultContents data={res} type="conditional" />;
 }
