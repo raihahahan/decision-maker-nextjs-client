@@ -59,7 +59,7 @@ export function ResultList({
   const headers = <ResultListHeaders type={type} />;
   const rows = <ResultListRows resultData={resultData} type={type} />;
   return (
-    <div style={{ display: "flex", width: "50vw", flexDirection: "column" }}>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <TableTitleHeader
         type={type}
         disableCreate
