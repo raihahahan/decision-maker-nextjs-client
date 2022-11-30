@@ -1,3 +1,4 @@
+import conditionalDecisionApi from "../../features/conditionalDecision/conditionalDecision-api";
 import { ConditionalDecisionIndexContents } from "../../features/conditionalDecision/conditionalDecision-contents";
 import { IConditionalDecisionItem } from "../../features/conditionalDecision/conditionalDecision-types";
 
@@ -10,6 +11,6 @@ export default function ConditionalIndexPage({
 }
 
 export async function getServerSideProps() {
-  const res: IConditionalDecisionItem[] = [];
+  const res: IConditionalDecisionItem[] = await conditionalDecisionApi.get();
   return { props: { res } };
 }
