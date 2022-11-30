@@ -62,7 +62,7 @@ abstract class DAL<T> {
     }
   }
 
-  public async put(id: number, value: T): Promise<void> {
+  public async put<TVal>(id: number, value: TVal): Promise<void> {
     try {
       await axios.put(`${this.route}/${id}`, value);
     } catch (error) {
