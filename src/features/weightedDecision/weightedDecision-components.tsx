@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Button,
   Group,
   Slider,
   TextInput,
@@ -33,6 +32,7 @@ import usePreventExitForm from "../../common/hooks/usePreventExitForm";
 import MultiStepForm from "../multiStepForm/multiStepForm-components";
 import { weightedStepperData } from "./weightedDecision-data";
 import { IMultiStepFormItem } from "../multiStepForm/multiStepForm-types";
+import { SubmitButton } from "../../common/components/buttons";
 
 export function WeightedMainForm({
   activeHandlers,
@@ -351,15 +351,5 @@ export function WeightedInputSubmitButton({
 }: {
   onClick: () => void;
 }) {
-  return (
-    <Button
-      style={{ margin: 20 }}
-      color="green"
-      size="lg"
-      type="submit"
-      onClick={onClick}
-    >
-      Submit
-    </Button>
-  );
+  return <SubmitButton onClick={onClick} />;
 }
