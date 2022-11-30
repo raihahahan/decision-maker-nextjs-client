@@ -24,7 +24,8 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.6.0",
     "react-redux": "^8.0.4",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.7",
