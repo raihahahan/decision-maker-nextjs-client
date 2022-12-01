@@ -8,6 +8,8 @@ import {
   IConditionalDecisionItem,
   IConditionalInput,
   IConditionalInputItem,
+  IInnerItemExclude,
+  IInnerItemInclude,
 } from "./conditionalDecision-types";
 
 class ConditionalDecisionAPI extends DecisionDAL<IConditionalDecisionItem> {
@@ -40,10 +42,24 @@ class ConditionalConditionsAPI extends DAL<ICondition> {
   }
 }
 
+class ConditionalIncludeAPI extends DAL<IInnerItemInclude> {
+  constructor() {
+    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.INCLUDE}`);
+  }
+}
+
+class ConditionalExcludeAPI extends DAL<IInnerItemExclude> {
+  constructor() {
+    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.EXCLUDE}`);
+  }
+}
+
 const conditionalChoiceApi = new ConditionalChoiceAPI();
 const conditionalInputItemsApi = new ConditionalInputItemsAPI();
 const conditionalInputsApi = new ConditionalInputsAPI();
 const conditionalConditionsApi = new ConditionalConditionsAPI();
+const conditionalIncludeApi = new ConditionalIncludeAPI();
+const conditionalExcludeApi = new ConditionalExcludeAPI();
 
 export default new ConditionalDecisionAPI();
 export {
@@ -51,4 +67,6 @@ export {
   conditionalInputItemsApi,
   conditionalInputsApi,
   conditionalConditionsApi,
+  conditionalIncludeApi,
+  conditionalExcludeApi,
 };
