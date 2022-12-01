@@ -215,7 +215,7 @@ export function SearchbarFilterButton({ type }: { type: DecisionTypes }) {
             color="teal"
             variant="default"
           >
-            Filters
+            Sort by
           </Button>
         </Menu.Target>
 
