@@ -9,14 +9,14 @@ export default function Error({
     return (
       <div>
         <h1>Error with status code {statusCode}</h1>
-        <p>{error}</p>
+        <p>{JSON.stringify(error)}</p>
       </div>
     );
   } else {
     return (
       <div>
         <h1>Sorry! The requested page is not found.</h1>
-        <p>{error}</p>
+        <p>{JSON.stringify(error)}</p>
       </div>
     );
   }
