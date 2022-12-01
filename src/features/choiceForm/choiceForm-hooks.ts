@@ -39,7 +39,7 @@ export default function useChoiceForm<T extends IDecision>(
       extraFormConfig?.onEditName(+decisionId, name, initialValues as any);
     },
     removeChoice(id: number, itemID?: number) {
-      form.removeListItem("choices", id);
+      debounce(() => form.removeListItem("choices", id), 300)();
       extraFormConfig?.onRemoveChoice(itemID as number);
     },
     async addChoice() {
