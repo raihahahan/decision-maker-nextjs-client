@@ -79,13 +79,10 @@ export function ConditionsForm({
   formHelpers: IExtraFormConfigCondition<IConditionalDecisionItem>;
 }) {
   const { siteColors } = useTheme();
-  const { buttonHandlers, isPressed } = useCondtionalDecisionConditionsForm(
-    form,
-    formHelpers
-  );
+  const { buttonHandlers, isPressed, finalOnEditConditionName } =
+    useCondtionalDecisionConditionsForm(form, formHelpers);
   const {
     onAddCondition,
-    onEditConditionName,
     onRemoveCondition,
     onToggleExcludeButton,
     onToggleIncludeButton,
@@ -119,7 +116,9 @@ export function ConditionsForm({
                   type="text"
                   label={`Condition ${conditionIndex + 1}`}
                   value={item.name}
-                  onChange={(e) => onEditConditionName(e, conditionIndex)}
+                  onChange={(e) => {
+                    finalOnEditConditionName(e, conditionIndex, item);
+                  }}
                 />
 
                 <RemoveButton
@@ -130,30 +129,40 @@ export function ConditionsForm({
                   }}
                 />
               </div>
-              <h4>Include</h4>
+              <h4>Good for</h4>
               {form.values.choices.map((choice, includeChoiceIndex) => {
                 const refId = choice.refId as string;
                 return (
                   <ConditionCheckItem
-                    isPressed={isPressed(conditionIndex, refId, "include")}
+                    isPressed={isPressed(
+                      conditionIndex,
+                      refId,
+                      "include",
+                      item
+                    )}
                     key={includeChoiceIndex}
                     choice={choice}
                     onChange={() =>
-                      onToggleIncludeButton(conditionIndex, refId)
+                      onToggleIncludeButton(conditionIndex, refId, item)
                     }
                   />
                 );
               })}
-              <h4>Exclude</h4>
+              <h4>Bad for</h4>
               {form.values.choices.map((choice, excludeChoiceIndex) => {
                 const refId = choice.refId as string;
                 return (
                   <ConditionCheckItem
-                    isPressed={isPressed(conditionIndex, refId, "exclude")}
+                    isPressed={isPressed(
+                      conditionIndex,
+                      refId,
+                      "exclude",
+                      item
+                    )}
                     key={excludeChoiceIndex}
                     choice={choice}
                     onChange={() =>
-                      onToggleExcludeButton(conditionIndex, refId)
+                      onToggleExcludeButton(conditionIndex, refId, item)
                     }
                   />
                 );
@@ -242,6 +251,8 @@ export function ConditionalInputForm({
     finalInput.map((i) => i.value)
   );
 
+  const [inputForm, setInputForm] = useState(finalInput);
+
   return (
     <div
       style={{
@@ -267,7 +278,13 @@ export function ConditionalInputForm({
                     })
                   );
                   if (!conditionalInput) {
-                    finalInput[index].value = !finalInput[index].value;
+                    setInputForm((i) =>
+                      i.map((_item, _index) => {
+                        if (_index == index) {
+                          return { ..._item, value: !_item.value };
+                        } else return _item;
+                      })
+                    );
                   } else {
                     buttonHandlers.onClickCheck(item);
                   }
@@ -279,7 +296,7 @@ export function ConditionalInputForm({
           );
         })}
         <SubmitButton
-          onClick={() => buttonHandlers.onClickSubmit(finalInput, res)}
+          onClick={() => buttonHandlers.onClickSubmit(inputForm, res)}
         />
       </>
     </div>

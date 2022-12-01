@@ -1,7 +1,7 @@
 import { ButtonProps } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import usePreventExitForm from "../../common/hooks/usePreventExitForm";
@@ -32,16 +32,20 @@ import {
   IConditionalInputItem,
   IExtraFormConfigCondition,
   IInnerItem,
+  IInnerItemExclude,
+  IInnerItemInclude,
 } from "./conditionalDecision-types";
 import { conditionalDecisionCreateUnsavedListener } from "./conditionalDecision-utils";
-import conditionalDecisionApi, {
+import {
   conditionalChoiceApi,
   conditionalConditionsApi,
+  conditionalExcludeApi,
+  conditionalIncludeApi,
   conditionalInputItemsApi,
   conditionalInputsApi,
 } from "./conditionalDecision-api";
-import { IExtraFormConfig } from "../weightedDecision/weightedDecision-types";
 import { Choice } from "../../common/domains/domains";
+import { debounce } from "lodash";
 
 export function useConditionalDecisionReducer(): IUseDecisionReducer {
   const dispatch = useDispatch<AppDispatch>();
@@ -68,6 +72,8 @@ export function useConditionalDecisionReducer(): IUseDecisionReducer {
     decisionActions: conditionalDecisionActions,
   };
 }
+
+//========================================//
 
 export function useConditionalDecisionSteppers(
   params: useFormSteppersParams<IConditionalDecisionItem>
@@ -109,11 +115,12 @@ export function useConditionalDecisionSteppers(
         form.values.createdAt = new Date().toISOString();
         form.values.updatedAt = new Date().toISOString();
         const res = await decisionApi?.post(form.values as any);
+
         decisionActions.add(form.values);
         const _id = res?.id;
         router.push({ pathname: `/conditional/${_id}/input` });
       } else {
-        // editHandlers?.onSubmitEdit(form.values);
+        router.push({ pathname: `/conditional/${id}/input` });
       }
     } else {
       nextStep();
@@ -135,6 +142,8 @@ export function useConditionalDecisionSteppers(
     onClickLeftButton,
   };
 }
+
+//========================================//
 
 export function useConditionalDecisionCreate() {
   const [active, setActive] = useState(0);
@@ -159,6 +168,8 @@ export function useConditionalDecisionCreate() {
   };
 }
 
+//========================================//
+
 export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
   const [active, setActive] = useState(0);
   const [unsavedChanges, setUnsavedChanges] = useState(true);
@@ -176,7 +187,7 @@ export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
     async onAddChoice(decisionId: number) {
       const newChoice = new Choice("", undefined, decisionId);
       const res = await conditionalChoiceApi.post(newChoice);
-      return res.id as number;
+      return res?.id as number;
     },
 
     async onRemoveChoice(id: number) {
@@ -199,9 +210,14 @@ export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
 
     async onEditCondition(id: number, value: ICondition) {
       await conditionalConditionsApi.put(id, value);
+      await conditionalInputsApi.put(id, {
+        ...value,
+        foreignId: res.id,
+      } as IConditionalInput);
     },
     async onRemoveCondition(id: number) {
       await conditionalConditionsApi.delete(id);
+      await conditionalInputsApi.delete(id);
     },
     async onAddCondition(decisionId: number) {
       const newCondition = {
@@ -210,8 +226,15 @@ export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
         include: [],
         exclude: [],
       } as ICondition;
-      const res = await conditionalConditionsApi.post(newCondition);
-      return res.id as number;
+      const _res = await conditionalConditionsApi.post(newCondition);
+
+      await conditionalInputsApi.post({
+        ...newCondition,
+        value: false,
+        foreignId: res.id,
+        id: _res.id,
+      } as IConditionalInput);
+      return _res?.id as number;
     },
   };
 
@@ -249,6 +272,8 @@ export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
   };
 }
 
+//========================================//
+
 export function useCondtionalDecisionConditionsForm(
   form: UseFormReturnType<
     IConditionalDecisionItem,
@@ -263,82 +288,172 @@ export function useCondtionalDecisionConditionsForm(
   const isPressed = (
     conditionIndex: number,
     refId: string,
-    type: "include" | "exclude"
+    type: "include" | "exclude",
+    conditionItem: ICondition
   ): boolean => {
-    return (
-      form.values.conditions[conditionIndex][type].find(
-        (i) => i.choiceId == refId
-      ) != undefined
-    );
+    if (isEdit) {
+      return conditionItem[type].find((i) => i.choiceId == refId) != undefined;
+    } else
+      return (
+        form.values.conditions[conditionIndex][type].find(
+          (i) => i.choiceId == refId
+        ) != undefined
+      );
   };
 
-  const toggleOn = (
+  const toggleOn = async (
     conditionIndex: number,
     refId: string,
-    type: "include" | "exclude"
+    type: "include" | "exclude",
+    conditionItem: ICondition
   ) => {
     const opposite = type == "include" ? "exclude" : "include";
 
-    form.insertListItem(`conditions.${conditionIndex}.${type}`, {
-      choiceId: refId,
-    } as IInnerItem);
+    if (isEdit) {
+      if (type == "include") {
+        const newInclude: IInnerItemInclude = {
+          choiceId: refId,
+          conditionId: conditionItem.id as number,
+          type: "include",
+          conditionIdInclude: conditionItem.id as number,
+        };
+        const res = await conditionalIncludeApi.post(newInclude);
+        form.insertListItem(`conditions.${conditionIndex}.${type}`, {
+          ...newInclude,
+          id: res.id,
+        });
+      } else {
+        const newExclude: IInnerItemExclude = {
+          choiceId: refId,
+          conditionId: conditionItem.id as number,
+          type: "exclude",
+          conditionIdExclude: conditionItem.id as number,
+        };
+        const res = await conditionalExcludeApi.post(newExclude);
+        form.insertListItem(`conditions.${conditionIndex}.${type}`, {
+          ...newExclude,
+          id: res.id,
+        });
+      }
+    } else {
+      form.insertListItem(`conditions.${conditionIndex}.${type}`, {
+        choiceId: refId,
+        type,
+      } as IInnerItem);
+    }
 
-    if (isPressed(conditionIndex, refId, opposite)) {
-      toggleOff(conditionIndex, refId, opposite);
+    if (isPressed(conditionIndex, refId, opposite, conditionItem)) {
+      toggleOff(conditionIndex, refId, opposite, conditionItem);
     }
   };
 
   const toggleOff = (
     conditionIndex: number,
     refId: string,
-    type: "include" | "exclude"
+    type: "include" | "exclude",
+    conditionItem: ICondition
   ) => {
     const indexToRemove = form.values.conditions[conditionIndex][
       type
     ].findIndex((i) => i.choiceId == refId);
+    const itemToRemoveID = form.values.conditions[conditionIndex][type].find(
+      (i) => i.choiceId == refId
+    )?.id;
     if (indexToRemove != -1)
       form.removeListItem(
         `conditions.${conditionIndex}.${type}`,
         indexToRemove
       );
+    if (isEdit) {
+      if (type == "include") {
+        conditionalIncludeApi.delete(itemToRemoveID as number);
+      } else {
+        conditionalExcludeApi.delete(itemToRemoveID as number);
+      }
+    }
   };
 
   const buttonHandlers = {
-    onAddCondition() {
-      form.insertListItem("conditions", {
-        name: "",
-        include: [],
-        exclude: [],
-        decisionId: -1,
-      } as ICondition);
+    async onAddCondition() {
+      if (isEdit) {
+        const res = await formHelpers?.onAddCondition(+decisionId);
+        form.insertListItem("conditions", {
+          name: "",
+          include: [],
+          exclude: [],
+          decisionId: +decisionId,
+          id: res as number,
+        } as ICondition);
+      } else {
+        form.insertListItem("conditions", {
+          name: "",
+          include: [],
+          exclude: [],
+          decisionId: -1,
+        } as ICondition);
+      }
     },
     onEditConditionName(
       e: ChangeEvent<HTMLInputElement>,
-      conditionIndex: number
+      conditionIndex: number,
+      item: ICondition
     ) {
-      form.setFieldValue(`conditions.${conditionIndex}.name`, e.target.value);
+      if (isEdit) {
+        const id = item?.id;
+        const newCondition: ICondition = { ...item, name: e.target.value };
+
+        formHelpers.onEditCondition(id as number, newCondition);
+      }
     },
     onRemoveCondition(conditionIndex: number) {
       form.removeListItem("conditions", conditionIndex);
-    },
-    onToggleIncludeButton(conditionIndex: number, refId: string) {
-      if (isPressed(conditionIndex, refId, "include")) {
-        toggleOff(conditionIndex, refId, "include");
-      } else {
-        toggleOn(conditionIndex, refId, "include");
+      if (isEdit) {
+        const id = form.values.conditions[conditionIndex].id;
+        formHelpers.onRemoveCondition(id as number);
       }
     },
-    onToggleExcludeButton(conditionIndex: number, refId: string) {
-      if (isPressed(conditionIndex, refId, "exclude")) {
-        toggleOff(conditionIndex, refId, "exclude");
+    async onToggleIncludeButton(
+      conditionIndex: number,
+      refId: string,
+      conditionItem: ICondition
+    ) {
+      if (isPressed(conditionIndex, refId, "include", conditionItem)) {
+        toggleOff(conditionIndex, refId, "include", conditionItem);
       } else {
-        toggleOn(conditionIndex, refId, "exclude");
+        toggleOn(conditionIndex, refId, "include", conditionItem);
+      }
+    },
+    async onToggleExcludeButton(
+      conditionIndex: number,
+      refId: string,
+      conditionItem: ICondition
+    ) {
+      if (isPressed(conditionIndex, refId, "exclude", conditionItem)) {
+        toggleOff(conditionIndex, refId, "exclude", conditionItem);
+      } else {
+        toggleOn(conditionIndex, refId, "exclude", conditionItem);
       }
     },
   };
 
-  return { buttonHandlers, isPressed };
+  const debouncedEditConditionName = useCallback(
+    debounce(buttonHandlers.onEditConditionName, 300),
+    []
+  );
+
+  const finalOnEditConditionName = (
+    e: ChangeEvent<HTMLInputElement>,
+    conditionIndex: number,
+    item: ICondition
+  ) => {
+    debouncedEditConditionName(e, conditionIndex, item);
+    form.setFieldValue(`conditions.${conditionIndex}.name`, e.target.value);
+  };
+
+  return { buttonHandlers, isPressed, finalOnEditConditionName };
 }
+
+//========================================//
 
 export function useConditionalInputForm() {
   const router = useRouter();
@@ -356,17 +471,13 @@ export function useConditionalInputForm() {
         conditionalItemId: id,
         conditionalInputs: finalInput,
       };
-      conditionalItems.conditions = conditionalItems.conditions.map((item) => {
-        if (item.id) delete item.id;
-        item.include = item.include.map((inc) => {
-          if (inc?.id) delete inc.id;
-          return inc;
+      conditionalInputItem.conditionalInputs.forEach((i) => {
+        i.include.forEach((inc) => {
+          delete inc.id;
         });
-        item.exclude = item.exclude.map((exc) => {
-          if (exc?.id) delete exc.id;
-          return exc;
+        i.exclude.forEach((exc) => {
+          delete exc.id;
         });
-        return item;
       });
 
       await conditionalInputItemsApi.post(conditionalInputItem);
@@ -377,11 +488,14 @@ export function useConditionalInputForm() {
   return { buttonHandlers };
 }
 
+//========================================//
+
 export function useConditionalInputEditForm() {
   const router = useRouter();
   const buttonHandlers = {
     onClickCheck(condItem: IConditionalInput) {
       condItem.value = !condItem.value;
+
       conditionalInputsApi.put(condItem.id as number, condItem);
     },
     async onClickSubmit(
