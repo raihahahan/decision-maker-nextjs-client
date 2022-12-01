@@ -12,9 +12,21 @@ export interface ICondition {
 export interface IInnerItem {
   id?: number;
   choiceId: string;
+  conditionId: number;
+  type: "include" | "exclude";
 }
+
+export interface IInnerItemInclude extends IInnerItem {
+  conditionIdInclude: number;
+}
+
+export interface IInnerItemExclude extends IInnerItem {
+  conditionIdExclude: number;
+}
+
 export interface IConditionalInput extends ICondition {
   value: boolean;
+  foreignId?: number;
 }
 
 export interface IConditionalDecisionItem extends IDecision {
