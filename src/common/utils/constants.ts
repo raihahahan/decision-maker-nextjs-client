@@ -17,6 +17,8 @@ const CONSTANTS = {
     INPUT_ITEMS: "ConditionalInputItems",
     INPUTS: "ConditionalInput",
     CONDITIONS: "ConditionalConditions",
+    INCLUDE: "ConditionalInclude",
+    EXCLUDE: "ConditionalExclude",
   },
 };
 
