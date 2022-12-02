@@ -187,7 +187,7 @@ export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
     async onAddChoice(decisionId: number) {
       const newChoice = new Choice("", undefined, decisionId);
       const res = await conditionalChoiceApi.post(newChoice);
-      return res?.id as number;
+      return res;
     },
 
     async onRemoveChoice(id: number) {
@@ -406,11 +406,11 @@ export function useCondtionalDecisionConditionsForm(
       }
     },
     onRemoveCondition(conditionIndex: number) {
-      form.removeListItem("conditions", conditionIndex);
       if (isEdit) {
         const id = form.values.conditions[conditionIndex].id;
         formHelpers.onRemoveCondition(id as number);
       }
+      form.removeListItem("conditions", conditionIndex);
     },
     async onToggleIncludeButton(
       conditionIndex: number,

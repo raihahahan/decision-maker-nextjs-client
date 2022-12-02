@@ -5,12 +5,13 @@ export class Choice implements IChoice {
   name = "";
   id: number | undefined = undefined;
   decisionId: number | undefined = undefined;
-  refId: string = uuidv4();
+  refId: string = "";
 
   constructor(name?: string, id?: number, decisionId?: number) {
     this.name = name ?? "";
     this.id = id;
     this.decisionId = decisionId;
+    this.refId = uuidv4();
   }
 
   get() {

@@ -1,6 +1,6 @@
 import { Checkbox, Group, Text, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitButton } from "../../common/components/buttons";
 import { IChoice } from "../../common/types/decision-types";
 import { AddButton, RemoveButton } from "../choiceForm/choiceForm-components";
@@ -87,6 +87,8 @@ export function ConditionsForm({
     onToggleExcludeButton,
     onToggleIncludeButton,
   } = buttonHandlers;
+
+  useEffect(() => alert(JSON.stringify(form.values.choices)), []);
 
   return (
     <div
@@ -220,6 +222,7 @@ export function ConditionalDecisionEditForm({
 }) {
   const { activeHandlers, conditionalForm, setUnsavedChanges, editHandlers } =
     useConditionalDecisionEdit(res);
+
   return (
     <ConditionalMainForm
       activeHandlers={activeHandlers}
@@ -239,7 +242,7 @@ export function ConditionalInputForm({
 }) {
   let finalInput: IConditionalInput[] = conditionalInput
     ? conditionalInput.conditionalInputs
-    : res.conditions.map((item) => {
+    : res?.conditions.map((item) => {
         return { ...item, value: false };
       });
 

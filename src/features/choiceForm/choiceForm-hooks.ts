@@ -44,12 +44,9 @@ export default function useChoiceForm<T extends IDecision>(
     },
     async addChoice() {
       if (form.values.choices.length < 100) {
-        const changedID = await extraFormConfig?.onAddChoice(+decisionId);
-        form.insertListItem("choices", {
-          id: changedID ?? form.values.choices.length,
-          name: "",
-          refId: uuidv4(),
-        });
+        const newChoice = await extraFormConfig?.onAddChoice(+decisionId);
+
+        form.insertListItem("choices", newChoice);
       } else {
         alert("Maximum 100 choices");
       }
@@ -81,16 +78,17 @@ export default function useChoiceForm<T extends IDecision>(
 
 export function useChoiceInput<T>(
   formHelpers: TFormHelpers,
-  form: UseFormReturnType<T, (values: T) => T>,
+  form: UseFormReturnType<IDecision, (values: IDecision) => IDecision>,
   index: number,
   decisionID?: number,
   itemID?: number
 ) {
   const editHandler = (e: ChangeEvent<HTMLInputElement>) => {
     if (typeof itemID == "number") {
+      const currChoice = form.values.choices.find((i) => i.id == itemID);
       formHelpers.editChoice(
         itemID as any,
-        new Choice(e.target.value, itemID, decisionID),
+        { ...currChoice, name: e.target.value },
         index
       );
     } else return;

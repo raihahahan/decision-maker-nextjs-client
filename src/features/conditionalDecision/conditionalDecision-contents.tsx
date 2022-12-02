@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import Error from "../../common/components/error";
 import InputLayout from "../../common/components/inputLayout";
 import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import { IFinalResult } from "../../common/types/decision-types";
@@ -31,6 +32,7 @@ export function ConditionalInputContents({
   res: IConditionalDecisionItem;
   conditionalInput?: IConditionalInputItem;
 }) {
+  if (!res) return <Error />;
   return <ConditionalInputForm res={res} conditionalInput={conditionalInput} />;
 }
 
