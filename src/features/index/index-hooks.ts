@@ -109,6 +109,7 @@ export function useIndexPagination(type: DecisionTypes) {
   const [currPage, setCurrPage] = useState<number>(initialPage);
 
   const onClickPage = (pageNum: number) => {
+    if (pageNum == 0 || totalPages == 1) return;
     setCurrPage(pageNum);
     const currQueries = router.query;
     router.push({ pathname: `/${type}`, query: { ...currQueries, pageNum } });
