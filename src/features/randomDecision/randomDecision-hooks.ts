@@ -11,7 +11,7 @@ import {
 } from "../../common/types/decision-types";
 import { AppDispatch } from "../../redux/store";
 import { TExtraFormConfig } from "../choiceForm/choiceForm-types";
-import randomDecisionApi, { randomChoiceApi } from "./randomDecision-api";
+import randomDecisionApi from "./randomDecision-api";
 import {
   addRandomDecision,
   removeRandomDecision,
@@ -51,24 +51,15 @@ export default function useRandomDecision() {
       decisionId: number,
       name: string,
       curr: IRandomDecisionItem
-    ) {
-      curr.name = name;
-      curr.updatedAt = new Date().toISOString();
-      await randomDecisionApi.put(decisionId, curr);
-    },
+    ) {}, // TO REMOVE
+
     async onAddChoice(decisionId: number) {
-      const newChoice = new Choice("", undefined, decisionId);
-      const res = await randomChoiceApi.post(newChoice);
-      return res.id as number;
-    },
+      return new Choice("", undefined, decisionId);
+    }, // TO REMOVE
 
-    async onRemoveChoice(id: number) {
-      await randomChoiceApi.delete(id);
-    },
+    async onRemoveChoice(id: number) {}, // TO REMOVE
 
-    async onEditChoice(id: number, value: IChoice) {
-      await randomChoiceApi.put(id, value);
-    },
+    async onEditChoice(id: number, value: IChoice) {}, // TO REMOVE
 
     async onSubmitEdit(value: IDecision) {
       value.updatedAt = new Date().toISOString();

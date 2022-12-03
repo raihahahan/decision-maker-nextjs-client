@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { IFinalResult } from "../../common/types/decision-types";
 import ResultContents from "../result/result-contents";
 import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
+import Error from "../../common/components/error";
 
 export default function RandomDecisionCreateContents() {
   return (
@@ -24,6 +25,8 @@ export function RandomDecisionEditFormContents({
 }: {
   res: IRandomDecisionItem;
 }) {
+  if (!res || !res.choices) return <Error error={res} />;
+
   return (
     <InputLayout type="random">
       <RandomDecisionEditForm res={res} />
@@ -32,6 +35,7 @@ export function RandomDecisionEditFormContents({
 }
 
 export function RandomDecisionResultContents({ res }: { res: IFinalResult }) {
+  if (!res) return <Error error={res} />;
   return <ResultContents data={res} type="random" />;
 }
 
@@ -40,6 +44,7 @@ export function RandomDecisionIndexContents({
 }: {
   res: IRandomDecisionItem[];
 }) {
+  if (!res) return <Error error={res} />;
   const {
     decisionActions: randomDecisionActions,
     decisionLocalData: randomDecisionLocalData,
