@@ -16,9 +16,5 @@ export type formHookReturnType<T extends IDecision> = {
 };
 
 export type TExtraFormConfig<T> = {
-  onEditName(decisionId: number, name: string, curr: T): Promise<void>;
-  onAddChoice(decisionId: number): Promise<IChoice>;
-  onRemoveChoice(id: number): Promise<void>;
-  onEditChoice(id: number, value: T): Promise<void>;
   onSubmitEdit(value: T): Promise<void> | undefined;
 };

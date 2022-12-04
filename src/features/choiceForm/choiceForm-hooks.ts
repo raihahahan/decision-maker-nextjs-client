@@ -3,25 +3,21 @@ import { FormValidateInput, UseFormReturnType } from "@mantine/form/lib/types";
 import { debounce } from "lodash";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useCallback, useEffect } from "react";
-import { Choice } from "../../common/domains/domains";
-import { IDecision } from "../../common/types/decision-types";
+import { v4 as uuidv4 } from "uuid";
+import { IChoice, IDecision } from "../../common/types/decision-types";
 import { TExtraFormConfig, TFormHelpers } from "./choiceForm-types";
 import { formUnsaveChangesListener } from "./choiceForm-utils";
-import { v4 as uuidv4 } from "uuid";
 
 export default function useChoiceForm<T extends IDecision>(
   initialValues: T,
   validate: FormValidateInput<T>,
-  setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>,
-  extraFormConfig?: TExtraFormConfig<T>
+  setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>
 ) {
-  // extraFormConfig is for choice form edit
   const router = useRouter();
   const form = useForm<T>({
     initialValues,
     validate,
   });
-  const decisionId = router.query.id as string;
 
   useEffect(() => {
     form.setValues(initialValues);
@@ -36,16 +32,13 @@ export default function useChoiceForm<T extends IDecision>(
   const formHelpers = {
     editName(name: string) {
       form.setFieldValue("name", name as any);
-      extraFormConfig?.onEditName(+decisionId, name, initialValues as any);
     },
     removeChoice(id: number, itemID?: number) {
-      debounce(() => form.removeListItem("choices", id), 300)();
-      extraFormConfig?.onRemoveChoice(itemID as number);
+      form.removeListItem("choices", id);
     },
-    async addChoice() {
+    addChoice() {
       if (form.values.choices.length < 100) {
-        const newChoice = await extraFormConfig?.onAddChoice(+decisionId);
-
+        const newChoice: IChoice = { name: "", refId: uuidv4() };
         form.insertListItem("choices", newChoice);
       } else {
         alert("Maximum 100 choices");
@@ -53,7 +46,6 @@ export default function useChoiceForm<T extends IDecision>(
     },
     editChoice(id: number, value: T, index: number) {
       form.setFieldValue(`choices.${index}.name`, value.name as any);
-      extraFormConfig?.onEditChoice(id, value);
     },
     decide() {
       if (form.validateField("choices").hasError) {
