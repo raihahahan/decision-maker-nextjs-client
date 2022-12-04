@@ -93,6 +93,7 @@ export function CurrentPage<T extends IDecision>({
           onSubmit={() => alert("TODO")}
           hideDecide
           presetData={presetValues}
+          showBackButton={presetValues ? true : false}
         />
       ) : active == 1 ? (
         <>
