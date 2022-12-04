@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import Error from "../../common/components/error";
 import InputLayout from "../../common/components/inputLayout";
 import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import { IFinalResult } from "../../common/types/decision-types";
@@ -25,6 +26,8 @@ export default function WeightedDecisionCreateContents() {
 }
 
 export function WeightedEditContents({ res }: { res: IWeightedDecisionItem }) {
+  if (!res) return <Error error={res} />;
+
   return (
     <InputLayout type="weighted">
       <WeightedDecisionEditForm presetValues={res} />
@@ -39,6 +42,7 @@ export function WeightedInputContents({
   res: IWeightedDecisionItem;
   weightedInput?: IWeightedInputItem;
 }) {
+  if (!res) return <Error error={res} />;
   return <WeightedInputForm res={res} weightedInput={weightedInput} />;
 }
 
