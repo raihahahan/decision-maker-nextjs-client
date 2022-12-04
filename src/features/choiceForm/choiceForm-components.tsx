@@ -111,7 +111,7 @@ export function ChoiceInput<T extends IDecision>({
 }) {
   const { finalOnChange } = useChoiceInput<T>(
     formHelpers,
-    form,
+    form as any,
     index,
     decisionID,
     itemID
