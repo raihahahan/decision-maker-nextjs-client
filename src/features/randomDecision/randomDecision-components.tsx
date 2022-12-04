@@ -46,8 +46,7 @@ export function RandomDecisionEditForm({ res }: { res: IRandomDecisionItem }) {
   const randomEditForm = useChoiceForm<IDecision>(
     presetData,
     InitialValidate,
-    setUnsavedChanges,
-    editHandlers
+    setUnsavedChanges
   );
 
   return (

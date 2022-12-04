@@ -1,13 +1,10 @@
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { Choice } from "../../common/domains/domains";
 import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import {
-  IChoice,
   IDecision,
   IDecisionReducer,
   IUseDecisionReducer,
-  pushQuery,
 } from "../../common/types/decision-types";
 import { AppDispatch } from "../../redux/store";
 import { TExtraFormConfig } from "../choiceForm/choiceForm-types";
@@ -23,10 +20,8 @@ import { IRandomDecisionItem } from "./randomDecision-types";
 
 export default function useRandomDecision() {
   const router = useRouter();
-  const {
-    decisionLocalData: randomDecisionLocalData,
-    decisionActions: randomDecisionActions,
-  } = useDecisionGenerics("random");
+  const { decisionActions: randomDecisionActions } =
+    useDecisionGenerics("random");
 
   const createHandlers = {
     async onSubmitCreate(value: IDecision) {
@@ -47,20 +42,6 @@ export default function useRandomDecision() {
   };
 
   const editHandlers: TExtraFormConfig<IDecision> = {
-    async onEditName(
-      decisionId: number,
-      name: string,
-      curr: IRandomDecisionItem
-    ) {}, // TO REMOVE
-
-    async onAddChoice(decisionId: number) {
-      return new Choice("", undefined, decisionId);
-    }, // TO REMOVE
-
-    async onRemoveChoice(id: number) {}, // TO REMOVE
-
-    async onEditChoice(id: number, value: IChoice) {}, // TO REMOVE
-
     async onSubmitEdit(value: IDecision) {
       value.updatedAt = new Date().toISOString();
       const id = value.id;
