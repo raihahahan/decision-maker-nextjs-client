@@ -30,7 +30,6 @@ import {
   IConditionalDecisionItem,
   IConditionalInput,
   IConditionalInputItem,
-  IExtraFormConfigCondition,
   IInnerItem,
   IInnerItemExclude,
   IInnerItemInclude,
@@ -44,8 +43,8 @@ import {
   conditionalInputItemsApi,
   conditionalInputsApi,
 } from "./conditionalDecision-api";
-import { Choice } from "../../common/domains/domains";
 import { debounce } from "lodash";
+import { TExtraFormConfig } from "../choiceForm/choiceForm-types";
 
 export function useConditionalDecisionReducer(): IUseDecisionReducer {
   const dispatch = useDispatch<AppDispatch>();
@@ -174,29 +173,29 @@ export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
   const [active, setActive] = useState(0);
   const [unsavedChanges, setUnsavedChanges] = useState(true);
 
-  const editHandlers: IExtraFormConfigCondition<IConditionalDecisionItem> = {
-    async onEditName(
-      decisionId: number,
-      name: string,
-      curr: IConditionalDecisionItem
-    ) {
-      curr.name = name;
-      curr.updatedAt = new Date().toISOString();
-      await decisionApi.put<IConditionalDecisionItem>(decisionId, curr);
-    },
-    async onAddChoice(decisionId: number) {
-      const newChoice = new Choice("", undefined, decisionId);
-      const res = await conditionalChoiceApi.post(newChoice);
-      return res;
-    },
+  const editHandlers: TExtraFormConfig<IConditionalDecisionItem> = {
+    // async onEditName(
+    //   decisionId: number,
+    //   name: string,
+    //   curr: IConditionalDecisionItem
+    // ) {
+    //   curr.name = name;
+    //   curr.updatedAt = new Date().toISOString();
+    //   await decisionApi.put<IConditionalDecisionItem>(decisionId, curr);
+    // },
+    // async onAddChoice(decisionId: number) {
+    //   const newChoice = new Choice("", undefined, decisionId);
+    //   const res = await conditionalChoiceApi.post(newChoice);
+    //   return res;
+    // },
 
-    async onRemoveChoice(id: number) {
-      await conditionalChoiceApi.delete(id);
-    },
+    // async onRemoveChoice(id: number) {
+    //   await conditionalChoiceApi.delete(id);
+    // },
 
-    async onEditChoice(id: number, value: IChoice) {
-      await conditionalChoiceApi.put(id, value);
-    },
+    // async onEditChoice(id: number, value: IChoice) {
+    //   await conditionalChoiceApi.put(id, value);
+    // },
 
     async onSubmitEdit(value: IDecision) {
       value.updatedAt = new Date().toISOString();
@@ -208,48 +207,44 @@ export function useConditionalDecisionEdit(res: IConditionalDecisionItem) {
       });
     },
 
-    async onEditCondition(id: number, value: ICondition) {
-      await conditionalConditionsApi.put(id, value);
-      await conditionalInputsApi.put(id, {
-        ...value,
-        foreignId: res.id,
-      } as IConditionalInput);
-    },
-    async onRemoveCondition(id: number) {
-      await conditionalConditionsApi.delete(id);
-      await conditionalInputsApi.delete(id);
-    },
-    async onAddCondition(decisionId: number) {
-      const newCondition = {
-        decisionId,
-        name: "",
-        include: [],
-        exclude: [],
-      } as ICondition;
-      const _res = await conditionalConditionsApi.post(newCondition);
+    // async onEditCondition(id: number, value: ICondition) {
+    //   await conditionalConditionsApi.put(id, value);
+    //   await conditionalInputsApi.put(id, {
+    //     ...value,
+    //     foreignId: res.id,
+    //   } as IConditionalInput);
+    // },
+    // async onRemoveCondition(id: number) {
+    //   await conditionalConditionsApi.delete(id);
+    //   await conditionalInputsApi.delete(id);
+    // },
+    // async onAddCondition(decisionId: number) {
+    //   const newCondition = {
+    //     decisionId,
+    //     name: "",
+    //     include: [],
+    //     exclude: [],
+    //   } as ICondition;
+    //   const _res = await conditionalConditionsApi.post(newCondition);
 
-      await conditionalInputsApi.post({
-        ...newCondition,
-        value: false,
-        foreignId: res.id,
-        id: _res.id,
-      } as IConditionalInput);
-      return _res?.id as number;
-    },
+    //   await conditionalInputsApi.post({
+    //     ...newCondition,
+    //     value: false,
+    //     foreignId: res.id,
+    //     id: _res.id,
+    //   } as IConditionalInput);
+    //   return _res?.id as number;
+    // },
   };
 
   const conditionalForm = useChoiceForm<IConditionalDecisionItem>(
     res,
     initialConditionalValidate,
-    setUnsavedChanges,
-    editHandlers
+    setUnsavedChanges
   );
 
   conditionalForm.formHelpers = {
     ...conditionalForm.formHelpers,
-    onEditCondition: editHandlers.onEditCondition,
-    onRemoveCondition: editHandlers.onRemoveCondition,
-    onAddCondition: editHandlers.onAddCondition,
   } as any;
 
   const { decisionActions, decisionApi } = useDecisionGenerics("conditional");
@@ -279,7 +274,7 @@ export function useCondtionalDecisionConditionsForm(
     IConditionalDecisionItem,
     (values: IConditionalDecisionItem) => IConditionalDecisionItem
   >,
-  formHelpers: IExtraFormConfigCondition<IConditionalDecisionItem>
+  formHelpers: TExtraFormConfig<IConditionalDecisionItem>
 ) {
   const router = useRouter();
   const decisionId = router.query.id as string;
@@ -376,14 +371,14 @@ export function useCondtionalDecisionConditionsForm(
   const buttonHandlers = {
     async onAddCondition() {
       if (isEdit) {
-        const res = await formHelpers?.onAddCondition(+decisionId);
-        form.insertListItem("conditions", {
-          name: "",
-          include: [],
-          exclude: [],
-          decisionId: +decisionId,
-          id: res as number,
-        } as ICondition);
+        // const res = await formHelpers?.onAddCondition(+decisionId);
+        // form.insertListItem("conditions", {
+        //   name: "",
+        //   include: [],
+        //   exclude: [],
+        //   decisionId: +decisionId,
+        //   id: res as number,
+        // } as ICondition);
       } else {
         form.insertListItem("conditions", {
           name: "",
@@ -398,18 +393,17 @@ export function useCondtionalDecisionConditionsForm(
       conditionIndex: number,
       item: ICondition
     ) {
-      if (isEdit) {
-        const id = item?.id;
-        const newCondition: ICondition = { ...item, name: e.target.value };
-
-        formHelpers.onEditCondition(id as number, newCondition);
-      }
+      // if (isEdit) {
+      //   const id = item?.id;
+      //   const newCondition: ICondition = { ...item, name: e.target.value };
+      //   formHelpers.onEditCondition(id as number, newCondition);
+      // }
     },
     onRemoveCondition(conditionIndex: number) {
-      if (isEdit) {
-        const id = form.values.conditions[conditionIndex].id;
-        formHelpers.onRemoveCondition(id as number);
-      }
+      // if (isEdit) {
+      //   const id = form.values.conditions[conditionIndex].id;
+      //   formHelpers.onRemoveCondition(id as number);
+      // }
       form.removeListItem("conditions", conditionIndex);
     },
     async onToggleIncludeButton(

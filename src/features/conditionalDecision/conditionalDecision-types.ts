@@ -38,9 +38,3 @@ export interface IConditionalInputItem {
   conditionalInputs: IConditionalInput[];
   conditionalItemId: number;
 }
-
-export interface IExtraFormConfigCondition<T> extends TExtraFormConfig<T> {
-  onAddCondition(decisionId: number): Promise<number>;
-  onRemoveCondition(id: number): Promise<void>;
-  onEditCondition(id: number, value: ICondition): Promise<void>;
-}

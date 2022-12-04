@@ -1,9 +1,10 @@
 import { Checkbox, Group, Text, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitButton } from "../../common/components/buttons";
 import { IChoice } from "../../common/types/decision-types";
 import { AddButton, RemoveButton } from "../choiceForm/choiceForm-components";
+import { TExtraFormConfig } from "../choiceForm/choiceForm-types";
 import MultiStepForm from "../multiStepForm/multiStepForm-components";
 import {
   IMultiStepFormItem,
@@ -24,7 +25,6 @@ import {
   IConditionalDecisionItem,
   IConditionalInput,
   IConditionalInputItem,
-  IExtraFormConfigCondition,
 } from "./conditionalDecision-types";
 
 export function ConditionalMainForm({
@@ -76,7 +76,7 @@ export function ConditionsForm({
     IConditionalDecisionItem,
     (values: IConditionalDecisionItem) => IConditionalDecisionItem
   >;
-  formHelpers: IExtraFormConfigCondition<IConditionalDecisionItem>;
+  formHelpers: TExtraFormConfig<IConditionalDecisionItem>;
 }) {
   const { siteColors } = useTheme();
   const { buttonHandlers, isPressed, finalOnEditConditionName } =
@@ -87,8 +87,6 @@ export function ConditionsForm({
     onToggleExcludeButton,
     onToggleIncludeButton,
   } = buttonHandlers;
-
-  useEffect(() => alert(JSON.stringify(form.values.choices)), []);
 
   return (
     <div
