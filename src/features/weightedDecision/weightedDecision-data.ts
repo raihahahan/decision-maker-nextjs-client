@@ -7,7 +7,7 @@ export const initialWeightedValues: IWeightedDecisionItem = {
   criteriaList: [
     {
       name: "Price",
-      weight: 46,
+      weight: 23,
     },
     { name: "Convenience", weight: 23 },
   ],

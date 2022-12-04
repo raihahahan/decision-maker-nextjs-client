@@ -10,9 +10,7 @@ import {
 import { AddButton, RemoveButton } from "../choiceForm/choiceForm-components";
 import { UseFormReturnType } from "@mantine/form";
 import {
-  ICriteria,
   ICriteriaInput,
-  IExtraFormConfig,
   IWeightedDecisionItem,
   IWeightedInputItem,
 } from "./weightedDecision-types";
@@ -51,12 +49,7 @@ export function WeightedMainForm({
   const pages: IMultiStepFormItem[] = [
     {
       id: 0,
-      element: (
-        <CriteriaForm
-          form={weightedForm.form}
-          extraFormHelpers={weightedForm.formHelpers as any}
-        />
-      ),
+      element: <CriteriaForm form={weightedForm.form} />,
     },
   ];
 
@@ -114,20 +107,18 @@ export function WeightedDecisionEditForm({
 
 export function CriteriaForm({
   form,
-  extraFormHelpers,
 }: {
   form: UseFormReturnType<
     IWeightedDecisionItem,
     (values: IWeightedDecisionItem) => IWeightedDecisionItem
   >;
-  extraFormHelpers: IExtraFormConfig<IWeightedDecisionItem, ICriteria>;
 }) {
   const {
     addCriteria,
     removeCriteria,
-    finalOnChangeCriteriaName,
-    finalOnChangeCriteriaWeight,
-  } = useCriteriaForm(form, extraFormHelpers);
+    onEditCriteriaName,
+    onEditCriteriaWeight,
+  } = useCriteriaForm(form);
 
   const { siteColors } = useTheme();
   return (
@@ -158,14 +149,7 @@ export function CriteriaForm({
                   type="text"
                   label={`Criteria ${index + 1}`}
                   value={item.name}
-                  onChange={(e) => {
-                    finalOnChangeCriteriaName(
-                      e,
-                      item.weight,
-                      index,
-                      item.id as number
-                    );
-                  }}
+                  onChange={(e) => onEditCriteriaName(e, index)}
                 />
                 <RemoveButton
                   onClick={() => removeCriteria(index, item?.id)}
@@ -179,14 +163,7 @@ export function CriteriaForm({
                 key={item.id + item.name}
                 style={{ margin: 20 }}
                 value={item.weight}
-                onChange={(e) => {
-                  finalOnChangeCriteriaWeight(
-                    e,
-                    item.name,
-                    index,
-                    item?.id as number // TODO BUG: item value is outdated
-                  );
-                }}
+                onChange={(e) => onEditCriteriaWeight(e, index)}
                 marks={[
                   { value: 20, label: "20%" },
                   { value: 50, label: "50%" },
@@ -256,6 +233,8 @@ export function WeightedInputForm({
       style={{ margin: 20 }}
     />
   );
+
+  item.criteriaInput.sort((a, b) => a.weight - b.weight);
 
   return (
     <div

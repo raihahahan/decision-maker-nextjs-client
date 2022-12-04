@@ -35,13 +35,6 @@ export interface IWeightedDecisionItem extends IDecision {
   criteriaList: ICriteria[];
 }
 
-export interface IExtraFormConfig<T, C> extends TExtraFormConfig<T> {
-  onAddCriteria(decisionId: number): Promise<number>;
-  onRemoveCriteria(id: number): Promise<void>;
-  onEditCriteria(id: number, value: C, isEditSlider?: boolean): Promise<void>;
-  onSubmitEdit(value: any): Promise<void>;
-}
-
 export interface useWeightedInputReturnType {
   weightedInputForm: UseFormReturnType<
     IWeightedInput[],
@@ -66,18 +59,8 @@ export interface useWeightedInputReturnType {
 export interface useCriteriaFormReturnType {
   addCriteria: () => Promise<void>;
   removeCriteria: (id: number, itemID?: number) => void;
-  finalOnChangeCriteriaName: (
-    e: ChangeEvent<HTMLInputElement>,
-    weight: number,
-    index: number,
-    itemID: number
-  ) => void;
-  finalOnChangeCriteriaWeight: (
-    e: number,
-    name: string,
-    index: number,
-    itemID: number
-  ) => void;
+  onEditCriteriaName: (e: ChangeEvent<HTMLInputElement>, index: number) => void;
+  onEditCriteriaWeight: (e: number, index: number) => void;
 }
 
 export interface useWeightedFormSteppersReturnType {
