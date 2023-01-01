@@ -16,6 +16,11 @@ export default function WeightedResultPage({ res }: { res: IFinalResult }) {
 export async function getServerSideProps(context: NextPageContext) {
   const id: string = context.query.id as string;
   const weightedInput = await weightedInputApi.getById(+id);
+  if (weightedInput == null) {
+    return  {
+      props: { res: null }
+    }
+  }
   const res = await weightedDeicisonApi.decide<IWeightedInput[]>(
     +id,
     weightedInput.weightedInputs

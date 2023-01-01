@@ -21,7 +21,7 @@ export default function ResultContents({
   data: IFinalResult;
   type: DecisionTypes;
 }) {
-  if (data.type == "error" || !data || !data?.weightedResults)
+  if (data == null || data.type == "error" || !data || !data?.weightedResults)
     return <Error error={data} />;
   const { weightedResults, decisionName } = data;
   const { onClickEdit, onClickCreateNew, onClickEditInput } = useResult(type);
