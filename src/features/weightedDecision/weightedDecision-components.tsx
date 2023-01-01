@@ -194,7 +194,6 @@ export function WeightedInputForm({
     weightedInputForm: form,
     onSubmit,
     onChangeSlider,
-    putSlider,
   } = weightedInput
     ? useWeightedEditInput(res, setUnsavedChanges, weightedInput)
     : useWeightedInput(res, setUnsavedChanges);
@@ -267,7 +266,7 @@ export function WeightedInputForm({
         {item.criteriaInput.map((c, index) => {
           return (
             <WeightedInputCriteriaCard
-              sliderHelpers={{ onChangeSlider, putSlider }}
+              sliderHelpers={{ onChangeSlider }}
               indices={{ outIndex: activeHandlers.active - 1, index }}
               c={c}
             />
@@ -296,13 +295,12 @@ export function WeightedInputCriteriaCard({
       i1: number,
       i2: number,
       c: ICriteriaInput
-    ) => Promise<void>;
-    putSlider: (e: number, c1: ICriteriaInput, c2: ICriteriaInput) => void;
+    ) => void;
   };
   indices: { outIndex: number; index: number };
   c: ICriteriaInput;
 }) {
-  const { onChangeSlider, putSlider } = sliderHelpers;
+  const { onChangeSlider } = sliderHelpers;
   const { outIndex, index } = indices;
 
   return (
@@ -315,10 +313,7 @@ export function WeightedInputCriteriaCard({
           { value: 50, label: "50%" },
           { value: 80, label: "80%" },
         ]}
-        onChange={async (e) => {
-          await onChangeSlider(e, outIndex, index, c);
-          putSlider(e, c, c);
-        }}
+        onChange={(e) => onChangeSlider(e, outIndex, index, c)}
         value={c.value}
       />
     </div>

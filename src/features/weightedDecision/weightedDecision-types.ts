@@ -46,14 +46,7 @@ export interface useWeightedInputReturnType {
     outIndex: number,
     index: number,
     criteria: ICriteria
-  ) => Promise<void>;
-  putSlider: DebouncedFunc<
-    (
-      e: number,
-      criteria: ICriteria,
-      criteriaInput: ICriteriaInput
-    ) => Promise<void>
-  >;
+  ) => void;
 }
 
 export interface useCriteriaFormReturnType {

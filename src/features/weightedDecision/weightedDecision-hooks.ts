@@ -44,7 +44,6 @@ import {
   weightedItemsToWeightedInput,
 } from "./weightedDecision-utils";
 import weightedDeicisonApi, {
-  weightedCriteriaInputApi,
   weightedInputApi,
 } from "./weightedDeicison-api";
 
@@ -71,6 +70,7 @@ export function useWeightedEditInput(
 
   const onSubmit = async () => {
     setUnsavedChanges(false);
+    await weightedInputApi.put(weightedItems.id as number, { weightedItemId: weightedItems.id, weightedInputs: weightedInputForm.values } as IWeightedInputItem);
     router.push({
       pathname: `/weighted/${weightedItems.id}/result`,
     });
@@ -88,17 +88,7 @@ export function useWeightedEditInput(
     );
   };
 
-  const putSlider = debounce(
-    async (e: number, criteria: ICriteria, criteriaInput: ICriteriaInput) => {
-      await weightedCriteriaInputApi.put(criteriaInput.id as number, {
-        ...criteriaInput,
-        value: e,
-      });
-    },
-    300
-  );
-
-  return { weightedInputForm, onSubmit, onChangeSlider, putSlider };
+  return { weightedInputForm, onSubmit, onChangeSlider };
 }
 
 export function useWeightedInput(
@@ -126,11 +116,10 @@ export function useWeightedInput(
     });
   };
 
-  const onChangeSlider = async (
+  const onChangeSlider = (
     e: number,
     outIndex: number,
     index: number,
-    criteria: ICriteria
   ) => {
     weightedInputForm.setFieldValue(
       `${outIndex}.criteriaInput.${index}.value`,
@@ -138,11 +127,7 @@ export function useWeightedInput(
     );
   };
 
-  const putSlider = debounce(async () => {
-    return;
-  }, 300);
-
-  return { weightedInputForm, onSubmit, onChangeSlider, putSlider };
+  return { weightedInputForm, onSubmit, onChangeSlider };
 }
 
 // ====================================================== //
