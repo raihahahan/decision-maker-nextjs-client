@@ -3,7 +3,6 @@ import { IFinalResult } from "../../../common/types/decision-types";
 import { WeightedResultContents } from "../../../features/weightedDecision/weightedDecision-contents";
 import {
   IWeightedInput,
-  IWeightedInputItem,
 } from "../../../features/weightedDecision/weightedDecision-types";
 import weightedDeicisonApi, {
   weightedInputApi,
@@ -28,6 +27,6 @@ export async function getServerSideProps(context: NextPageContext) {
   return {
     props: {
       res,
-    }, // will be passed to the page component as props
+    },
   };
 }
