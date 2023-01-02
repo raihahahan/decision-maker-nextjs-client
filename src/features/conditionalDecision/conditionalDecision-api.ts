@@ -1,8 +1,8 @@
 import DAL from "../../common/domains/DAL";
 import DecisionDAL from "../../common/domains/DecisionDAL";
 import { IChoice } from "../../common/types/decision-types";
+import { appendApi } from "../../common/utils/api-utils";
 import CONSTANTS from "../../common/utils/constants";
-import { API_URL } from "../../common/utils/globals";
 import {
   ICondition,
   IConditionalDecisionItem,
@@ -14,43 +14,43 @@ import {
 
 class ConditionalDecisionAPI extends DecisionDAL<IConditionalDecisionItem> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.DECISION_ITEM}`);
+    super(appendApi(CONSTANTS.CONDITIONAL.DECISION_ITEM));
   }
 }
 
 class ConditionalChoiceAPI extends DAL<IChoice> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.CHOICES}`);
+    super(appendApi(CONSTANTS.CONDITIONAL.CHOICES));
   }
 }
 
 class ConditionalInputItemsAPI extends DAL<IConditionalInputItem> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.INPUT_ITEMS}`);
+    super(appendApi(CONSTANTS.CONDITIONAL.INPUT_ITEMS));
   }
 }
 
 class ConditionalInputsAPI extends DAL<IConditionalInput> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.INPUTS}`);
+    super(appendApi(CONSTANTS.CONDITIONAL.INPUTS));
   }
 }
 
 class ConditionalConditionsAPI extends DAL<ICondition> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.CONDITIONS}`);
+    super(appendApi(CONSTANTS.CONDITIONAL.CONDITIONS));
   }
 }
 
 class ConditionalIncludeAPI extends DAL<IInnerItemInclude> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.INCLUDE}`);
+    super(appendApi(CONSTANTS.CONDITIONAL.INCLUDE));
   }
 }
 
 class ConditionalExcludeAPI extends DAL<IInnerItemExclude> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.CONDITIONAL.EXCLUDE}`);
+    super(appendApi(CONSTANTS.CONDITIONAL.EXCLUDE));
   }
 }
 
