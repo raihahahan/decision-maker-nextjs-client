@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import useDecisionGenerics from "../../common/hooks/useDecisionGenerics";
 import { DecisionTypes, IDecision } from "../../common/types/decision-types";
+import { pathCombine } from "../../common/utils/api-utils";
+import CONSTANTS from "../../common/utils/constants";
 import { TUseIndexList } from "./index-types";
 
 export default function useIndexList(
@@ -43,14 +45,14 @@ export default function useIndexList(
       router.push(`/${type}/${_item.id}`);
     },
     onClickAdd() {
-      router.push(`/${type}/create`);
+      router.push(pathCombine(true, type, CONSTANTS.ACTION_METHODS.CREATE));
     },
     onClickEditInput(item: IDecision) {
-      router.push({ pathname: `/${type}/${item.id}/input` });
+      router.push({ pathname: pathCombine(true, type, item.id?.toString() as string, CONSTANTS.ACTION_METHODS.INPUT) });
       this.onClickEdit(item);
     },
     onClickResult(item: IDecision) {
-      router.push(`/${type}/${item.id}/result`);
+      router.push(pathCombine(true, type, item.id?.toString() as string, CONSTANTS.ACTION_METHODS.RESULT));
     },
   };
 
@@ -73,7 +75,7 @@ export default function useIndexList(
 
   const checkBoxChecked = (element: IDecision): boolean =>
     selected.find((i) => i.id == element.id) != undefined;
-
+ 
   const topCheckBoxChecked = selected.length == res.length && res.length != 0;
   return {
     buttonHandlers,
