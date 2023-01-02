@@ -40,6 +40,7 @@ import {
   useIndexTable,
 } from "./index-hooks";
 import { TButtonProps, TUseIndexList } from "./index-types";
+import Error from "../../common/components/error";
 
 export function IndexButtons() {
   return (
@@ -183,6 +184,7 @@ export function IndexGetList({
   res: IDecision[];
   type: DecisionTypes;
 }) {
+  if (res == null || res == undefined) return <Error />
   useIndexQueryListener(type);
   return (
     <InputLayout type={type} hideTitle>
