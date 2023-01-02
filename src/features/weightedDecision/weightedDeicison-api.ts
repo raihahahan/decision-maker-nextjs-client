@@ -1,8 +1,8 @@
-import axios from "axios";
+import { axios } from "../../common/api/Axios";
 import DAL from "../../common/domains/DAL";
 import DecisionDAL from "../../common/domains/DecisionDAL";
+import { appendApi, pathCombine } from "../../common/utils/api-utils";
 import CONSTANTS from "../../common/utils/constants";
-import { API_URL } from "../../common/utils/globals";
 import {
   IWeightedDecisionItem,
   IWeightedInputItem,
@@ -10,7 +10,7 @@ import {
 
 class WeightedDecisionAPI extends DecisionDAL<IWeightedDecisionItem> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.WEIGHTED.DECISION_ITEM}`);
+    super(appendApi(CONSTANTS.WEIGHTED.DECISION_ITEM));
   }
 
   public override async post(
@@ -24,17 +24,18 @@ class WeightedDecisionAPI extends DecisionDAL<IWeightedDecisionItem> {
       for (let item of input.criteriaList) {
         delete item?.id;
       }
-      const res = await axios.post(`${this.route}`, input);
-      return res.data as IWeightedDecisionItem;
+      const endpoint = pathCombine(false, this.decisionType);
+      const res = await axios.post<any, IWeightedDecisionItem>(endpoint, input);
+      return res;
     } catch (error) {
-      return { name: JSON.stringify(error), choices: [] } as any;
+      return { name: null, choices: [] } as any;
     }
   }
 }
 
 class WeightedInputAPI extends DAL<IWeightedInputItem> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.WEIGHTED.INPUT_ITEMS}`);
+    super(appendApi(CONSTANTS.WEIGHTED.INPUT_ITEMS));
   }
 }
 
