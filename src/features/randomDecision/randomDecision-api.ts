@@ -1,11 +1,11 @@
 import { IRandomDecisionItem } from "./randomDecision-types";
-import { API_URL } from "../../common/utils/globals";
 import DecisionDAL from "../../common/domains/DecisionDAL";
 import CONSTANTS from "../../common/utils/constants";
+import { appendApi } from "../../common/utils/api-utils";
 
 class RandomDecisionAPI extends DecisionDAL<IRandomDecisionItem> {
   constructor() {
-    super(`${API_URL}/api/${CONSTANTS.RANDOM.DECISION_ITEM}`);
+    super(appendApi(CONSTANTS.RANDOM.DECISION_ITEM));
   }
 }
 
