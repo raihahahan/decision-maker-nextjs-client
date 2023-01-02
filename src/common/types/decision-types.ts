@@ -57,3 +57,9 @@ export interface IUseDecisionReducer {
   decisionLocalData: IDecision[];
   decisionActions: IDecisionReducer<IDecision>;
 }
+
+export type TDALParams = {
+  sortorder?: string;
+  pageNumber?: number;
+  q?: string;
+}
