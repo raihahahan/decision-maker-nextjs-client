@@ -1,2 +1,2 @@
 # decision-maker-nextjs-client
-Nextjs client for MakeMyDecision (Decision maker web app).
+Nextjs client for MakeMyDecision (https://github.com/raihahahan/decision-maker-api).
