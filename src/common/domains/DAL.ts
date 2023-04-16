@@ -19,9 +19,9 @@ abstract class DAL<T> {
 
   public async get(params?: TDALParams): Promise<T[]> {
     try {
-      let endpoint : string = pathCombine(false, this.decisionType);
+      let endpoint: string = pathCombine(false, this.decisionType);
       if (params) {
-        endpoint = makeUrlWithQueries(endpoint, params)
+        endpoint = makeUrlWithQueries(endpoint, params);
       }
       const res = await axios.get<any, T[]>(endpoint);
       return res;
