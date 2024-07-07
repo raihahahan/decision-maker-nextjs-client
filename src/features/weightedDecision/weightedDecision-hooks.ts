@@ -43,9 +43,7 @@ import {
   weightedDecisionCreateUnsavedListener,
   weightedItemsToWeightedInput,
 } from "./weightedDecision-utils";
-import weightedDeicisonApi, {
-  weightedInputApi,
-} from "./weightedDeicison-api";
+import weightedDeicisonApi, { weightedInputApi } from "./weightedDeicison-api";
 
 /* Hooks in this file:
   1. useWeightedInput: logic for /weighted/{id}/input
@@ -64,13 +62,19 @@ export function useWeightedEditInput(
   const router = useRouter();
 
   // initialise other variables and methods
-  const initialValues = weightedInput.weightedInputs;
+  const initialValues = weightedInput?.weightedInputs;
 
   const weightedInputForm = useForm<IWeightedInput[]>({ initialValues });
 
   const onSubmit = async () => {
     setUnsavedChanges(false);
-    await weightedInputApi.put(weightedItems.id as number, { weightedItemId: weightedItems.id, weightedInputs: weightedInputForm.values } as IWeightedInputItem);
+    await weightedInputApi.put(
+      weightedItems.id as number,
+      {
+        weightedItemId: weightedItems.id,
+        weightedInputs: weightedInputForm.values,
+      } as IWeightedInputItem
+    );
     router.push({
       pathname: `/weighted/${weightedItems.id}/result`,
     });
@@ -116,11 +120,7 @@ export function useWeightedInput(
     });
   };
 
-  const onChangeSlider = (
-    e: number,
-    outIndex: number,
-    index: number,
-  ) => {
+  const onChangeSlider = (e: number, outIndex: number, index: number) => {
     weightedInputForm.setFieldValue(
       `${outIndex}.criteriaInput.${index}.value`,
       e
