@@ -2,7 +2,7 @@ import { ButtonProps } from "@mantine/core";
 import { routes } from "../../features/site/site-types";
 import { DecisionTypes } from "../types/decision-types";
 
-export const API_URL = "https://localhost:7239";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export type DecisionTypeItemsType = {
   name: routes;
