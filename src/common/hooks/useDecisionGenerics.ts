@@ -7,14 +7,17 @@ import weightedDeicisonApi from "../../features/weightedDecision/weightedDeiciso
 import { DecisionTypes, IUseDecisionReducer } from "../types/decision-types";
 
 export default function useDecisionGenerics(type: DecisionTypes) {
+  const r = useRandomDecisionReducer();
+  const w = useWeightedDecisionReducer();
+  const c = useConditionalDecisionReducer();
   const { decisionActions, decisionLocalData } =
     type == "random"
-      ? useRandomDecisionReducer()
+      ? r
       : type == "weighted"
-      ? useWeightedDecisionReducer()
+      ? w
       : type == "conditional"
-      ? useConditionalDecisionReducer()
-      : useRandomDecisionReducer();
+      ? c
+      : r;
 
   const decisionApi =
     type == "random"

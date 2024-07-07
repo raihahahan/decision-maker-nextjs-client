@@ -156,7 +156,7 @@ export default function MainHeader({
           height: "100%",
         }}
       >
-        <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+        {/* <MediaQuery largerThan="sm" styles={{ display: "none" }}>
           <Burger
             color={siteColors.text.primary}
             style={{ color: siteColors.text.primary }}
@@ -165,7 +165,7 @@ export default function MainHeader({
             size="sm"
             mr="xl"
           />
-        </MediaQuery>
+        </MediaQuery> */}
         <Link href="/" passHref>
           <Anchor onClick={() => setOpened(false)}>
             <RectangleTitle

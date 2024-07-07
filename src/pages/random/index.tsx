@@ -8,12 +8,13 @@ export default function RandomIndexPage({
 }: {
   res: IRandomDecisionItem[];
 }) {
-  if (res == null) return <Error />
+  // if (res == null) return <Error />
+  return <Error />;
   return <RandomDecisionIndexContents res={res} />;
 }
 
 export async function getServerSideProps() {
   const res = await randomDecisionApi.get();
-  if (!res) return { props: { res: null }}
+  if (!res) return { props: { res: null } };
   return { props: { res } };
 }

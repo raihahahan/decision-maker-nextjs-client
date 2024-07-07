@@ -44,14 +44,16 @@ export function RandomDecisionIndexContents({
 }: {
   res: IRandomDecisionItem[];
 }) {
-  if (!res) return <Error error={res} />;
   const {
     decisionActions: randomDecisionActions,
     decisionLocalData: randomDecisionLocalData,
   } = useDecisionGenerics("random");
   useEffect(() => {
     randomDecisionActions.set(res);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!res) return <Error error={res} />;
 
   return (
     <IndexLayout type="random">

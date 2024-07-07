@@ -162,15 +162,15 @@ export function DecisionCard({ item }: { item: DecisionTypeItemsType }) {
             text={"Create new"}
             name={item.name as any}
             color={item.color}
-            extraStyles={{ width: "50%", margin: 0, borderTopLeftRadius: 0 }}
+            extraStyles={{ width: "100%", margin: 0, borderTopLeftRadius: 0 }}
           />
-          <FeatureButton
+          {/* <FeatureButton
             text="View history"
             name="error"
             link={`/${item.displayName.toLowerCase()}`}
             color={item.color}
             extraStyles={{ width: "50%", borderTopRightRadius: 0, margin: 0 }}
-          />
+          /> */}
         </Button.Group>
       </div>
     </Card>
@@ -184,8 +184,9 @@ export function IndexGetList({
   res: IDecision[];
   type: DecisionTypes;
 }) {
-  if (res == null || res == undefined) return <Error />
   useIndexQueryListener(type);
+  if (res == null || res == undefined) return <Error />;
+
   return (
     <InputLayout type={type} hideTitle>
       <>

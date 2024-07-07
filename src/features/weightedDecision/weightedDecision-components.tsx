@@ -129,7 +129,7 @@ export function CriteriaForm({
       <form>
         {form.values.criteriaList.map((item, index) => {
           return (
-            <div>
+            <div key={index}>
               <div
                 style={{
                   display: "flex",
@@ -190,13 +190,17 @@ export function WeightedInputForm({
   weightedInput?: IWeightedInputItem;
 }) {
   const [unsavedChanges, setUnsavedChanges] = useState(true);
+  const editHandler = useWeightedEditInput(
+    res,
+    setUnsavedChanges,
+    weightedInput as any
+  );
+  const createdHandler = useWeightedInput(res, setUnsavedChanges);
   const {
     weightedInputForm: form,
     onSubmit,
     onChangeSlider,
-  } = weightedInput
-    ? useWeightedEditInput(res, setUnsavedChanges, weightedInput)
-    : useWeightedInput(res, setUnsavedChanges);
+  } = weightedInput ? editHandler : createdHandler;
 
   const { activeHandlers, pageHandlers } = useWeightedInputPagination();
 
@@ -266,6 +270,7 @@ export function WeightedInputForm({
         {item.criteriaInput.map((c, index) => {
           return (
             <WeightedInputCriteriaCard
+              key={index}
               sliderHelpers={{ onChangeSlider }}
               indices={{ outIndex: activeHandlers.active - 1, index }}
               c={c}

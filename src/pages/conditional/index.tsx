@@ -8,12 +8,13 @@ export default function ConditionalIndexPage({
 }: {
   res: IConditionalDecisionItem[];
 }) {
-  if (!res) return <Error />;
+  // if (!res) return <Error />;
+  return <Error />;
   return <ConditionalDecisionIndexContents res={res} />;
 }
 
 export async function getServerSideProps() {
   const res: IConditionalDecisionItem[] = await conditionalDecisionApi.get();
-  if (!res) return { props: { res: null }}
+  if (!res) return { props: { res: null } };
   return { props: { res } };
 }

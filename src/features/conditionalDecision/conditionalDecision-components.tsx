@@ -96,7 +96,7 @@ export function ConditionsForm({
       <form>
         {form.values.conditions.map((item, conditionIndex) => {
           return (
-            <div>
+            <div key={item.id}>
               <div
                 style={{
                   display: "flex",
@@ -244,9 +244,9 @@ export function ConditionalInputForm({
         return { ...item, value: false };
       });
 
-  const { buttonHandlers } = conditionalInput
-    ? useConditionalInputEditForm()
-    : useConditionalInputForm();
+  const editHandler = useConditionalInputEditForm();
+  const formHandler = useConditionalInputForm();
+  const { buttonHandlers } = conditionalInput ? editHandler : formHandler;
 
   const [checkedState, setCheckedState] = useState<boolean[]>(
     finalInput.map((i) => i.value)
@@ -268,7 +268,7 @@ export function ConditionalInputForm({
         <h3>Tick the boxes for the conditions that are currently true.</h3>
         {finalInput.map((item, index) => {
           return (
-            <div style={{ display: "flex", flexDirection: "row" }}>
+            <div key={index} style={{ display: "flex", flexDirection: "row" }}>
               <Checkbox
                 checked={checkedState[index]}
                 onChange={() => {

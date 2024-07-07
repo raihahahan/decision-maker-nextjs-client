@@ -125,6 +125,7 @@ export function FormSteppers({
         {stepperData.map((item) => {
           return (
             <Stepper.Step
+              key={item.id}
               disabled
               label={item.label}
               description={item.description}

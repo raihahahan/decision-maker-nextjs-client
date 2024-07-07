@@ -29,12 +29,12 @@ export default function InputLayout({
         {!hideTitle && (
           <>
             <br />
-            <FeatureButton
+            {/* <FeatureButton
               text="View history"
               name="error"
               link={`/${type}`}
               color={DecisionTypeItems.find((i) => i.type == type)?.color}
-            />
+            /> */}
           </>
         )}
         <br />

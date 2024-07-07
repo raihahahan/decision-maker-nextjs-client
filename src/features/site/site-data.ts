@@ -1,16 +1,16 @@
 import { anchorTitles, routes } from "./site-types";
 
 const anchorData: { title: anchorTitles; anchorRoute: routes }[] = [
-  { title: "", anchorRoute: "/" },
-  { title: "Random", anchorRoute: "/random" },
-  {
-    title: "Weighted",
-    anchorRoute: "/weighted",
-  },
-  {
-    title: "Conditional",
-    anchorRoute: "/conditional",
-  },
+  // { title: "", anchorRoute: "/" },
+  // { title: "Random", anchorRoute: "/random" },
+  // {
+  //   title: "Weighted",
+  //   anchorRoute: "/weighted",
+  // },
+  // {
+  //   title: "Conditional",
+  //   anchorRoute: "/conditional",
+  // },
 ];
 
 export default anchorData;
@@ -18,7 +18,7 @@ export default anchorData;
 export const footerData: { title: anchorTitles; anchorRoute: routes }[] = [
   {
     title: "M.Raihan" as any,
-    anchorRoute: "https://mraihan.vercel.app",
+    anchorRoute: "https://mraihan.dev",
   },
   {
     title: "Github" as any,
@@ -29,8 +29,8 @@ export const footerData: { title: anchorTitles; anchorRoute: routes }[] = [
     anchorRoute: "mailto:mraihandev@gmail.com" as any,
   },
 
-  {
-    title: "Privacy Policy",
-    anchorRoute: "/privacy-policy",
-  },
+  // {
+  //   title: "Privacy Policy",
+  //   anchorRoute: "/privacy-policy",
+  // },
 ];

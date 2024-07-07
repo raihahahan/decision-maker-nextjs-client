@@ -21,12 +21,12 @@ export default function ResultContents({
   data: IFinalResult;
   type: DecisionTypes;
 }) {
-  if (data == null || data.type == "error" || !data || !data?.weightedResults)
-    return <Error error={data} />;
   const { weightedResults, decisionName } = data;
   const { onClickEdit, onClickCreateNew, onClickEditInput } = useResult(type);
   const { md } = useGlobalMediaQuery();
-  const router = useRouter();
+  if (data == null || data.type == "error" || !data || !data?.weightedResults)
+    return <Error error={data} />;
+
   return (
     <InputLayout type={type}>
       <div
